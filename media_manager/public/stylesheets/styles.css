@@ -1,0 +1,124 @@
+/* -------------------- Text ----------------------*/
+
+  h1,h2,h3,h4,p,a,label,div {
+    color: #FFF;
+  }
+  
+  .birth {
+    font-family: 'birth_of_a_heroregular';
+  }
+
+/* -------------------- End Text ----------------------*/
+
+/* -------------------- General Layout ----------------------*/
+
+  .hidden {
+    display: none !important;
+  }
+
+  .pull-left {
+    float: left;
+  }
+  
+  .inline {
+    display: inline-block;
+  }
+
+  html, body {
+    height: 100%;
+  }
+  
+  .overflow {
+    overflow: auto;
+  }
+  
+  /* Padding */
+  .pad10 {
+    padding: 10px;
+  }
+  
+  /* Margin Top */
+  .mt20 {
+    margin-top: 20px;
+  }
+  
+  /* Margin Left */
+  .ml40 {
+    margin-left: 40px !important;
+  }
+  
+  /* Margin Right */
+  .mr20 {
+    margin-right: 20px;
+  }
+  
+/* -------------------- End General Layout ----------------------*/
+
+/* -------------------- General Display ----------------------*/
+
+  [box] {
+    background-color: rgba(119,119,119, 0.3);
+    box-shadow: 1px 1px 20px 10px #777;
+    -webkit-box-shadow: 1px 1px 20px 10px #222;
+    -moz-box-shadow: 1px 1px 20px 10px #777;
+    -o-box-shadow: 1px 1px 20px 10px #777;
+    -k-box-shadow: 1px 1px 20px 10px #777;
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -o-border-radius: 30px;
+    -k-border-radius: 30px;
+  }
+
+/* -------------------- End General Display ----------------------*/
+
+/* -------------------- Backgrounds ----------------------*/
+
+  .background-cover {
+    background-size: cover;
+  }
+
+  body {
+    background: url('/images/backgrounds/main/1.jpg') center no-repeat;
+  }
+
+/* -------------------- End Backgrounds ----------------------*/
+
+/* -------------------- Specific Layout ----------------------*/
+
+  body:before {
+    width: 200px;
+    height: 200px;
+    margin-left: 30px;
+    font-family: 'birth_of_a_heroregular';
+    font-size: 100px;
+    color: #FFF;
+    content: "AMP";
+  }
+
+/* -------------------- End Specific Layout ----------------------*/
+
+/* -------------------- Bootstrap Hacks ----------------------*/
+
+  body {
+    padding-left: 20px;
+    padding-right: 20px;
+    line-height: normal;
+  }
+
+/* -------------------- End Bootstrap Hacks ----------------------*/
+
+/* -------------------- Fonts ----------------------*/
+
+  @font-face {
+    font-family: 'birth_of_a_heroregular';
+    src: url('/fonts/birth_of_a_hero-webfont.eot');
+    src: url('/fonts/birth_of_a_hero-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/fonts/birth_of_a_hero-webfont.woff') format('woff'),
+         url('/fonts/birth_of_a_hero-webfont.ttf') format('truetype'),
+         url('/fonts/birth_of_a_hero-webfont.svg#birth_of_a_heroregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+/* -------------------- End Fonts ----------------------*/
