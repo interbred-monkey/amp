@@ -3,7 +3,6 @@
 var fs = require('fs');
 var _ = require('underscore');
 var config = require('./config/config.json');
-var api = require('./api.js');
 
 // include all the modules used for processing
 var modules = {};
