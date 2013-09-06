@@ -1,0 +1,9 @@
+[
+  {
+    "title": "Performs a youtube search for a string",
+    "method": "GET",
+    "endpoint": "/api/youtube-search",
+    "module": "youtube.js",
+    "callback": "doYouTubeSearchAPI"
+  }
+]

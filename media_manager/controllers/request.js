@@ -2,39 +2,20 @@
 
 var fs = require('fs');
 var _ = require('underscore');
-var config = require('./config/config.json');
+var config = require('./config/__config.json');
 
-// include all the modules used for processing
+// modules
 var modules = {};
 
+// controller config
+var controller_config = [];
+
 // a list of files we dont want to register
-var ignore_files = [".DS_Store"];
+var ignore_files = [".DS_Store", "__config.js"];
 
-// include all the modules
-fs.readdir(__dirname+'/api_modules/', function(err,files) {
-  
-  if (err && err.code !== "ENOENT") {
-    console.log("Unable to read modules directory");
-    process.exit();
-  }
-  
-  // if we have some results
-  if (_.isArray(files) && files.length > 0) {
-  
-    // remove the shit files
-    files = removeIgnoreFiles(files);
-  
-    // load in the modules directory
-    for (var f in files) {
-      modules[files[f].split(".")[0]] = require('./api_modules/'+files[f]);
-    }
-  
-  }
-  
-});
-
+// handle a request
 var processRequest = function(req, callback) {
-	
+
 	// is this a favicon request
 	if (req.path === 'favicon.ico') {
 	  return callback(false,"Favicon, dont load anything");
@@ -50,11 +31,16 @@ var processRequest = function(req, callback) {
   url_bits.splice(0,1);
   
   // api calls
-  if (url_bits[0] === "api") {
+  if (url_bits[0] === "api" || url_bits[0] === "ajax") {
   
+    // get the request vars etc
     var vars = buildVars(req.params, req.query);
-    delegateAPI(req.url, vars, function() {
-      return callback();
+    
+    // call the respective function
+    delegateAPI(req.path, req.method, vars, function(success, msg, data) {
+      
+      return callback(success, msg, data);
+      
     });
     
   }
@@ -95,9 +81,36 @@ var processRequest = function(req, callback) {
   
 }
 
-var delegateAPI = function(req_path, req_vars, callback) {
+var delegateAPI = function(req_path, req_method, req_vars, callback) {
   
-  return callback();
+  // do we have some config?
+  if (!_.isArray(controller_config) || controller_config.length === 0) {
+    return callback(false, "Could not load config");
+  }
+  
+  // loop the config to see what we should do with the request
+  for (var cc in controller_config) {
+    
+    // does it match the config?
+    if (controller_config[cc].endpoint.toLowerCase() === req_path.toLowerCase() && controller_config[cc].method.toLowerCase() === req_method.toLowerCase()) {
+      
+      // include the module
+      var module = require('./api_modules/'+controller_config[cc].module);
+      
+      // run the function
+      module[controller_config[cc].callback].call(undefined, req_vars, function(success, msg, data) {
+        
+        return callback(success, msg, data);
+        
+      });
+    }
+    
+    // couldn't find the api call
+    else {
+      return callback(false, "End Point Not Found");
+    }
+    
+  }
   
 }
 
@@ -167,8 +180,61 @@ var buildVars = function(body, qs) {
 	return ret;
 }
 
+// self executing function to include the modules and config
+var setup = function() {
+  
+  // include all the modules
+  fs.readdir(__dirname+'/api_modules/', function(err,files) {
+  
+    if (err && err.code !== "ENOENT") {
+      console.log("Unable to read modules directory");
+      process.exit();
+    }
+  
+    // if we have some results
+    if (_.isArray(files) && files.length > 0) {
+  
+      // remove the shit files
+      files = removeIgnoreFiles(files);
+  
+      // load in the modules directory
+      for (var f in files) {
+        modules[files[f].split(".")[0]] = require('./api_modules/'+files[f]);
+      }
+  
+    }
+  
+  });
+
+  // load in the controller config
+  fs.readdir(__dirname+'/config', function(err, config_files) {
+  
+    if (err && err.code !== "ENOENT") {
+      console.log("Unable to read config directory");
+      process.exit();
+    }
+
+    if (_.isArray(config_files) && config_files.length > 0) {
+    
+      // remove the shit files
+      config_files = removeIgnoreFiles(config_files);
+    
+      for (var cf in config_files) {
+    
+        var json = fs.readFileSync(__dirname+'/config/'+config_files[cf], {encoding: "utf8"});
+        json = JSON.parse(json);
+        
+        controller_config = controller_config.concat(json);
+    
+      }
+    }
+
+  });
+  
+}();
+
 // stuff to export
 module.exports = {
-	process : processRequest,
+	processRequest : processRequest,
   modules: modules
 }

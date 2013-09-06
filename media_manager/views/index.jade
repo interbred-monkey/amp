@@ -24,11 +24,7 @@ html
           li 
             a(href='/file-manager') File Manager
     div.row-fluid
-      div(class='span6', box)
-        div(class='span6 ml40 pad10')
-          form(class='navbar-search form-inline')
-            label(class='control-label mr20') Find a YouTube Video
-            input(type='text' class='search-query', placeholder='Foo Fighters', typeahead, data-source='/ajax/youtube-search')
+      include youtube_search_bar.jade
       div(class='span6', box)
       
     include scripts.jade

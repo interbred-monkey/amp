@@ -7,7 +7,7 @@ var express = require('express');
 var server = express();
 var http = require('http');
 var http_server = http.createServer(server);
-var config = require('./media_manager/config/config.json');
+var config = require('./media_manager/config/__config.json');
 var http_request = require('./media_manager/controllers/request.js');
 
 // setup the body parser
@@ -38,23 +38,23 @@ server.all('*', function(req,res) {
 	rp.params = req.body;
 	
 	// handle the request
-	http_request.process(rp, function(success, msg, data) {
+	http_request.processRequest(rp, function(success, msg, data) {
 	
-		if(success){
+		if (success) {
 			if(data.file){
-				res.render(base_dir+data.file_path, {params:data.vars});
+				res.render(base_dir+data.file_path, {params: data.vars});
 			}
 			else{
 			  var ret = {"success":success, "msg": msg};
 			  
-			  if(data){
+			  if (!_.isUndefined(data)) {
 			    ret.data = data;
 			  }
 			  
 			  res.send((success?200:404), JSON.stringify(ret));
 			}
 		}
-		else{
+		else {
 			res.send(404);
 		}
 		res.end();

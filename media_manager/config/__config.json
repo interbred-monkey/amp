@@ -1,0 +1,4 @@
+{
+	"debug": true,
+	"require_socket_io": true
+}
