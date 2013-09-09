@@ -17,7 +17,7 @@ server.use(express.bodyParser());
 server.set('view engine', 'jade');
 
 // static content folders
-var public_folders = ["stylesheets", "javascript", "bootstrap", "images", "fonts"];
+var public_folders = ["stylesheets", "javascript", "bootstrap", "images", "fonts", "movies", "music", "_images"];
 
 // base directory
 var base_dir = __dirname+'/media_manager';
@@ -33,32 +33,32 @@ server.all('*', function(req,res) {
   // get some params for the request
   var rp = {};
   rp.method = req.method;
-	rp.path = req._parsedUrl.pathname;
-	rp.query = req.query;
-	rp.params = req.body;
-	
-	// handle the request
-	http_request.processRequest(rp, function(success, msg, data) {
-	
-		if (success) {
-			if(data.file){
-				res.render(base_dir+data.file_path, {params: data.vars});
-			}
-			else{
-			  var ret = {"success":success, "msg": msg};
-			  
-			  if (!_.isUndefined(data)) {
-			    ret.data = data;
-			  }
-			  
-			  res.send((success?200:404), JSON.stringify(ret));
-			}
-		}
-		else {
-			res.send(404);
-		}
-		res.end();
-	});
+  rp.path = req._parsedUrl.pathname;
+  rp.query = req.query;
+  rp.params = req.body;
+  
+  // handle the request
+  http_request.processRequest(rp, function(success, msg, data) {
+  
+	  if (success) {
+		  if(data.file){
+			  res.render(base_dir+data.file_path, {params: data.vars, req: rp});
+		  }
+		  else{
+		    var ret = {"success":success, "msg": msg};
+		    
+		    if (!_.isUndefined(data)) {
+		      ret.data = data;
+		    }
+		    
+		    res.send((success?200:404), JSON.stringify(ret));
+		  }
+	  }
+	  else {
+		  res.send(404);
+	  }
+	  res.end();
+  });
 	
 });
 

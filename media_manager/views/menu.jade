@@ -1,0 +1,32 @@
+div.span12
+  ul(class='nav nav-pills')
+    if req.path == "/"
+      li.active 
+        a(href='/') Main
+    else
+      li
+        a(href='/') Main
+    if req.path == "/music"
+      li.active 
+        a(href='/music') Music
+    else
+      li
+        a(href='/music') Music
+    if req.path == "/movies"
+      li.active 
+        a(href='/movies') Movies
+    else
+      li
+        a(href='/movies') Movies
+    if req.path == "/images"
+      li.active 
+        a(href='/images') Images
+    else
+      li
+        a(href='/images') Images
+    if req.path == "/file-manager"
+      li.active 
+        a(href='/file-manager') File Manager
+    else
+      li
+        a(href='/file-manager') File Manager
