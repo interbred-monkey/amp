@@ -17,7 +17,7 @@ var ignore_files = [".DS_Store", "__config.js"];
 var processRequest = function(req, callback) {
 
 	// is this a favicon request
-	if (req.path === 'favicon.ico') {
+	if (req.path === '/favicon.ico') {
 	  return callback(false,"Favicon, dont load anything");
 	}
 	
