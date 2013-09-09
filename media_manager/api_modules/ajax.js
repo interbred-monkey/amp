@@ -3,6 +3,9 @@
 // include the youtube functions
 var youtube = require('./youtube.js');
 
+// include the file-system functions
+var file_system = require('./file_system.js');
+
 // perform a youtube search
 var youtubeSearch = function(params, callback) {
   
@@ -15,6 +18,16 @@ var youtubeSearch = function(params, callback) {
   
 }
 
+// perform a file system search
+var fileSearch = function(params, callback) {
+  
+  file_system.findFiles(params, function(success, msg, data) {
+    callback(success, msg, data);
+  });
+  
+}
+
 module.exports = {
-  youtubeSearch: youtubeSearch
+  youtubeSearch: youtubeSearch,
+  fileSearch: fileSearch
 }
