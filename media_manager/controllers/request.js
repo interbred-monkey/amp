@@ -11,7 +11,7 @@ var modules = {};
 var controller_config = [];
 
 // a list of files we dont want to register
-var ignore_files = [".DS_Store", "__config.js"];
+var ignore_files = [".DS_Store", "__config.js", "views"];
 
 // handle a request
 var processRequest = function(req, callback) {
@@ -89,10 +89,14 @@ var delegateAPI = function(req_path, req_method, req_vars, callback) {
   }
   
   // loop the config to see what we should do with the request
+  var found_endpoint = false;
+  
   for (var cc in controller_config) {
     
     // does it match the config?
     if (controller_config[cc].endpoint.toLowerCase() === req_path.toLowerCase() && controller_config[cc].method.toLowerCase() === req_method.toLowerCase()) {
+      
+      found_endpoint = true;
       
       // include the module
       var module = require('./api_modules/'+controller_config[cc].module);
@@ -103,13 +107,17 @@ var delegateAPI = function(req_path, req_method, req_vars, callback) {
         return callback(success, msg, data);
         
       });
+      
+      // break from the loop
+      break;
+      
     }
     
-    // couldn't find the api call
-    else {
-      return callback(false, "End Point Not Found");
-    }
-    
+  }
+  
+  // couldn't find the endpoint
+  if (found_endpoint === false) {
+    return callback (false, "Endpoint not found");
   }
   
 }

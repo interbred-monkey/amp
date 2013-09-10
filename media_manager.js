@@ -1,12 +1,17 @@
 #!/usr/bin/env node
 
-// mediaMan api server
+// media manager api server
 
-// requires
+// setup the server requires
 var express = require('express');
 var server = express();
 var http = require('http');
 var http_server = http.createServer(server);
+
+// include the underscore library
+var _ = require('underscore');
+
+// include config etc
 var config = require('./media_manager/config/__config.json');
 var http_request = require('./media_manager/controllers/request.js');
 
@@ -40,24 +45,25 @@ server.all('*', function(req,res) {
 	// handle the request
 	http_request.processRequest(rp, function(success, msg, data) {
 	
-		if (success) {
-			if(data.file){
-				res.render(base_dir+data.file_path, {params: data.vars});
-			}
-			else{
-			  var ret = {"success":success, "msg": msg};
-			  
-			  if (!_.isUndefined(data)) {
-			    ret.data = data;
-			  }
-			  
-			  res.send((success?200:404), JSON.stringify(ret));
-			}
-		}
-		else {
-			res.send(404);
-		}
-		res.end();
+	  // do we have some html to put out?
+	  if(data.file){
+      res.render(base_dir+data.file_path, {params: data.vars});
+    }
+	
+	  // must be an api call
+	  else {
+      var ret = {"success":success, "msg": msg};
+        
+      if (!_.isUndefined(data)) {
+        ret.data = data;
+      }
+    
+      res.send((success?200:404), JSON.stringify(ret));
+    }
+	
+    // sever communications
+    res.end();
+    
 	});
 	
 });
