@@ -22,7 +22,7 @@ server.use(express.bodyParser());
 server.set('view engine', 'jade');
 
 // static content folders
-var public_folders = ["stylesheets", "javascript", "bootstrap", "images", "fonts"];
+var public_folders = ["stylesheets", "javascript", "bootstrap", "images", "fonts", "movies", "music", "_images"];
 
 // base directory
 var base_dir = __dirname+'/media_manager';
@@ -47,7 +47,7 @@ server.all('*', function(req,res) {
 	
 	  // do we have some html to put out?
 	  if(data.file){
-      res.render(base_dir+data.file_path, {params: data.vars});
+      res.render(base_dir+data.file_path, {params: data.vars, req: rp});
     }
 	
 	  // must be an api call

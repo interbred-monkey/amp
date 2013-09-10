@@ -1,9 +1,7 @@
 each d in data
-  div(class='row search-row', link=d.link)
-    div(class='span1 mr20')
-      img(src=d.img, alt=d.artist+(d.title?' - '+d.title:""))
-    div.span10
-      h3=d.artist
-      p=d.title+' ('+d.duration+')'
+  div(class='search-row', link=d.link)
+    img(src=d.img, alt=d.artist+(d.title?' - '+d.title:""))
+    h3=d.artist
+    p=d.title+' ('+d.duration+')'
       
       

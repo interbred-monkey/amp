@@ -1,15 +1,52 @@
-/* TypeAhead Styles */
+/* Custom TypeAhead Styles */
+
+[typeahead-suggestions] img {
+  max-width: 50%;
+}
+
+[typeahead-suggestions] h3 {
+  color: #333;
+  font-size: 15px;
+}
+
+/* Standard TypeAhead Styles */
 
 [typeahead-suggestions] {
   display: block;
   position: absolute;
   z-index: 10000;
+  padding: 10px;
+  color: #777;
   background-color: #FFF;
-  border: 2px solid #333;
+  border: 5px solid #333;
   border-radius: 15px;
   -moz-border-radius: 15px;
   -webkit-border-radius: 15px;
   -ms-border-radius: 15px;
   -o-border-radius: 15px;
   -k-border-radius: 15px;
+  cursor: pointer;
+  text-overflow: elipsis;
+  overflow: hidden;
+  text-align: center;
+}
+
+[typeahead-suggestions] ul {
+  display: block;
+}
+
+[typeahead-suggestions] li {
+  display: block;
+  color: #777;
+  font-family: arial;
+  border-bottom: 1px solid #333;
+}
+
+[typeahead-suggestions] li:last-child {
+  border-bottom: none;
+}
+
+[typeahead-suggestions] li:hover {
+  color: #333;
+  background-color: #78B9FF;
 }
