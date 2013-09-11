@@ -12,6 +12,16 @@ var findFiles = function(params, callback) {
   
 }
 
+// list files in a given directory
+var listFiles = function(params, callback) {
+  
+  // load the dir
+  var dir = fs.readdirSync(__dirname+params.path);
+  
+  console.log(dir);
+  
+}
+
 module.exports = {
   findFiles: findFiles
 }

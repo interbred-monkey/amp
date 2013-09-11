@@ -22,7 +22,7 @@ server.use(express.bodyParser());
 server.set('view engine', 'jade');
 
 // static content folders
-var public_folders = ["stylesheets", "javascript", "bootstrap", "images", "fonts", "movies", "music", "_images"];
+var public_folders = ["stylesheets", "javascript", "bootstrap", "images", "fonts"];
 
 // base directory
 var base_dir = __dirname+'/media_manager';
