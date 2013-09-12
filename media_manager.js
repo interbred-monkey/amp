@@ -46,7 +46,7 @@ server.all('*', function(req,res) {
 	http_request.processRequest(rp, function(success, msg, data) {
 	
 	  // do we have some html to put out?
-	  if(data.file){
+	  if(!_.isUndefined(data) && data.file){
       res.render(base_dir+data.file_path, {params: data.vars, req: rp});
     }
 	

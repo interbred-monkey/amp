@@ -140,9 +140,11 @@ var processSearchResults = function(yt_res){
     (duration.hours() > 0?time_bits += duration.hours()+":":"");
     (duration.minutes() > 0?time_bits += duration.minutes()+":":"");
     (time_bits === ""?time_bits = duration.seconds()+" secs":time_bits += duration.seconds());
+    
+    var title_bits = yt_res[y].title.$t.split(' - ');
   
     var tmp_ob = {};
-    var title_bits = yt_res[y].title.$t.split(' - ');
+    tmp_ob.id = getYouTubeId(yt_res[y].media$group.media$content[0].url);
     tmp_ob.artist = title_bits[0];
     tmp_ob.title = (_.isUndefined(title_bits[1])?"":title_bits[1]);
     tmp_ob.duration = time_bits;
@@ -174,8 +176,63 @@ var dlVideo = function(params, callback) {
   
 }
 
+var getYouTubeId = function(embed_code) {
+   
+   // supported urls/embed code
+   // <iframe width="640" height="360" src="http://www.youtube.com/embed/2uJqW9O6aW0?feature=player_detailpage" frameborder="0" allowfullscreen></iframe> 
+   // <object width="420" height="315"><param name="movie" value="http://www.youtube.com/v/OMw5lwpTBY8?version=3&amp;hl=en_GB&amp;rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/OMw5lwpTBY8?version=3&amp;hl=en_GB&amp;rel=0" type="application/x-shockwave-flash" width="420" height="315" allowscriptaccess="always" allowfullscreen="true"></embed></object> 
+   // http://www.youtube.com/watch?v=OMw5lwpTBY8
+   // http://youtu.be/OMw5lwpTBY8
+   
+  var ret = false;
+  var id = false;
+
+  if (embed_code.indexOf("www.youtube.com/embed") != -1) {  
+      
+    var matches = embed_code.match(/www.youtube.com\/embed\/([a-z0-9-_]+)/gi);
+     
+     if(matches.length){
+        id = matches[0].split("/")[2];
+     }
+       
+  } else if (embed_code.match(/www.youtube.com\/watch/)){
+     
+     var theurl = url.parse(embed_code,true);
+     
+     if (theurl.query.v) {
+       id = theurl.query.v;
+     }  
+     
+  }  else if(embed_code.match(/youtu.be/)){
+     
+     var matches = embed_code.match(/youtu.be\/([a-z0-9-_]+)/gi);
+     
+     if(matches.length){
+        id = matches[0].split("/")[1];
+     }
+     
+  }  else if(embed_code.match(/www.youtube.com\/v/)){
+     
+     var matches = embed_code.match(/www.youtube.com\/v\/([a-z0-9-_]+)/gi);
+     
+     if(matches.length){
+        id = matches[0].split("/")[2];
+     }
+     
+  }
+  
+  // format the stuff
+  if(!id){
+    return false;
+  }
+  
+  return id;
+
+}
+
 module.exports = {
   doYouTubeSearch: doYouTubeSearch,
   dlVideo: dlVideo,
-  getVideoInfo: getVideoInfo
+  getVideoInfo: getVideoInfo,
+  getYouTubeId: getYouTubeId
 }

@@ -70,6 +70,30 @@
     -k-border-radius: 30px;
   }
 
+  [search-preview] {
+    display: block;
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background-color: #FFF;
+    border: 3px solid #777;
+    box-shadow: 1px 1px 20px 10px #777;
+    -webkit-box-shadow: 1px 1px 20px 10px #222;
+    -moz-box-shadow: 1px 1px 20px 10px #777;
+    -o-box-shadow: 1px 1px 20px 10px #777;
+    -k-box-shadow: 1px 1px 20px 10px #777;
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -o-border-radius: 30px;
+    -k-border-radius: 30px;
+    z-index: 1000000;
+  }
+
+  [search-preview] iframe {
+    margin: 15px 15px;
+  }
+
 /* -------------------- End General Display ----------------------*/
 
 /* -------------------- Backgrounds ----------------------*/

@@ -5,8 +5,9 @@ var typeahead = function(__params) {
   var __el = __params.element;
   
   var __el_pos = $(__el).offset();
-  var __el_width = $(__el).width();
+  var __el_width = $(__el).width()+20;
   var __container = $('<div/>');
+  var __mouse_evt = "out";
   
   $(__container).attr('typeahead-suggestions','')
                 .css({
@@ -56,14 +57,37 @@ var typeahead = function(__params) {
     
     $('body').append(__container);
     _addEventClick();
+    _addEventHover();
     
+  }
+
+  var _addEventBodyClick = function(__evt) {
+    // make a click event on the body
+    if (__evt.sourceElement === __el){
+      return;
+    }
+    else {
+      $(__el).remove();
+    }
   }
   
   var _addEventClick = function() {
     // make a click event on the callback handle
-    if (typeof __params.callback !== "undefined") {
-      $(__container).find(__params.callback.handle).on('click', function() {
-        __params.callback.method.call(this, this);
+    if (typeof __params.click !== "undefined") {
+      $(__container).find(__params.click.handle).on('click', function() {
+        __params.click.method.call(this, this);
+      });
+    }
+  }
+  
+  var _addEventHover = function() {
+    // make a click event on the callback handle
+    if (typeof __params.hover !== "undefined") {
+      $(__container).find(__params.hover.handle).on('mouseenter', function() {
+        __params.hover.over.call(this, this);
+      });
+      $(__container).find(__params.hover.handle).on('mouseleave', function() {
+        __params.hover.out.call(this, this);
       });
     }
   }

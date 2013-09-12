@@ -1,12 +1,35 @@
 /* Custom TypeAhead Styles */
 
-[typeahead-suggestions] img {
-  max-width: 50%;
+[typeahead-suggestions] .header {
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
-[typeahead-suggestions] h3 {
+[typeahead-suggestions] .header p {
   color: #333;
   font-size: 15px;
+  font-weight: bold;
+}
+
+[typeahead-suggestions] p {
+  color: #333;
+  padding: 0px;
+  line-height: 14px;
+}
+
+[typeahead-suggestions] div.search-row {
+  min-height: 30px;
+  padding: 15px 20px 10px;
+  border-bottom: 1px solid #555;
+}
+
+[typeahead-suggestions] div.search-row:hover {
+  background-color: #78B9FF;
+}
+
+[typeahead-suggestions] div.search-row:last-child {
+  border-bottom: none;
 }
 
 /* Standard TypeAhead Styles */
@@ -15,10 +38,9 @@
   display: block;
   position: absolute;
   z-index: 10000;
-  padding: 10px;
   color: #777;
   background-color: #FFF;
-  border: 5px solid #333;
+  border: 5px solid #555;
   border-radius: 15px;
   -moz-border-radius: 15px;
   -webkit-border-radius: 15px;
@@ -28,11 +50,11 @@
   cursor: pointer;
   text-overflow: elipsis;
   overflow: hidden;
-  text-align: center;
 }
 
 [typeahead-suggestions] ul {
   display: block;
+  padding: 10px 20px;
 }
 
 [typeahead-suggestions] li {
