@@ -38,7 +38,13 @@ $(document).ready(function() {
         
           // get the url of the video
           var vid_url = $(el).attr('link');
-        
+
+          // clear the timeout
+          clearTimeout(sp);
+          
+          // close the search preview
+          closeYouTubeSearchPreview();
+
           // make it display
           showYouTubeVideo(vid_url);
           
@@ -73,6 +79,29 @@ $(document).ready(function() {
   
 });
 
+var showYouTubeVideo = function(video_id) {
+
+  if ($('[video_player] #video_player').length === 0) {
+    var vp = $('<div/>').attr('id', 'video_player');
+    $('[video_player]').html(vp);
+  }
+
+  // make the yt video
+  var params = {
+    container: 'video_player',
+    height: 600,
+    width: 700,
+    video_id: video_id,
+    controls: 1,
+    autoplay: 1
+  }
+
+  var playa = makeYtVideoPlayer(params);
+
+  $('[video_player]').append(playa);
+
+}
+
 var previewYouTubeSearchVideo = function(video_id) {
   
   if ($('[search-preview]').length === 0) {
@@ -91,8 +120,8 @@ var previewYouTubeSearchVideo = function(video_id) {
   // make the yt video
   var params = {
     container: 'preview_search_video',
-    height: 170,
-    width: 170,
+    height: 270,
+    width: 270,
     video_id: video_id,
     controls: 0,
     autoplay: 1
@@ -104,7 +133,7 @@ var previewYouTubeSearchVideo = function(video_id) {
 
 }
 
-var closeYouTubeSearchPreview = function(video_link) {
+var closeYouTubeSearchPreview = function() {
   
   $('[search-preview]').remove();
   

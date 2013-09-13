@@ -67,7 +67,7 @@ var typeahead = function(__params) {
       return;
     }
     else {
-      $(__el).remove();
+      $(__container).remove();
     }
   }
   
@@ -75,7 +75,12 @@ var typeahead = function(__params) {
     // make a click event on the callback handle
     if (typeof __params.click !== "undefined") {
       $(__container).find(__params.click.handle).on('click', function() {
+        
+        // clear the container
+        $(__container).remove();
+        
         __params.click.method.call(this, this);
+      
       });
     }
   }
