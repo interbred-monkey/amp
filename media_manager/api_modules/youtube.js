@@ -12,73 +12,54 @@ var request = require('request');
 // Load in the moment library
 var moment = require('moment');
 
+var getYouTubeVideoInfoAPI = function(params, callback) {
+
+  if (_.isUndefined(params.video_id)) {
+    return callback(false, "video_id is a required parameter");
+  }
+
+  getYouTubeVideoInfo(params, function(success, msg, data) {
+    return callback(success, msg, data);
+  })
+
+}
+
 // Get the youtube video info from the api
-var getVideoInfo = function(video_id, callback){
+var getYouTubeVideoInfo = function(params, callback){
   
-  var url = "https://gdata.youtube.com/feeds/api/videos/"+video_id+"?v=2&alt=json";
+  var url = "https://gdata.youtube.com/feeds/api/videos/"+params.video_id+"?v=2&alt=json";
   
   request(url,function(err,response,body){
   
-    if(err){
-      return callback(false,"Encountered an error - "+err);
+    if (err) {
+      return callback(false, "Encountered an error - "+err);
     }
-    else if(response.statusCode != 200){
-      return callback(false,"Received header - "+response.statusCode);
+    else if (response.statusCode !== 200) {
+      return callback(false, "Received header - "+response.statusCode);
     }
     
-    if(body != ""){
-    
-      var data = getParams(body);
-      callback(true,data);
-      
+    if(body === ""){
+      return callback(false, "No data recieved");
     }
+
+    // parse the json
+    try {
+      var yt_res = JSON.parse(body);
+    }
+    
+    catch (e) {
+      return callback(false, "Unable to decode body");
+    }
+
+    if (_.isUndefined(yt_res.entry) || !_.isObject(yt_res.entry)){
+      return callback(false, "No results");
+    }
+
+    var data = getYouTubeParams(yt_res.entry);
+    return callback(true, "Video info returned", data);
   
   });
   
-}
-
-// Gets details from the json passed back
-var getParams = function(json){
-  
-  json = JSON.parse(json);
-  
-  // Most of the video data is - entry->media$group
-  var ob = {};
-  ob.title = json.entry.media$group.media$title.$t;
-  ob.description = json.entry.media$group.media$description.$t;
-  
-  // put all the thumbnail options in the returning object changing the name
-  for(t in json.entry.media$group.media$thumbnail){
-    
-    switch(json.entry.media$group.media$thumbnail[t].yt$name){
-    
-      case "sddefault":
-        json.entry.media$group.media$thumbnail[t].name = "standard quality video default";
-        delete(json.entry.media$group.media$thumbnail[t].yt$name);
-        break;
-    
-      case "mqdefault":
-        json.entry.media$group.media$thumbnail[t].name = "medium quality video default";
-        delete(json.entry.media$group.media$thumbnail[t].yt$name);
-        break;
-      
-      case "hqdefault":
-        json.entry.media$group.media$thumbnail[t].name = "high quality video default";
-        delete(json.entry.media$group.media$thumbnail[t].yt$name);
-        break;
-        
-      default:
-        json.entry.media$group.media$thumbnail[t].name = json.entry.media$group.media$thumbnail[t].yt$name;
-        delete(json.entry.media$group.media$thumbnail[t].yt$name);
-        break;
-    
-    }
-    
-  }
-  
-  ob.thumbnail = json.entry.media$group.media$thumbnail;
-  
-  return ob;
 }
 
 // api call for a search
@@ -119,10 +100,16 @@ var doYouTubeSearch = function(params, callback) {
 }
 
 // make the results from the playlists
-var processSearchResults = function(yt_res){
+var processYouTubeSearchResults = function(yt_res){
   
   // parse the json
-  yt_res = JSON.parse(yt_res);
+  try {
+    yt_res = JSON.parse(yt_res);
+  }
+  
+  catch (e) {
+    return callback(false, "Unable to decode body");
+  }
 
   // no results
   if (!yt_res || _.isUndefined(yt_res.feed) || !_.isArray(yt_res.feed.entry) || yt_res.feed.entry.length === 0) {
@@ -135,25 +122,35 @@ var processSearchResults = function(yt_res){
   var ret = [];
   for(y in yt_res){
   
-    var duration = moment().startOf('day').add('seconds', yt_res[y].media$group.yt$duration.seconds);
-    var time_bits = "";
-    (duration.hours() > 0?time_bits += duration.hours()+":":"");
-    (duration.minutes() > 0?time_bits += duration.minutes()+":":"");
-    (time_bits === ""?time_bits = duration.seconds()+" secs":time_bits += duration.seconds());
+    var yt_ob = getYouTubeParams(yt_res[y]);
     
-    var title_bits = yt_res[y].title.$t.split(' - ');
-  
-    var tmp_ob = {};
-    tmp_ob.id = getYouTubeId(yt_res[y].media$group.media$content[0].url);
-    tmp_ob.artist = title_bits[0];
-    tmp_ob.title = (_.isUndefined(title_bits[1])?"":title_bits[1]);
-    tmp_ob.duration = time_bits;
-    tmp_ob.link = yt_res[y].media$group.media$content[0].url+"version=3&fs=1&enablejsapi=1&autoplay=0&controls=0&rel=0&showinfo=0&disablekb=1&modestbranding=1";
-    tmp_ob.img = yt_res[y].media$group.media$thumbnail[0].url;
-    ret.push(tmp_ob);
+    ret.push(yt_ob);
   }
   
   return ret;
+}
+
+// get the params from the youtube data
+var getYouTubeParams = function(data) {
+
+  var duration = moment().startOf('day').add('seconds', data.media$group.yt$duration.seconds);
+  var time_bits = "";
+  (duration.hours() > 0?time_bits += duration.hours()+":":"");
+  (duration.minutes() > 0?time_bits += duration.minutes()+":":"");
+  (time_bits === ""?time_bits = duration.seconds()+" secs":time_bits += duration.seconds());
+  
+  var title_bits = data.title.$t.split(' - ');
+
+  var tmp_ob = {};
+  tmp_ob.id = getYouTubeId(data.media$group.media$content[0].url);
+  tmp_ob.artist = title_bits[0];
+  tmp_ob.title = (_.isUndefined(title_bits[1])?"":title_bits[1]);
+  tmp_ob.duration = time_bits;
+  tmp_ob.link = data.media$group.media$content[0].url+"version=3&fs=1&enablejsapi=1&autoplay=0&controls=0&rel=0&showinfo=0&disablekb=1&modestbranding=1";
+  tmp_ob.img = data.media$group.media$thumbnail[0].url;
+
+  return tmp_ob;
+
 }
 
 // function to download a yt video
@@ -233,6 +230,7 @@ var getYouTubeId = function(embed_code) {
 module.exports = {
   doYouTubeSearch: doYouTubeSearch,
   dlVideo: dlVideo,
-  getVideoInfo: getVideoInfo,
+  getYouTubeVideoInfoAPI: getYouTubeVideoInfoAPI,
+  getYouTubeVideoInfo: getYouTubeVideoInfo,
   getYouTubeId: getYouTubeId
 }

@@ -31,6 +31,22 @@ var youtubeSearch = function(params, callback) {
   
 }
 
+// perform a youtube search
+var youtubeVideoInfo = function(params, callback) {
+  
+  // do a youtube search
+  youtube.getYouTubeVideoInfoAPI(params, function(success, msg, data) {
+    
+    var _jade = fs.readFileSync(__dirname+'/views/video_info_template.jade', {encoding: "utf8"});
+    var fn = jade.compile(_jade);
+    var html = fn({data: data});
+    
+    return callback(success, msg, html);
+    
+  });
+  
+}
+
 // perform a file system search
 var fileSearch = function(params, callback) {
   

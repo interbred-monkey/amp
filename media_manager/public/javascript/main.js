@@ -37,7 +37,8 @@ $(document).ready(function() {
         method: function(el) {
         
           // get the url of the video
-          var vid_url = $(el).attr('link');
+          var video_id = $(el).attr('data-id');
+          var video_link = $(el).attr('link');
 
           // clear the timeout
           clearTimeout(sp);
@@ -46,7 +47,7 @@ $(document).ready(function() {
           closeYouTubeSearchPreview();
 
           // make it display
-          showYouTubeVideo(vid_url);
+          showYouTubeVideo(video_id, video_link);
           
         }
       },
@@ -89,8 +90,8 @@ var showYouTubeVideo = function(video_id) {
   // make the yt video
   var params = {
     container: 'video_player',
-    height: 600,
-    width: 700,
+    height: 750,
+    width: 1200,
     video_id: video_id,
     controls: 1,
     autoplay: 1

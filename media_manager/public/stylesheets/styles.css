@@ -100,6 +100,7 @@
 
   [main] {
     min-height: 800px !important;
+    padding: 20px;
   }
 
 /* -------------------- End General Display ----------------------*/

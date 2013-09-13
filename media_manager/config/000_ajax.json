@@ -5,5 +5,12 @@
     "endpoint": "/ajax/youtube-search",
     "module": "ajax.js",
     "callback": "youtubeSearch"
+  },
+  {
+    "title": "Gets YouTube video information",
+    "method": "GET",
+    "endpoint": "/ajax/youtube-video-info",
+    "module": "ajax.js",
+    "callback": "youtubeVideoInfo"
   }
 ]
