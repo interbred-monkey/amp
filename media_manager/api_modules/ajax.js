@@ -20,8 +20,19 @@ var youtubeSearch = function(params, callback) {
   
   // do a youtube search
   youtube.doYouTubeSearch(params, function(success, msg, data) {
+
+    // did we error
+    if (success === false) {
+      return callback(success, msg, data);
+    }
+
+    var jade_path = __dirname+'/views/search_result_template.jade';
+
+    if (!fs.existsSync(jade_path)) {
+      return callback(false, "An error occured reading file");
+    }
     
-    var _jade = fs.readFileSync(__dirname+'/views/search_result_template.jade', {encoding: "utf8"});
+    var _jade = fs.readFileSync(jade_path, {encoding: "utf8"});
     var fn = jade.compile(_jade);
     var html = fn({data: data});
     
@@ -36,8 +47,19 @@ var youtubeVideoInfo = function(params, callback) {
   
   // do a youtube search
   youtube.getYouTubeVideoInfoAPI(params, function(success, msg, data) {
+
+    // did we error
+    if (success === false) {
+      return callback(success, msg, data);
+    }
+
+    var jade_path = __dirname+'/views/video_info_template.jade';
+
+    if (!fs.existsSync(jade_path)) {
+      return callback(false, "An error occured reading file");
+    }
     
-    var _jade = fs.readFileSync(__dirname+'/views/video_info_template.jade', {encoding: "utf8"});
+    var _jade = fs.readFileSync(jade_path, {encoding: "utf8"});
     var fn = jade.compile(_jade);
     var html = fn({data: data});
     
@@ -58,5 +80,6 @@ var fileSearch = function(params, callback) {
 
 module.exports = {
   youtubeSearch: youtubeSearch,
+  youtubeVideoInfo: youtubeVideoInfo,
   fileSearch: fileSearch
 }

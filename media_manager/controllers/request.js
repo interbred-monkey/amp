@@ -100,6 +100,13 @@ var delegateAPI = function(req_path, req_method, req_vars, callback) {
       
       // include the module
       var module = require('./api_modules/'+controller_config[cc].module);
+
+      // make sure the callback is a function
+      if (!_.isFunction(module[controller_config[cc].callback])) {
+
+        return callback(false, "Method not found");
+      
+      }
       
       // run the function
       module[controller_config[cc].callback].call(undefined, req_vars, function(success, msg, data) {

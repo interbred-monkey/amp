@@ -22,8 +22,6 @@ var makeYtVideoPlayer = function(params) {
     }
   });
 
-  console.log(ytp);
-
   return ytp;
 
 }

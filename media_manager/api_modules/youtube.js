@@ -90,7 +90,7 @@ var doYouTubeSearch = function(params, callback) {
     
     if (body !== "") {
     
-      var data = processSearchResults(body);
+      var data = processYouTubeSearchResults(body);
       return callback(true, "youtube search complete", data);
       
     }

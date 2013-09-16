@@ -46,8 +46,11 @@ $(document).ready(function() {
           // close the search preview
           closeYouTubeSearchPreview();
 
+          // get the video info to display
+          getYouTubeVideoInfo(video_id);
+
           // make it display
-          showYouTubeVideo(video_id, video_link);
+          showYouTubeVideo(video_id);
           
         }
       },
@@ -100,6 +103,22 @@ var showYouTubeVideo = function(video_id) {
   var playa = makeYtVideoPlayer(params);
 
   $('[video_player]').append(playa);
+
+}
+
+var getYouTubeVideoInfo = function(video_id) {
+
+  $.ajax({
+    type: "GET",
+    url: "/ajax/youtube-video-info",
+    dataType: "json",
+    data: {
+      "video_id": video_id
+    },
+    success: function(res){
+      $('[video-details]').html(res.data);
+    }
+  });
 
 }
 
