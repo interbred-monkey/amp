@@ -45,7 +45,7 @@
   .pad20 {
     padding: 20px;
   }
-  
+
   /* Margin Top */
   .mt20 {
     margin-top: 20px;
@@ -60,6 +60,10 @@
   }
   
   /* Margin Left */
+  .nlm {
+    margin-left: 0px !important;
+  }
+
   .ml40 {
     margin-left: 40px !important;
   }

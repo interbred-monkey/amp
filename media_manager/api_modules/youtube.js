@@ -225,7 +225,7 @@ var formatTitle = function(title) {
 
   if (title.indexOf('-') !== -1) {
  
-    title = title.replace(/[^a-z]+([-\s]+)/g, ' - ');
+    title = title.replace(/[^a-z]+([-\s]+)/gi, ' - ');
 
     bits = title.split(' - ');
 
@@ -234,11 +234,9 @@ var formatTitle = function(title) {
     ret.artist = bits[0].trim();
     ret.title = "";
 
-    if (bits.length > 2) {    
+    if (bits.length > 2) {   
 
       for (var b = 1; b < bits.length; b++) {
-
-        console.log(bits[b], b);
 
         ret.title += bits[b].trim()+(b !== bits.length-1?' - ':'');
 

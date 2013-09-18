@@ -4,8 +4,25 @@ div.row-fluid
   include youtube_search_bar.jade
   div(class='span6', box)
 
-div(class='row-fluid mt30')
-  div(class='span12 ', main, box)
+div(class='row-fluid mt30', container, id='main_container')
+  div(class='span12', main, box)
+    h1 Main
+
+div(class='row-fluid mt30 hidden', container, id='music_container')
+  div(class='span12', main, box)
+    h1 Music
+
+div(class='row-fluid mt30 hidden', container, id='movies_container')
+  div(class='span12', main, box)
+    h1 Movies
     include video_player.jade
+
+div(class='row-fluid mt30 hidden', container, id='images_container')
+  div(class='span12', main, box)
+    h1 Images
+
+div(class='row-fluid mt30 hidden', container, id='file_manager_container')
+  div(class='span12', main, box)
+    h1 File Manager
   
 include scripts.jade

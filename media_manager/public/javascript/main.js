@@ -5,6 +5,17 @@ var mouse_pos = {};
 // document ready function
 $(document).ready(function() {
 
+  // make sure we are displaying the main page
+  window.location.hash = "main";
+
+  // setup a hashchange on the url
+  $(window).bind('hashchange', function(){
+
+    processHashChange(location.hash);
+    return false;
+
+  })
+
   // setup a mouse move for the search previews etc
   $(document).mousemove(function(evt) {
     mouse_pos.x = evt.pageX;
@@ -32,40 +43,6 @@ $(document).ready(function() {
           }
         });
       },
-      click: {
-        handle: '.search-row',
-        method: function(el) {
-        
-          // get the url of the video
-          var video_id = $(el).attr('data-id');
-          var video_link = $(el).attr('link');
-          var video_artist = $(el).attr('artist');
-
-          // do we have an artist?
-          if (!video_artist) {
-            video_artist = $('#youtube_search').val();
-          }
-
-          // clear the timeout
-          clearTimeout(sp);
-          
-          // close the search preview
-          closeYouTubeSearchPreview();
-
-          // show the info box
-          $('[video-details]').removeClass('hidden');
-
-          // get the video info to display
-          getYouTubeVideoInfo(video_id);
-
-          // find similar artists
-          getArtistInfo(video_artist);
-
-          // make it display
-          showYouTubeVideo(video_id);
-          
-        }
-      },
       hover: {
         handle: '.search-row',
         over: function(el) {
@@ -88,6 +65,43 @@ $(document).ready(function() {
 
           closeYouTubeSearchPreview(vid_id);
 
+        }
+      },
+      click: {
+        handle: '.search-row',
+        method: function(el) {
+        
+          // get the url of the video
+          var video_id = $(el).attr('data-id');
+          var video_link = $(el).attr('link');
+          var video_artist = $(el).attr('artist');
+
+          // do we have an artist?
+          if (!video_artist) {
+            video_artist = $('#youtube_search').val();
+          }
+
+          // change to the movies tab
+          window.location.hash = "movies";
+
+          // clear the timeout
+          clearTimeout(sp);
+          
+          // close the search preview
+          closeYouTubeSearchPreview();
+
+          // show the info box
+          $('[video-details]').removeClass('hidden');
+
+          // get the video info to display
+          getYouTubeVideoInfo(video_id);
+
+          // find similar artists
+          getArtistInfo(video_artist);
+
+          // make it display
+          showYouTubeVideo(video_id);
+          
         }
       }
     });
@@ -226,5 +240,22 @@ var getSimilarArtists = function(artist) {
 
     }
   });
+
+}
+
+var processHashChange = function(hash) {
+
+  var hash_bits = hash.split('/');
+
+  hash_bits[0] = hash_bits[0].replace(/-/g,'_');
+
+  if ($(hash_bits[0]+'_container').hasClass('hidden')) {
+
+    $('[menu-item]').removeClass('active');
+    $('[menu-item="'+hash_bits[0]+'"]').addClass('active');
+    $('[container]').addClass('hidden');
+    $(hash_bits[0]+'_container').removeClass('hidden');
+
+  }
 
 }

@@ -1,32 +1,32 @@
 div.span12
   ul(class='nav nav-pills')
     if req.path == "/"
-      li.active 
-        a(href='/') Main
+      li(class='active', menu-item='#main')
+        a(href='#main') Main
     else
-      li
-        a(href='/') Main
+      li(menu-item='#main')
+        a(href='#main') Main
     if req.path == "/music"
-      li.active 
-        a(href='/music') Music
+      li(class='active', menu-item='#music')
+        a(href='#music') Music
     else
-      li
-        a(href='/music') Music
+      li(menu-item='#music')
+        a(href='#music') Music
     if req.path == "/movies"
-      li.active 
-        a(href='/movies') Movies
+      li(class='active', menu-item='#movies')
+        a(href='#movies') Movies
     else
-      li
-        a(href='/movies') Movies
+      li(menu-item='#movies')
+        a(href='#movies') Movies
     if req.path == "/images"
-      li.active 
-        a(href='/images') Images
+      li(class='active', menu-item='#images') 
+        a(href='#images') Images
     else
-      li
-        a(href='/images') Images
+      li(menu-item='#images')
+        a(href='#images') Images
     if req.path == "/file-manager"
-      li.active 
-        a(href='/file-manager') File Manager
+      li(class='active', menu-item='#file-manager')
+        a(href='#file-manager') File Manager
     else
-      li
-        a(href='/file-manager') File Manager
+      li(menu-item='#file_manager')
+        a(href='#file-manager') File Manager
