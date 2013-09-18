@@ -5,5 +5,26 @@
     "endpoint": "/ajax/youtube-search",
     "module": "ajax.js",
     "callback": "youtubeSearch"
+  },
+  {
+    "title": "Gets YouTube video information",
+    "method": "GET",
+    "endpoint": "/ajax/youtube-video-info",
+    "module": "ajax.js",
+    "callback": "youtubeVideoInfo"
+  },
+  {
+    "title": "Gets similar artist information from last.fm",
+    "method": "GET",
+    "endpoint": "/ajax/similar-artists",
+    "module": "ajax.js",
+    "callback": "getSimilarArtistInfo"
+  },
+  {
+    "title": "Gets artist information from last.fm",
+    "method": "GET",
+    "endpoint": "/ajax/artist-info",
+    "module": "ajax.js",
+    "callback": "getArtistInfo"
   }
 ]

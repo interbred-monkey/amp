@@ -1,0 +1,14 @@
+
+a(href=data.link, title='Watch '+data.title+' on YouTube')
+  h3 
+    =data.artist
+
+a(href=data.link, title='Watch '+data.title+' on YouTube')
+  p
+    =data.title+' ('+data.duration+')'
+
+if (data.description !== undefined)
+  p
+    =data.description
+
+a(href=data.link, title='Watch '+data.title+' on YouTube', target='_blank') Watch on YouTube
