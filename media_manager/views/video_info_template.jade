@@ -1,14 +1,14 @@
-div.row-fluid
-  div.span12
-    a(href=data.link, title='Watch '+data.title+' on YouTube')
-      h3 
-        =data.title
 
-    if (data.description !== undefined)
-      p
-        =data.description
+a(href=data.link, title='Watch '+data.title+' on YouTube')
+  h3 
+    =data.artist
 
-    p
-      ='('+data.duration+')'
+a(href=data.link, title='Watch '+data.title+' on YouTube')
+  p
+    =data.title+' ('+data.duration+')'
 
-    a(href=data.link, title='Watch '+data.title+' on YouTube', target='_blank') Watch on YouTube
+if (data.description !== undefined)
+  p
+    =data.description
+
+a(href=data.link, title='Watch '+data.title+' on YouTube', target='_blank') Watch on YouTube

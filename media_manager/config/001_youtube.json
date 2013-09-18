@@ -4,13 +4,13 @@
     "method": "GET",
     "endpoint": "/api/youtube-search",
     "module": "youtube.js",
-    "callback": "doYouTubeSearchAPI"
+    "callback": "doYouTubeSearch"
   },
   {
     "title": "Gets YouTube video information",
     "method": "GET",
     "endpoint": "/api/youtube-video-info",
     "module": "youtube.js",
-    "callback": "getYouTubeVideoInfoAPI"
+    "callback": "getYouTubeVideoInfo"
   }
 ]

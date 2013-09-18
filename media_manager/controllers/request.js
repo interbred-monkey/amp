@@ -11,7 +11,7 @@ var modules = {};
 var controller_config = [];
 
 // a list of files we dont want to register
-var ignore_files = [".DS_Store", "__config.js", "views"];
+var ignore_files = [".DS_Store", "__config.js"];
 
 // handle a request
 var processRequest = function(req, callback) {
@@ -214,6 +214,12 @@ var setup = function() {
   
       // load in the modules directory
       for (var f in files) {
+
+        // if it doesn't have an extension then don't include it
+        if (files[f].indexOf('.') === -1) {
+          continue;
+        }
+
         modules[files[f].split(".")[0]] = require('./api_modules/'+files[f]);
       }
   

@@ -12,20 +12,12 @@ var request = require('request');
 // Load in the moment library
 var moment = require('moment');
 
-var getYouTubeVideoInfoAPI = function(params, callback) {
+// Get the youtube video info from the api
+var getYouTubeVideoInfo = function(params, callback){
 
   if (_.isUndefined(params.video_id)) {
     return callback(false, "video_id is a required parameter");
   }
-
-  getYouTubeVideoInfo(params, function(success, msg, data) {
-    return callback(success, msg, data);
-  })
-
-}
-
-// Get the youtube video info from the api
-var getYouTubeVideoInfo = function(params, callback){
   
   var url = "https://gdata.youtube.com/feeds/api/videos/"+params.video_id+"?v=2&alt=json";
   
@@ -62,18 +54,12 @@ var getYouTubeVideoInfo = function(params, callback){
   
 }
 
-// api call for a search
-var doYouTubeSearchAPI = function(params, callback) {
-  
-  // call the actual process
-  doYouTubeSearch(params, function(success, msg, data) {
-    callback(success, msg, data);
-  });
-  
-}
-
 // search youtube for a video
 var doYouTubeSearch = function(params, callback) {
+
+  if (_.isUndefined(params.str)) {
+    return callback(false, "str is a required parameter");
+  }
 
   var str = params.str;
 
@@ -139,12 +125,12 @@ var getYouTubeParams = function(data) {
   (duration.minutes() > 0?time_bits += duration.minutes()+":":"");
   (time_bits === ""?time_bits = duration.seconds()+" secs":time_bits += duration.seconds());
   
-  var title_bits = data.title.$t.split(' - ');
+  var title_bits = formatTitle(data.title.$t);
 
   var tmp_ob = {};
   tmp_ob.id = getYouTubeId(data.media$group.media$content[0].url);
-  tmp_ob.artist = title_bits[0];
-  tmp_ob.title = (_.isUndefined(title_bits[1])?"":title_bits[1]);
+  tmp_ob.artist = title_bits.artist;
+  tmp_ob.title = (_.isUndefined(title_bits.title)?"":title_bits.title);
   tmp_ob.duration = time_bits;
   tmp_ob.link = data.media$group.media$content[0].url+"version=3&fs=1&enablejsapi=1&autoplay=0&controls=0&rel=0&showinfo=0&disablekb=1&modestbranding=1";
   tmp_ob.img = data.media$group.media$thumbnail[0].url;
@@ -227,10 +213,70 @@ var getYouTubeId = function(embed_code) {
 
 }
 
+var formatTitle = function(title) {
+
+  var stop_words = ['live', 'bestof', 'best of', 'greatest hits', 'hd', 'lyrics', 'hq'];
+
+  var ret = {};
+  var bits = [];
+
+  title = title.replace(/([\[\]])/g, '');
+  title = title.replace(/([\.\:\"\/])/g, '-');
+
+  if (title.indexOf('-') !== -1) {
+ 
+    title = title.replace(/[^a-z]+([-\s]+)/g, ' - ');
+
+    bits = title.split(' - ');
+
+    bits = _.compact(bits);
+
+    ret.artist = bits[0].trim();
+    ret.title = "";
+
+    if (bits.length > 2) {    
+
+      for (var b = 1; b < bits.length; b++) {
+
+        console.log(bits[b], b);
+
+        ret.title += bits[b].trim()+(b !== bits.length-1?' - ':'');
+
+      }
+
+    }
+
+    else {
+
+      ret.title = bits[1].trim();
+
+    }
+
+    var regex = new RegExp(' '+stop_words[sw]+' ', 'gi');
+
+    for (var sw in stop_words) {
+
+      ret.artist = ret.artist.replace(' '+stop_words[sw]+' ', '');
+
+    }
+
+  }
+
+  // there is no way of getting the artist
+  else {
+
+    ret.artist = undefined;
+    ret.title = title.trim();
+
+  }
+
+  return ret;
+
+}
+
 module.exports = {
   doYouTubeSearch: doYouTubeSearch,
   dlVideo: dlVideo,
-  getYouTubeVideoInfoAPI: getYouTubeVideoInfoAPI,
   getYouTubeVideoInfo: getYouTubeVideoInfo,
   getYouTubeId: getYouTubeId
 }

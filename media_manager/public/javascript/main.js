@@ -39,6 +39,12 @@ $(document).ready(function() {
           // get the url of the video
           var video_id = $(el).attr('data-id');
           var video_link = $(el).attr('link');
+          var video_artist = $(el).attr('artist');
+
+          // do we have an artist?
+          if (!video_artist) {
+            video_artist = $('#youtube_search').val();
+          }
 
           // clear the timeout
           clearTimeout(sp);
@@ -46,8 +52,14 @@ $(document).ready(function() {
           // close the search preview
           closeYouTubeSearchPreview();
 
+          // show the info box
+          $('[video-details]').removeClass('hidden');
+
           // get the video info to display
           getYouTubeVideoInfo(video_id);
+
+          // find similar artists
+          getArtistInfo(video_artist);
 
           // make it display
           showYouTubeVideo(video_id);
@@ -85,9 +97,10 @@ $(document).ready(function() {
 
 var showYouTubeVideo = function(video_id) {
 
-  if ($('[video_player] #video_player').length === 0) {
+  if ($('[video-player] div#video_player').length === 0) {
+    $('#video_player').remove('');
     var vp = $('<div/>').attr('id', 'video_player');
-    $('[video_player]').html(vp);
+    $('[video-player]').html(vp);
   }
 
   // make the yt video
@@ -100,9 +113,8 @@ var showYouTubeVideo = function(video_id) {
     autoplay: 1
   }
 
-  var playa = makeYtVideoPlayer(params);
-
-  $('[video_player]').append(playa);
+  // setup the yt video player
+  makeYtVideoPlayer(params);
 
 }
 
@@ -116,7 +128,15 @@ var getYouTubeVideoInfo = function(video_id) {
       "video_id": video_id
     },
     success: function(res){
-      $('[video-details]').html(res.data);
+
+      if (typeof res.data !== "undefined") {
+        $('[video-info]').html(res.data);
+      }
+
+      else {
+        $('[video-info]').html("<p>No video information</p>");
+      }
+      
     }
   });
 
@@ -157,4 +177,54 @@ var closeYouTubeSearchPreview = function() {
   
   $('[search-preview]').remove();
   
+}
+
+var getArtistInfo = function(artist) {
+
+  $.ajax({
+    type: "GET",
+    url: "/ajax/artist-info",
+    dataType: "json",
+    data: {
+      "artist": artist
+    },
+    success: function(res){
+      
+      if (typeof res.data !== "undefined") {
+        $('[artist-info]').html(res.data.artist_info);
+        $('[similar-artists]').html(res.data.similar_artists);
+      }
+
+      else {
+        $('[artist-info]').html('');
+        $('[similar-artists]').html('');
+      }
+
+    }
+  });
+
+}
+
+var getSimilarArtists = function(artist) {
+
+  $.ajax({
+    type: "GET",
+    url: "/ajax/similar-artists",
+    dataType: "json",
+    data: {
+      "artist": artist
+    },
+    success: function(res){
+      
+      if (typeof res.data !== "undefined") {
+        $('[similar-artists]').html(res.data);
+      }
+
+      else {
+        $('[similar-artists]').html('');
+      }
+
+    }
+  });
+
 }

@@ -8,6 +8,11 @@
     font-family: 'birth_of_a_heroregular';
   }
 
+  .black-text h1, .black-text h2, .black-text h3, .black-text h4, 
+  .black-text p, .black-text a, .black-text label, .black-text div {
+    color: #000;
+  }
+
 /* -------------------- End Text ----------------------*/
 
 /* -------------------- General Layout ----------------------*/
@@ -36,6 +41,10 @@
   .pad10 {
     padding: 10px;
   }
+
+  .pad20 {
+    padding: 20px;
+  }
   
   /* Margin Top */
   .mt20 {
@@ -62,6 +71,21 @@
 
   [box] {
     background-color: rgba(119,119,119, 0.3);
+    box-shadow: 1px 1px 20px 10px #777;
+    -webkit-box-shadow: 1px 1px 20px 10px #222;
+    -moz-box-shadow: 1px 1px 20px 10px #777;
+    -o-box-shadow: 1px 1px 20px 10px #777;
+    -k-box-shadow: 1px 1px 20px 10px #777;
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -o-border-radius: 30px;
+    -k-border-radius: 30px;
+  }
+
+  [white-box] {
+    background-color: #FFF;
+    border: 2px solid #333;
     box-shadow: 1px 1px 20px 10px #777;
     -webkit-box-shadow: 1px 1px 20px 10px #222;
     -moz-box-shadow: 1px 1px 20px 10px #777;
