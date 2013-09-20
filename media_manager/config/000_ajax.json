@@ -26,5 +26,12 @@
     "endpoint": "/ajax/artist-info",
     "module": "ajax.js",
     "callback": "getArtistInfo"
+  },
+  {
+    "title": "Do a google search",
+    "method": "GET",
+    "endpoint": "/ajax/google-search",
+    "module": "ajax.js",
+    "callback": "getGoogleSearch"
   }
 ]

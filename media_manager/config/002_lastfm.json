@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Gets similar artist information from last.fm",
+    "method": "GET",
+    "endpoint": "/api/similar-artists",
+    "module": "lastfm.js",
+    "callback": "getSimilarArtists"
+  },
+  {
+    "title": "Gets artist information from last.fm",
+    "method": "GET",
+    "endpoint": "/api/artist-info",
+    "module": "lastfm.js",
+    "callback": "getArtistInfo"
+  }
+]

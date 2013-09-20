@@ -97,6 +97,12 @@ var delegateAPI = function(req_path, req_method, req_vars, callback) {
   var found_endpoint = false;
   
   for (var cc in controller_config) {
+
+    if (!_.isObject(controller_config[cc])) {
+
+      continue;
+
+    }
     
     // does it match the config?
     if (controller_config[cc].endpoint.toLowerCase() === req_path.toLowerCase() && controller_config[cc].method.toLowerCase() === req_method.toLowerCase()) {

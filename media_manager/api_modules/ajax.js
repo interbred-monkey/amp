@@ -15,6 +15,9 @@ var youtube = require('./youtube.js');
 // include the lastfm functions
 var lastfm = require('./lastfm.js');
 
+// include the google_search functions
+var google_search = require('./google_search.js');
+
 // include the file-system functions
 var file_system = require('./file_system.js');
 
@@ -138,10 +141,21 @@ var fileSearch = function(params, callback) {
   
 }
 
+var getGoogleSearch = function(params, callback) {
+
+  google_search.searchGoogle(params, function(success, msg, data) {
+
+    callback(success, msg, data);
+
+  })
+
+}
+
 module.exports = {
   youtubeSearch: youtubeSearch,
   youtubeVideoInfo: youtubeVideoInfo,
   fileSearch: fileSearch,
   getSimilarArtistInfo: getSimilarArtistInfo,
-  getArtistInfo: getArtistInfo
+  getArtistInfo: getArtistInfo,
+  getGoogleSearch: getGoogleSearch
 }
