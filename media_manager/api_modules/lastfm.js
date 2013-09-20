@@ -94,6 +94,17 @@ var getArtistInfo = function(params, callback){
     // return just the artist matches
     var data = lfm_res.artist;
 
+    // format the data a bit
+    data.bio.content = data.bio.content.replace(/\n/g, '<br/>');
+    data.bio.content = data.bio.content.replace(/(User-contributed.*)/g, '').trim();
+
+    for (var im in data.image) {
+
+      data.image[im].text = data.image[im]['#text'];
+      delete(data.image[im]['#text']);
+
+    }
+
     return callback(true, "Artist info returned", data);
   
   });

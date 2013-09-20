@@ -82,27 +82,8 @@ var getArtistInfo = function(params, callback) {
       return callback(success, msg, data);
     }
 
-    var html = {};
-    html.similar_artists = false;
-    html.artist_info = false;
-
-    // make some similar artist html
-    if (!_.isUndefined(data.artist) && !_.isUndefined(data.artist.similar)){
-      
-      var jade_path = __dirname+'/views/similar_artists_template.jade';
-
-      if (!fs.existsSync(jade_path)) {
-        return callback(false, "An error occured reading file");
-      }
-      
-      var _jade = fs.readFileSync(jade_path, {encoding: "utf8"});
-      var fn = jade.compile(_jade);
-      html.similar_artists = fn({data: data.artist.similar.artist});
-
-    }
-
     // make some artist info
-    if (!_.isUndefined(data.artist) && !_.isUndefined(data.artist.similar)){
+    if (!_.isUndefined(data.name)){
 
       var jade_path = __dirname+'/views/artist_info_template.jade';
 
@@ -112,7 +93,7 @@ var getArtistInfo = function(params, callback) {
       
       var _jade = fs.readFileSync(jade_path, {encoding: "utf8"});
       var fn = jade.compile(_jade);
-      html.artist_info = fn({data: data});
+      html = fn({data: data});
 
     }
     

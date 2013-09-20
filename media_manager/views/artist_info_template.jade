@@ -1,0 +1,30 @@
+div.span3
+  each i in data.image
+    if i.size === "extralarge"
+      img(src=i.text, title=data.name)
+
+div.span9
+  div(accordion)
+    h3 About
+    div.content
+      h4 #{data.name} (#{data.bio.formationlist.formation.yearfrom+' - '+(data.bio.formationlist.formation.yearto!==""?data.bio.formationlist.formation.yearto:'Current Day')})
+      p!= data.bio.content
+
+    h3 Band Members
+    div.content
+      ul.plain-list
+        each m in data.bandmembers.member
+          li #{m.name}
+
+    h3 Genres
+    div.content
+      ul.plain-list
+        each t in data.tags.tag
+          li #{t.name}
+
+    h3 Similar Artists
+    div.content
+      ul.plain-list
+        each a in data.similar.artist
+          li 
+            a(href='javascript:void(0)', onclick='prefillArtist(this)', title=a.name, class='link') #{a.name}

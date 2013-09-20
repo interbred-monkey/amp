@@ -5,8 +5,19 @@ var mouse_pos = {};
 // document ready function
 $(document).ready(function() {
 
-  // make sure we are displaying the main page
-  window.location.hash = "main";
+  // make sure we are displaying the main page if there is no hash defined
+  if (typeof window.location.hash === "undefined") {
+   
+    window.location.hash = "main";
+  
+  }
+
+  // process the hash
+  else {
+
+    processHashChange(location.hash);
+    
+  }
 
   // setup a hashchange on the url
   $(window).bind('hashchange', function(){
@@ -14,7 +25,7 @@ $(document).ready(function() {
     processHashChange(location.hash);
     return false;
 
-  })
+  });
 
   // setup a mouse move for the search previews etc
   $(document).mousemove(function(evt) {
@@ -205,13 +216,16 @@ var getArtistInfo = function(artist) {
     success: function(res){
       
       if (typeof res.data !== "undefined") {
-        $('[artist-info]').html(res.data.artist_info);
-        $('[similar-artists]').html(res.data.similar_artists);
+
+        $('[artist-info]').html(res.data);
+        $('[artist-info]').find('a').attr('target', '_blank');
+
+        $('[accordion]').accordion();
+
       }
 
       else {
         $('[artist-info]').html('');
-        $('[similar-artists]').html('');
       }
 
     }

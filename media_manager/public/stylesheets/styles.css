@@ -13,9 +13,17 @@
     color: #000;
   }
 
+  a.link {
+    color: #0088cc;
+  }
+
 /* -------------------- End Text ----------------------*/
 
 /* -------------------- General Layout ----------------------*/
+
+  .overflow{
+    overflow: auto;
+  }
 
   .hidden {
     display: none !important;
@@ -135,6 +143,11 @@
     padding: 20px;
   }
 
+  ul.plain-list li {
+    margin: 2px 0px;
+    list-style-type: none;
+  }
+
 /* -------------------- End General Display ----------------------*/
 
 /* -------------------- Backgrounds ----------------------*/
@@ -148,6 +161,41 @@
   }
 
 /* -------------------- End Backgrounds ----------------------*/
+
+/* -------------------- Accordion ----------------------*/
+
+  [accordion] h3:first-child {
+    margin-top: 0px;
+  }
+
+  [accordion] h3 {
+    padding: 8px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -k-border-radius: 5px;
+    -o-border-radius: 5px;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+    color: #FFF;
+    background-color: #0088cc;
+    outline: none;
+  }
+
+  [accordion] h3:hover {
+    background-color: #00A5FB;
+    color: #FFF;
+  }
+
+  [accordion] div.content {
+    padding: 10px;
+  }
+
+/* -------------------- End Accordion ----------------------*/
 
 /* -------------------- Specific Layout ----------------------*/
 

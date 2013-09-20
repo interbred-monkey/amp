@@ -63,7 +63,12 @@ var processRequest = function(req, callback) {
     
       if (err) {
         (config.debug)?console.log("Debug - Error reading file '"+file+"'\nError: "+err+""):"";
-        return callback(false,"Error reading file");
+
+        var data = {};
+        data.file = file;
+        data.file_path = "/views/404.jade";
+
+        return callback(false, "Not Found", data);
       }
   
       (config.debug)?console.log("Debug - Serving static content '"+req.path+"'"):"";
