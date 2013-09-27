@@ -15,8 +15,8 @@ var youtube = require('./youtube.js');
 // include the lastfm functions
 var lastfm = require('./lastfm.js');
 
-// include the google_search functions
-var google_search = require('./google_search.js');
+// include the bing_search functions
+var bing_search = require('./bing_search.js');
 
 // include the file-system functions
 var file_system = require('./file_system.js');
@@ -32,7 +32,7 @@ var youtubeSearch = function(params, callback) {
       return callback(success, msg, data);
     }
 
-    var jade_path = __dirname+'/views/search_result_template.jade';
+    var jade_path = __dirname+'/views/autocomplete_result_template.jade';
 
     if (!fs.existsSync(jade_path)) {
       return callback(false, "An error occured reading file");
@@ -141,13 +141,28 @@ var fileSearch = function(params, callback) {
   
 }
 
-var getGoogleSearch = function(params, callback) {
+var getBingSearch = function(params, callback) {
 
-  google_search.searchGoogle(params, function(success, msg, data) {
+  bing_search.doBingSearch(params, function(success, msg, data) {
 
-    callback(success, msg, data);
+    // did we error
+    if (success === false) {
+      return callback(success, msg, data);
+    }
 
-  })
+    var jade_path = __dirname+'/views/bing_result_template.jade';
+
+    if (!fs.existsSync(jade_path)) {
+      return callback(false, "An error occured reading file");
+    }
+    
+    var _jade = fs.readFileSync(jade_path, {encoding: "utf8"});
+    var fn = jade.compile(_jade);
+    var html = fn({data: data});
+
+    callback(success, msg, html);
+
+  });
 
 }
 
@@ -157,5 +172,5 @@ module.exports = {
   fileSearch: fileSearch,
   getSimilarArtistInfo: getSimilarArtistInfo,
   getArtistInfo: getArtistInfo,
-  getGoogleSearch: getGoogleSearch
+  getBingSearch: getBingSearch
 }

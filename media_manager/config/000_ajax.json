@@ -28,10 +28,10 @@
     "callback": "getArtistInfo"
   },
   {
-    "title": "Do a google search",
+    "title": "Do a bing search",
     "method": "GET",
-    "endpoint": "/ajax/google-search",
+    "endpoint": "/ajax/bing-search",
     "module": "ajax.js",
-    "callback": "getGoogleSearch"
+    "callback": "getBingSearch"
   }
 ]

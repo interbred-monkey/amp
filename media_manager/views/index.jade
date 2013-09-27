@@ -2,11 +2,11 @@ include header.jade
 
 div.row-fluid
   include youtube_search_bar.jade
-  include google_search_bar.jade
+  include bing_search_bar.jade
 
 div(class='row-fluid mt30', container, id='main_container')
-  div(class='span12', main, box, google-results-container)
-    div(google-results, white-box)
+  div(class='span12', main, box, bing-results-container)
+    div(bing-results, class='hidden')
 
 div(class='row-fluid mt30 hidden', container, id='music_container')
   div(class='span12', main, box)

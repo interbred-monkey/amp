@@ -19,7 +19,7 @@ var getSimilarArtists = function(params, callback){
     return callback(false, "artist is a required parameter");
   }
 
-  var url = "http://ws.audioscrobbler.com/2.0/?method=artist.getsimilar&api_key="+config.api_keys.lastfm+"&format=json&limit=5&autocorrect=1&artist="+params.artist;
+  var url = "http://ws.audioscrobbler.com/2.0/?method=artist.getsimilar&api_key="+config.api_keys.lastfm+"&format=json&limit=5&autocorrect=1&artist="+encodeURI(params.artist);
   
   request(url,function(err,response,body){
   
@@ -63,7 +63,7 @@ var getArtistInfo = function(params, callback){
     return callback(false, "artist is a required parameter");
   }
 
-  var url = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key="+config.api_keys.lastfm+"&format=json&limit=5&autocorrect=1&artist="+params.artist;
+  var url = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key="+config.api_keys.lastfm+"&format=json&limit=5&autocorrect=1&artist="+encodeURI(params.artist);
   
   request(url,function(err,response,body){
   

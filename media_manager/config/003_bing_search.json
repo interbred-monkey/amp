@@ -1,0 +1,9 @@
+[
+  {
+    "title": "Performs a bing search for a string",
+    "method": "GET",
+    "endpoint": "/api/bing/search",
+    "module": "bing_search.js",
+    "callback": "doBingSearch"
+  }
+]

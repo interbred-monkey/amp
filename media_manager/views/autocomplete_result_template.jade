@@ -1,0 +1,8 @@
+each d in data
+  div(class='search-row', link=d.link, data-id=d.id, artist=d.artist)
+    div.header
+      p=(d.artist === undefined?d.title:d.artist)
+    
+    p=(d.artist === undefined?"":d.title)+' ('+d.duration+')'
+      
+      

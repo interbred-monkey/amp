@@ -138,8 +138,27 @@
     z-index: 1000000;
   }
 
-  [search-preview] iframe {
-    margin: 15px 15px;
+  [bing-results] {
+    padding: 10px;
+    background-color: #000;
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -o-border-radius: 30px;
+    -k-border-radius: 30px;
+  }
+
+  [bing-results] div.span11 {
+    padding: 15px 20px 15px 20px;
+  }
+
+  [bing-results] div.span11:hover {
+    background-color: #222;
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -o-border-radius: 30px;
+    -k-border-radius: 30px;
   }
 
   [main] {
@@ -162,6 +181,7 @@
 
   body {
     background: url('/images/backgrounds/main/1.jpg') center no-repeat;
+    background-attachment: fixed;
   }
 
 /* -------------------- End Backgrounds ----------------------*/

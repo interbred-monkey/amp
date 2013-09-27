@@ -2,14 +2,14 @@
   {
     "title": "Performs a youtube search for a string",
     "method": "GET",
-    "endpoint": "/api/youtube-search",
+    "endpoint": "/api/youtube/search",
     "module": "youtube.js",
     "callback": "doYouTubeSearch"
   },
   {
     "title": "Gets YouTube video information",
     "method": "GET",
-    "endpoint": "/api/youtube-video-info",
+    "endpoint": "/api/youtube/video-info",
     "module": "youtube.js",
     "callback": "getYouTubeVideoInfo"
   }

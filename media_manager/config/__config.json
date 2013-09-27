@@ -2,6 +2,7 @@
 	"debug": true,
 	"require_socket_io": true,
   "api_keys": {
-    "lastfm": "578c9f9d7cca278cfa55de30be908cf9"
+    "lastfm": "578c9f9d7cca278cfa55de30be908cf9",
+    "bing": "m1OH4wKFbbiWta1US6af4UGuMm/OEflKDkb/LV7k2po"
   }
 }

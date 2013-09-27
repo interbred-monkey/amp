@@ -1,0 +1,10 @@
+each d in data
+  div(class='row-fluid')
+    div.span11
+      h4
+        a(href=d.Url, class='link') #{d.Title}
+      p=d.Description
+      p
+        a(href=d.Url, class='link') #{d.DisplayUrl}
+      
+      
