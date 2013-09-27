@@ -1,9 +1,0 @@
-[
-  {
-    "title": "Do a google search",
-    "method": "GET",
-    "endpoint": "/api/google-search",
-    "module": "google_search.js",
-    "callback": "searchGoogle"
-  }
-]
