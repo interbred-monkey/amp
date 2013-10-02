@@ -15,8 +15,9 @@ var _ = require('underscore');
 var config = require('./media_manager/config/__config.json');
 var http_request = require('./media_manager/controllers/request.js');
 
-// setup the body parser
-server.use(express.bodyParser());
+// setup the things to get the query string and form elements
+server.use(express.urlencoded());
+server.use(express.multipart());
 
 // setup the render engine
 server.set('view engine', 'jade');
