@@ -2,7 +2,7 @@
 
 var doBingSearch = function(el) {
 
-  var str = $('#bing_search').val();
+  var str = $('[web-search-input]').val();
 
   if (str === "") {
 
@@ -21,18 +21,17 @@ var doBingSearch = function(el) {
 
       if (typeof res.data !== "undefined") {
         
-        $('[bing-results]').html(res.data);
+        $('#web_results_container').html(res.data);
       
       }
 
       else {
       
-        $('[bing-results]').html("<p>No Results</p>");
+        $('#web_results_container').html("<p>No Results</p>");
       
       }
 
-      $('[bing-results]').removeClass('hidden');
-      window.location.hash = "main";
+      window.location.hash = "browser/web-results";
       
     }
   });

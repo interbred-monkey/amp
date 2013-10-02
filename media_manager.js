@@ -21,15 +21,28 @@ server.use(express.bodyParser());
 // setup the render engine
 server.set('view engine', 'jade');
 
+// work out 7 days in milliseconds
+var seven_days = 60 * 60 * 24 * 7;
+
 // static content folders
-var public_folders = ["stylesheets", "javascript", "bootstrap", "images", "fonts"];
+var public_folders = ["stylesheets", "javascript", "bootstrap", { name: "images", options: { maxAge: seven_days} }, "fonts"];
 
 // base directory
 var base_dir = __dirname+'/media_manager';
 
 // set static content
 for (var pf in public_folders) {
-  server.use('/'+public_folders[pf], express.static(base_dir+'/public/'+public_folders[pf]));
+
+  // do we have options for the folder?
+  if (_.isObject(public_folders[pf])) {
+    server.use('/'+public_folders[pf].name, express.static(base_dir+'/public/'+public_folders[pf].name), public_folders[pf].options);
+  }
+
+  // no options just make it public
+  else {
+    server.use('/'+public_folders[pf], express.static(base_dir+'/public/'+public_folders[pf]));
+  }
+
 }
 
 // what should we do with post requests

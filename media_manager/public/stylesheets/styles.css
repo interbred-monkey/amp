@@ -3,6 +3,12 @@
   h1,h2,h3,h4,p,a,label,div {
     color: #FFF;
   }
+
+  h1[title] {
+    line-height: 150px;
+    font-weight: normal;
+    font-size: 100px;
+  }
   
   .birth {
     font-family: 'birth_of_a_heroregular';
@@ -14,23 +20,38 @@
   }
 
   a.link {
-    color: #0088cc;
+    color: #43B6F3;
   }
 
 /* -------------------- End Text ----------------------*/
 
 /* -------------------- General Layout ----------------------*/
 
-  .overflow{
-    overflow: auto;
+  .absolute {
+    position: absolute;
+  }
+
+  .relative {
+    position: relative;
   }
 
   .hidden {
     display: none !important;
   }
 
+  .invisible {
+    visibility: hidden;
+  }
+
   .pull-left {
     float: left;
+  }
+
+  .pull-middle {
+    display: block;
+    float: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
   
   .inline {
@@ -54,6 +75,16 @@
     padding: 20px;
   }
 
+  /* Padding Left */
+  .pl30 {
+    padding-left: 30px;
+  }
+
+  /* Padding Right */
+  .pr30 {
+    padding-right: 30px;
+  }
+
   /* Margin Top */
   .mt20 {
     margin-top: 20px;
@@ -65,6 +96,10 @@
   
   .mt40 {
     margin-top: 40px;
+  }
+  
+  .mt100 {
+    margin-top: 100px;
   }
   
   /* Margin Left */
@@ -138,9 +173,8 @@
     z-index: 1000000;
   }
 
-  [bing-results] {
+  #web_results_container {
     padding: 10px;
-    background-color: #000;
     border-radius: 30px;
     -webkit-border-radius: 30px;
     -moz-border-radius: 30px;
@@ -148,17 +182,14 @@
     -k-border-radius: 30px;
   }
 
-  [bing-results] div.span11 {
+  #web_results_container div.span12 {
     padding: 15px 20px 15px 20px;
+    border-bottom: 1px solid #222;
   }
 
-  [bing-results] div.span11:hover {
-    background-color: #222;
-    border-radius: 30px;
-    -webkit-border-radius: 30px;
-    -moz-border-radius: 30px;
-    -o-border-radius: 30px;
-    -k-border-radius: 30px;
+  #web_results_container div.span12:hover {
+    border-left: 1px solid #222;
+    border-right: 1px solid #222;
   }
 
   [main] {
@@ -176,15 +207,61 @@
 /* -------------------- Backgrounds ----------------------*/
 
   .background-cover {
-    background-size: cover;
+    background-size: cover !important;
   }
 
-  body {
-    background: url('/images/backgrounds/main/1.jpg') center no-repeat;
+  [backgrounds-container] {
+    position: fixed;
+    display: block;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+  }
+
+  [background-slider] {
+    position: absolute;
+    display: block;
+    height: 100%;
+  }
+
+  div[background] {
+    display: inline-block;
+    float: left;
+    height: 100%;
+  }
+
+  div[background='browser'] {
+    background: url('/images/backgrounds/main/browser_background.jpg') center no-repeat;
+    background-attachment: fixed;
+  }
+
+  div[background='music'] {
+    background: url('/images/backgrounds/main/music_background.jpg') center no-repeat;
+    background-attachment: fixed;
+  }
+
+  div[background='movies'] {
+    background: url('/images/backgrounds/main/movies_background.jpg') center no-repeat;
+    background-attachment: fixed;
+  }
+
+  div[background='images'] {
+    background: url('/images/backgrounds/main/images_background.jpg') center no-repeat;
+    background-attachment: fixed;
+  }
+
+  div[background='file_manager'] {
+    background: url('/images/backgrounds/main/file_manager_background.jpg') center no-repeat;
     background-attachment: fixed;
   }
 
 /* -------------------- End Backgrounds ----------------------*/
+
+/* -------------------- Pages ----------------------*/
+
+  
+
+/* -------------------- End Pages ----------------------*/
 
 /* -------------------- Accordion ----------------------*/
 
@@ -223,27 +300,11 @@
 
 /* -------------------- Specific Layout ----------------------*/
 
-  body:before {
-    width: 200px;
-    height: 200px;
-    margin-left: 30px;
-    font-family: 'birth_of_a_heroregular';
-    font-size: 100px;
-    color: #FFF;
-    content: "AMP";
+  body {
+    margin-top: -10px;
   }
 
 /* -------------------- End Specific Layout ----------------------*/
-
-/* -------------------- Bootstrap Hacks ----------------------*/
-
-  body {
-    padding-left: 20px;
-    padding-right: 20px;
-    line-height: normal;
-  }
-
-/* -------------------- End Bootstrap Hacks ----------------------*/
 
 /* -------------------- Fonts ----------------------*/
 

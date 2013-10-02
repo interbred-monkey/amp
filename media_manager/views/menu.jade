@@ -1,11 +1,11 @@
 div.span12
   ul(class='nav nav-pills')
-    if req.path == "/"
-      li(class='active', menu-item='#main')
-        a(href='#main') Main
+    if req.path == "/browser"
+      li(class='active', menu-item='#browser')
+        a(href='#browser/web-search') Browser
     else
-      li(menu-item='#main')
-        a(href='#main') Main
+      li(menu-item='#browser')
+        a(href='#browser/web-search') Browser
     if req.path == "/music"
       li(class='active', menu-item='#music')
         a(href='#music') Music

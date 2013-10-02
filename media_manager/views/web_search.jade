@@ -1,0 +1,9 @@
+div(id='web_search_container', container)
+  div.row-fluid
+    div(class='span4 pull-middle vertical-middle')
+      form(class='navbar-search form-horizontal', autocomplete='off', onsubmit='return false')
+        div.control-group
+          input(type='text', class='search-query input-xxlarge', rel='web-search-input', placeholder='Search the web' onkeyup='reflectSearch(this)')
+        div.control-group
+          button(type='button', class='btn btn-primary pull-middle', onclick='doBingSearch(this)') Search
+div(id='web_results_container', container, class='hidden')
