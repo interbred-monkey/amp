@@ -13,22 +13,20 @@ html
     link(rel='stylesheet', href='/stylesheets/styles.css')
 
   body
+    
+    div(class='background-cover', background='browser')
+    div(class='background-cover hidden', background='music')
+    div(class='background-cover hidden', background='movies')
+    div(class='background-cover hidden', background='images')
+    div(class='background-cover hidden', background='file_manager')
 
-    div(backgrounds-container)
-      div(class='background-cover', background-slider)
-        div(class='background-cover', background='browser')
-        div(class='background-cover', background='music')
-        div(class='background-cover', background='movies')
-        div(class='background-cover', background='images')
-        div(class='background-cover', background='file_manager')
+    div(class='pl30 pr30')
 
-    div.pl30.pr30
-
-      h1(title, class='birth ml30') AMP
+      h1(title, class='birth ml30 nmt') AMP
 
       div.row-fluid
         include menu.jade
-
+        
       div(id='music_search_row', class='row-fluid hidden', search-row)
         include music_search_bar.jade
         include soundcloud_search_bar.jade
@@ -49,22 +47,17 @@ html
         div(class='span12', main, box)
           include web_search.jade
         
-
       div(id='music_container', class='row-fluid mt40 hidden', container)
-        div(class='span12', main, box)
-          h1 Music
+        include music_player.jade
 
       div(id='movies_container', class='row-fluid mt40 hidden', container)
         div(class='span12', main, box)
-          h1 Movies
           include video_player.jade
 
       div(id='images_container', class='row-fluid mt30 hidden', container)
         div(class='span12', main, box)
-          h1 Images
 
       div(id='file_manager_container', class='row-fluid mt30 hidden', container)
         div(class='span12', main, box)
-          h1 File Manager
 
-      include scripts.jade
+  include scripts.jade

@@ -141,6 +141,32 @@ var fileSearch = function(params, callback) {
   
 }
 
+// get a directory list
+var getFileList = function(params, callback) {
+  
+  file_system.listFiles(params, function(success, msg, data) {
+    
+    // did we error
+    if (success === false) {
+      return callback(success, msg, data);
+    }
+
+    var jade_path = __dirname+'/views/file_list_template.jade';
+
+    if (!fs.existsSync(jade_path)) {
+      return callback(false, "An error occured reading file");
+    }
+    
+    var _jade = fs.readFileSync(jade_path, {encoding: "utf8"});
+    var fn = jade.compile(_jade);
+    var html = fn({data: data, type: params.type});
+    
+    return callback(success, msg, html);
+
+  });
+  
+}
+
 var getBingSearch = function(params, callback) {
 
   bing_search.doBingSearch(params, function(success, msg, data) {
@@ -172,5 +198,6 @@ module.exports = {
   fileSearch: fileSearch,
   getSimilarArtistInfo: getSimilarArtistInfo,
   getArtistInfo: getArtistInfo,
-  getBingSearch: getBingSearch
+  getBingSearch: getBingSearch,
+  getFileList: getFileList
 }

@@ -234,7 +234,7 @@ var formatTitle = function(title) {
     ret.artist = bits[0].trim();
     ret.title = "";
 
-    if (bits.length > 2) {   
+    if (bits.length > 2) { 
 
       for (var b = 1; b < bits.length; b++) {
 
@@ -244,6 +244,7 @@ var formatTitle = function(title) {
 
     }
 
+    // title must be in the second element
     else {
 
       ret.title = bits[1].trim();

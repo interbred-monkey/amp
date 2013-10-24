@@ -20,7 +20,7 @@
   }
 
   a.link {
-    color: #43B6F3;
+    color: #F8FF00;
   }
 
 /* -------------------- End Text ----------------------*/
@@ -43,8 +43,8 @@
     visibility: hidden;
   }
 
-  .pull-left {
-    float: left;
+  .stack-top {
+    z-index: 10000;
   }
 
   .pull-middle {
@@ -56,10 +56,6 @@
   
   .inline {
     display: inline-block;
-  }
-
-  html, body {
-    height: 100%;
   }
   
   .overflow {
@@ -86,6 +82,10 @@
   }
 
   /* Margin Top */
+  .nmt {
+    margin-top: 0px;
+  }
+
   .mt20 {
     margin-top: 20px;
   }
@@ -107,6 +107,14 @@
     margin-left: 0px !important;
   }
 
+  .ml5 {
+    margin-left: 5px;
+  }
+
+  .ml15 {
+    margin-left: 15px !important;
+  }
+
   .ml30 {
     margin-left: 30px !important;
   }
@@ -116,6 +124,10 @@
   }
   
   /* Margin Right */
+  .mr5 {
+    margin-right: 5px;
+  }
+
   .mr20 {
     margin-right: 20px;
   }
@@ -125,7 +137,7 @@
 /* -------------------- General Display ----------------------*/
 
   [box] {
-    background-color: rgba(119,119,119, 0.3);
+    background-color: rgba(119,119,119, 0.6);
     box-shadow: 1px 1px 20px 10px #777;
     -webkit-box-shadow: 1px 1px 20px 10px #222;
     -moz-box-shadow: 1px 1px 20px 10px #777;
@@ -153,45 +165,6 @@
     -k-border-radius: 30px;
   }
 
-  [search-preview] {
-    display: block;
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    background-color: #FFF;
-    border: 3px solid #777;
-    box-shadow: 1px 1px 20px 10px #777;
-    -webkit-box-shadow: 1px 1px 20px 10px #222;
-    -moz-box-shadow: 1px 1px 20px 10px #777;
-    -o-box-shadow: 1px 1px 20px 10px #777;
-    -k-box-shadow: 1px 1px 20px 10px #777;
-    border-radius: 30px;
-    -webkit-border-radius: 30px;
-    -moz-border-radius: 30px;
-    -o-border-radius: 30px;
-    -k-border-radius: 30px;
-    z-index: 1000000;
-  }
-
-  #web_results_container {
-    padding: 10px;
-    border-radius: 30px;
-    -webkit-border-radius: 30px;
-    -moz-border-radius: 30px;
-    -o-border-radius: 30px;
-    -k-border-radius: 30px;
-  }
-
-  #web_results_container div.span12 {
-    padding: 15px 20px 15px 20px;
-    border-bottom: 1px solid #222;
-  }
-
-  #web_results_container div.span12:hover {
-    border-left: 1px solid #222;
-    border-right: 1px solid #222;
-  }
-
   [main] {
     min-height: 800px !important;
     padding: 20px;
@@ -210,58 +183,39 @@
     background-size: cover !important;
   }
 
-  [backgrounds-container] {
+  [background] {
     position: fixed;
-    display: block;
     height: 100%;
     width: 100%;
     z-index: -1;
   }
 
-  [background-slider] {
-    position: absolute;
-    display: block;
-    height: 100%;
-  }
-
-  div[background] {
-    display: inline-block;
-    float: left;
-    height: 100%;
-  }
-
-  div[background='browser'] {
-    background: url('/images/backgrounds/main/browser_background.jpg') center no-repeat;
+  [background='browser'] {
+    background: url('/images/backgrounds/main/browser_background_hd.jpg') center no-repeat;
     background-attachment: fixed;
   }
 
-  div[background='music'] {
-    background: url('/images/backgrounds/main/music_background.jpg') center no-repeat;
+  [background='music'] {
+    background: url('/images/backgrounds/main/music_background_hd.jpg') center no-repeat;
     background-attachment: fixed;
   }
 
-  div[background='movies'] {
-    background: url('/images/backgrounds/main/movies_background.jpg') center no-repeat;
+  [background='movies'] {
+    background: url('/images/backgrounds/main/movies_background_hd.jpg') center no-repeat;
     background-attachment: fixed;
   }
 
-  div[background='images'] {
-    background: url('/images/backgrounds/main/images_background.jpg') center no-repeat;
+  [background='images'] {
+    background: url('/images/backgrounds/main/images_background_hd.jpg') center no-repeat;
     background-attachment: fixed;
   }
 
-  div[background='file_manager'] {
-    background: url('/images/backgrounds/main/file_manager_background.jpg') center no-repeat;
+  [background='file_manager'] {
+    background: url('/images/backgrounds/main/file_manager_background_hd.jpg') center no-repeat;
     background-attachment: fixed;
   }
 
 /* -------------------- End Backgrounds ----------------------*/
-
-/* -------------------- Pages ----------------------*/
-
-  
-
-/* -------------------- End Pages ----------------------*/
 
 /* -------------------- Accordion ----------------------*/
 
@@ -300,8 +254,50 @@
 
 /* -------------------- Specific Layout ----------------------*/
 
-  body {
-    margin-top: -10px;
+  #preview_search_video {
+    margin: 15px 0px 0px 15px;
+  }
+
+  [search-preview] {
+    display: block;
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background-color: #FFF;
+    border: 3px solid #777;
+    box-shadow: 1px 1px 20px 10px #777;
+    -webkit-box-shadow: 1px 1px 20px 10px #222;
+    -moz-box-shadow: 1px 1px 20px 10px #777;
+    -o-box-shadow: 1px 1px 20px 10px #777;
+    -k-box-shadow: 1px 1px 20px 10px #777;
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -o-border-radius: 30px;
+    -k-border-radius: 30px;
+    z-index: 1000000;
+  }
+
+  #web_results_container {
+    padding: 10px;
+    border-radius: 30px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    -o-border-radius: 30px;
+    -k-border-radius: 30px;
+  }
+
+  #web_results_container div.span12 {
+    padding: 15px 20px 15px 20px;
+    border-bottom: 1px solid #222;
+  }
+
+  #web_results_container div.span12:hover {
+    padding-left: 50px !important;
+  }
+
+  [file-browser] {
+    min-height: 760px !important;
   }
 
 /* -------------------- End Specific Layout ----------------------*/

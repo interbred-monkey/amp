@@ -3,18 +3,8 @@
 var typeahead = function(__params) {
   
   var __el = __params.element;
-  
-  var __el_pos = $(__el).offset();
-  var __el_width = $(__el).width()+20;
   var __container = $('<div/>');
   var __mouse_evt = "out";
-  
-  $(__container).attr('typeahead-suggestions','')
-                .css({
-                    top: __el_pos.top + 30,
-                    left: __el_pos.left,
-                    width: __el_width
-                 });
   
   // make a keyup on the input
   $(__el).on('keyup', function() {
@@ -54,6 +44,17 @@ var typeahead = function(__params) {
     else if (typeof __data === "string") {
       $(__container).html(__data);
     }
+
+    // make the suggestions in the right place
+    var __el_pos = $(__el).offset();
+    var __el_width = $(__el).width()+20;
+
+    $(__container).attr('typeahead-suggestions','')
+                  .css({
+                      top: __el_pos.top + 50,
+                      left: __el_pos.left,
+                      width: __el_width
+                   });
     
     $('body').append(__container);
     _addEventClick();

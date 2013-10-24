@@ -33,5 +33,12 @@
     "endpoint": "/ajax/bing-search",
     "module": "ajax.js",
     "callback": "getBingSearch"
+  },
+  {
+    "title": "Get a list of files",
+    "method": "GET",
+    "endpoint": "/ajax/file-browser",
+    "module": "ajax.js",
+    "callback": "getFileList"
   }
 ]

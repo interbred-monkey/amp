@@ -26,7 +26,7 @@ server.set('view engine', 'jade');
 var seven_days = 60 * 60 * 24 * 7;
 
 // static content folders
-var public_folders = ["stylesheets", "javascript", "bootstrap", { name: "images", options: { maxAge: seven_days} }, "fonts"];
+var public_folders = ["stylesheets", "javascript", "bootstrap", { name: "images", options: { maxAge: seven_days} }, "fonts", "media"];
 
 // base directory
 var base_dir = __dirname+'/media_manager';
