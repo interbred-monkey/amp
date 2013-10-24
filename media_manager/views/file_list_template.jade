@@ -1,0 +1,29 @@
+mixin makeFileList(d, type)
+
+  case type
+    when "video": icon = "icon-facetime-video"
+    when "music": icon = "icon-headphones"
+    when "images": icon = "icon-camera"
+    when "files": icon = "icon-file"
+
+  rel = d.title.replace(" ", "_").toLowerCase();
+
+  if d.contents
+    div.row-fluid
+      div.span12.nml
+        span(class="icon-folder-close mr5", folder-rel="#{d.title}")
+        a(href="javascript:void(0)", onclick="showFolderContent(this)", rel="#{rel}") #{d.title}
+    div.row-fluid
+      div(id="#{rel}_content", folder-content, class="span12 ml15 hidden")
+        for dc in d.contents
+          mixin makeFileList(dc, type)
+
+  else
+    div.row-fluid
+      div.span12
+        span(class="#{icon} mr5")
+        a(href="javascript:void(0)", onclick="loadMedia(this, '#{type}')", media-path="#{d.path}", ext="#{d.ext}") #{d.title}
+
+div.pad20
+  for bd in data
+    mixin makeFileList(bd, type)
