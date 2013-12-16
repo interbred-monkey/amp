@@ -151,6 +151,11 @@ var getFileList = function(params, callback) {
       return callback(success, msg, data);
     }
 
+    // we have no files
+    if (data.length === 0) {
+      return callback(success, msg);
+    }
+
     var jade_path = __dirname+'/views/file_list_template.jade';
 
     if (!fs.existsSync(jade_path)) {

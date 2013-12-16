@@ -8,12 +8,18 @@ var server = express();
 var http = require('http');
 var http_server = http.createServer(server);
 
+//include the file system library
+var fs = require('fs');
+
 // include the underscore library
 var _ = require('underscore');
 
 // include config etc
 var config = require('./media_manager/config/__config.json');
 var http_request = require('./media_manager/controllers/request.js');
+
+// before we do anything render the ascii
+console.log(fs.readFileSync('./media_manager/includes/startup_art.txt', {encoding: "UTF-8"}));
 
 // setup the things to get the query string and form elements
 server.use(express.urlencoded());
