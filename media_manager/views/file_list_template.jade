@@ -1,26 +1,26 @@
 mixin makeFileList(d, type)
 
   case type
-    when "video": icon = "icon-facetime-video"
-    when "music": icon = "icon-headphones"
-    when "images": icon = "icon-camera"
-    when "files": icon = "icon-file"
+    when "video": icon = "glyphicon glyphicon-facetime-video"
+    when "music": icon = "glyphicon glyphicon-headphones"
+    when "images": icon = "glyphicon glyphicon-camera"
+    when "files": icon = "glyphicon glyphicon-file"
 
   rel = d.title.replace(" ", "_").toLowerCase();
 
   if d.contents
-    div.row-fluid
-      div.span12.nml
-        span(class="icon-folder-close mr5", folder-rel="#{d.title}")
+    div.row
+      div.col-md-12.nml
+        span(class="glyphicon glyphicon-folder-close mr5", folder-rel="#{rel}")
         a(href="javascript:void(0)", onclick="showFolderContent(this)", rel="#{rel}") #{d.title}
-    div.row-fluid
-      div(id="#{rel}_content", folder-content, class="span12 ml15 hidden")
+    div.row
+      div(id="#{rel}_content", folder-content, class="col-md-12 ml15 hidden")
         for dc in d.contents
           mixin makeFileList(dc, type)
 
   else
-    div.row-fluid
-      div.span12
+    div.row
+      div.col-md-12
         span(class="#{icon} mr5")
         a(href="javascript:void(0)", onclick="loadMedia(this, '#{type}')", media-path="#{d.path}", ext="#{d.ext}") #{d.title}
 

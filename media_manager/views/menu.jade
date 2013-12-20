@@ -1,32 +1,44 @@
-div.span12
-  ul(class='nav nav-pills')
+div.col-md-12
+  ul(class='nav nav-pills mb20')
+
     if req.path == "/browser"
       li(class='active', menu-item='#browser')
         a(href='#browser/web-search') Browser
     else
       li(menu-item='#browser')
         a(href='#browser/web-search') Browser
+
     if req.path == "/music"
       li(class='active', menu-item='#music')
         a(href='#music') Music
     else
       li(menu-item='#music')
         a(href='#music') Music
+
     if req.path == "/movies"
       li(class='active', menu-item='#movies')
         a(href='#movies') Movies
     else
       li(menu-item='#movies')
         a(href='#movies') Movies
+
     if req.path == "/images"
       li(class='active', menu-item='#images') 
         a(href='#images') Images
     else
       li(menu-item='#images')
         a(href='#images') Images
+
     if req.path == "/file-manager"
-      li(class='active', menu-item='#file-manager')
+      li(class='active', menu-item='#file_manager')
         a(href='#file-manager') File Manager
     else
       li(menu-item='#file_manager')
         a(href='#file-manager') File Manager
+
+    if req.path == "/settings"
+      li(class='active', menu-item='#settings')
+        a(href='#settings') Settings
+    else
+      li(menu-item='#settings')
+        a(href='#settings') Settings

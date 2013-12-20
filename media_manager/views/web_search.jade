@@ -1,9 +1,21 @@
 div(id='web_search_container', container)
-  div.row-fluid
-    div(class='span4 pull-middle vertical-middle', rel='#browser_container')
+  div.row
+    div(class='col-md-4 pull-middle vertical-middle', rel='#browser_container')
       form(class='navbar-search form-horizontal', autocomplete='off', onsubmit='return false')
-        div.control-group
-          input(type='text', class='search-query input-xxlarge', rel='web-search-input', placeholder='Search the web' onkeyup='reflectSearch(this)')
-        div.control-group
-          button(type='button', class='btn btn-primary pull-middle', onclick='doWebSearch(this)') Search
-div(id='web_results_container', container, class='hidden')
+        div.form-group
+          input(type='text', class='search-query form-control', rel='web-search-input', placeholder='Search the web' onkeyup='reflectSearch(this)')
+        div.form-group
+          button(type='button', class='btn btn-default btn-primary pull-middle', onclick='doWebSearch(this)') Search
+
+div(id='web_results_container', container, class='col-md-12 hidden')
+  div.row
+    div(id='web_results_search', class='col-md-5')
+      h2 Search the web
+      form(class='row form-inline', autocomplete='off', onsubmit='return false')
+        div.col-md-10
+          input(type='text', web-search-input, class='search-query form-control', placeholder='eg. Google')
+        button(type='button', class='col-md-1 btn btn-default btn-primary ml30', onclick='doWebSearch(this)') Search
+      p(class='mt30') search powered by 
+        img(src='/images/bing_icon.png', height='90px')
+
+    div(id='web_results', class='col-md-6 ml20')

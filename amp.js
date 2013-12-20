@@ -16,7 +16,7 @@ var _ = require('underscore');
 
 // include config etc
 var config = require('./media_manager/config/__config.json');
-var http_request = require('./media_manager/controllers/request.js');
+var http_request = require('./media_manager/request.js');
 
 // before we do anything render the ascii
 console.log(fs.readFileSync('./media_manager/includes/startup_art.txt', {encoding: "UTF-8"}));

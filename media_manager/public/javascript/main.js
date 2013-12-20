@@ -20,8 +20,10 @@ $(document).ready(function() {
 
   // setup a mouse move for the search previews etc
   $(document).mousemove(function(evt) {
+
     mouse_pos.x = evt.pageX;
     mouse_pos.y = evt.pageY;
+
   });
   
   // make vertical elements middle
@@ -63,7 +65,9 @@ var processHashChange = function(hash) {
 
     // is this a query string
     if (hash_bits[hb].match(/\?/)) {
+
       continue;
+
     }
 
     // replace into something we can use
@@ -76,7 +80,6 @@ var processHashChange = function(hash) {
     if (_contains(navigation_functions, no_hash) === true) {
 
       var qs = processQueryString(hash_bits[hash_bits.length - 1]);
-
       navigation_functions[hash_bits[hb]].call(undefined, qs);
 
     }
@@ -85,8 +88,10 @@ var processHashChange = function(hash) {
     if (hb == 0) {
 
       if ($('[background="'+no_hash+'"]').hasClass('hidden')) {
+
         $('[background]').addClass('hidden');
         $('[background="'+no_hash+'"]').removeClass('hidden');
+
       }
 
       $('[menu-item]').removeClass('active');
@@ -96,7 +101,9 @@ var processHashChange = function(hash) {
 
     // add a hash to the element
     else {
+
       hash_bits[hb] = '#'+hash_bits[hb];
+
     }
 
     // show the containers
@@ -115,7 +122,9 @@ var prefillSearch = function(el) {
   $('.search-query').val(el.title);
 
   if ($('.search-query').hasClass('autocomplete')) {
+
     $('search-query').keyup();
+
   }
 
 }
@@ -151,7 +160,9 @@ var processQueryString = function(str) {
     var row = str_bits[sb].split('=');
 
     if (row.length === 0) {
+      
       continue;
+
     }
 
     params[row[0]] = row[1];
@@ -159,6 +170,34 @@ var processQueryString = function(str) {
   }
 
   return params;
+
+}
+
+var showSystemMessage = function(success, message) {
+
+  $('.system-message').remove();
+
+  if (success === false) {
+
+    var success_class = 'alert-danger';
+
+  }
+
+  else if (success === true) {
+
+    var success_class = 'alert-success';
+
+  }
+
+  var span = $('<span/>').html(message);
+  var div = $('<div/>').addClass('system-message col-md-2 alert '+success_class).html(span);
+  $('body').append(div);
+
+  setTimeout(function() {
+
+    $(div).addClass('transparent');
+
+  }, 6000);
 
 }
 

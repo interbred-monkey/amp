@@ -1,9 +1,9 @@
-div.span3
+div.col-md-3
   each i in data.image
     if i.size === "extralarge"
       img(src=i.text, title=data.name)
 
-div.span9
+div.col-md-9
   div(accordion)
     h3 About
     div.content

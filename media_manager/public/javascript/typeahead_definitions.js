@@ -11,7 +11,7 @@ $(document).ready(function() {
         url: "/ajax/youtube-search",
         dataType: "json",
         data: {
-          "str": str
+          str: str
         },
         success: function(res) {
           process(res.data);

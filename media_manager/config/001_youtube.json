@@ -12,5 +12,19 @@
     "endpoint": "/api/youtube/video-info",
     "module": "youtube.js",
     "callback": "getYouTubeVideoInfo"
+  },
+  {
+    "title": "Performs a youtube search for a string",
+    "method": "GET",
+    "endpoint": "/ajax/youtube-search",
+    "module": "youtube_display.js",
+    "callback": "displayYoutubeSearch"
+  },
+  {
+    "title": "Gets YouTube video information",
+    "method": "GET",
+    "endpoint": "/ajax/youtube-video-info",
+    "module": "youtube_display.js",
+    "callback": "displayYoutubeVideoInfo"
   }
 ]

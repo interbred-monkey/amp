@@ -7,8 +7,7 @@ html
     meta(name='description', content='Organise your music easy')
     meta(name='author', content='Simon Mudd')
     
-    link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
-    link(rel='stylesheet', href='/bootstrap/css/bootstrap-responsive.min.css')
+    link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/typeahead.css')
     link(rel='stylesheet', href='/stylesheets/styles.css')
 
@@ -19,45 +18,49 @@ html
     div(class='background-cover hidden', background='movies')
     div(class='background-cover hidden', background='images')
     div(class='background-cover hidden', background='file_manager')
+    div(class='background-cover hidden', background='settings')
 
     div(class='pl30 pr30')
 
       h1(title, class='birth ml30 nmt') AMP
 
-      div.row-fluid
+      div.row
         include menu.jade
         
-      div(id='music_search_row', class='row-fluid hidden', search-row)
+      div(id='music_search_row', class='row hidden', search-row)
         include music_search_bar.jade
         include soundcloud_search_bar.jade
 
-      div(id='movies_search_row', class='row-fluid hidden', search-row)
+      div(id='movies_search_row', class='row hidden', search-row)
         include movies_search_bar.jade
         include youtube_search_bar.jade
 
-      div(id='images_search_row', class='row-fluid hidden', search-row)
+      div(id='images_search_row', class='row hidden', search-row)
         include images_search_bar.jade
         include bing_image_search_bar.jade
 
-      div(id='file_manager_search_row', class='row-fluid hidden', search-row)
+      div(id='file_manager_search_row', class='row hidden', search-row)
         include file_search_bar.jade
         include bing_search_bar.jade
 
-      div(id='browser_container', class='row-fluid mt40', container)
-        div(class='span12', main, box)
+      div(id='browser_container', class='row mt40', container)
+        div(class='col-md-12', main, box)
           include web_search.jade
         
-      div(id='music_container', class='row-fluid mt40 hidden', container)
+      div(id='music_container', class='row mt40 hidden', container)
         include music_player.jade
 
-      div(id='movies_container', class='row-fluid mt40 hidden', container)
-        div(class='span12', main, box)
+      div(id='movies_container', class='row mt40 hidden', container)
+        div(class='col-md-12', main, box)
           include video_player.jade
 
-      div(id='images_container', class='row-fluid mt30 hidden', container)
-        div(class='span12', main, box)
+      div(id='images_container', class='row mt30 hidden', container)
+        div(class='col-md-12', main, box)
 
-      div(id='file_manager_container', class='row-fluid mt30 hidden', container)
-        div(class='span12', main, box)
+      div(id='file_manager_container', class='row mt30 hidden', container)
+        div(class='col-md-12', main, box)
+
+      div(id='settings_container', class='row mt30 hidden', container)
+        include settings_manager.jade
 
   include scripts.jade

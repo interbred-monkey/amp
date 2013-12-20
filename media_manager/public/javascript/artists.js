@@ -7,7 +7,7 @@ var getArtistInfo = function(artist) {
     url: "/ajax/artist-info",
     dataType: "json",
     data: {
-      "artist": artist
+      artist: artist
     },
     success: function(res){
       
@@ -21,7 +21,9 @@ var getArtistInfo = function(artist) {
       }
 
       else {
+
         $('[artist-info]').html('');
+
       }
 
     }
@@ -37,16 +39,20 @@ var getSimilarArtists = function(artist) {
     url: "/ajax/similar-artists",
     dataType: "json",
     data: {
-      "artist": artist
+      artist: artist
     },
     success: function(res){
       
       if (typeof res.data !== "undefined") {
+
         $('[similar-artists]').html(res.data);
+
       }
 
       else {
+
         $('[similar-artists]').html('');
+        
       }
 
     }

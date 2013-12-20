@@ -11,7 +11,9 @@ var typeahead = function(__params) {
     
     // not long enough yet
     if (this.value.length < __params.minLength) {
+
       return;
+
     }
     
     // get some data
@@ -32,8 +34,10 @@ var typeahead = function(__params) {
       
       // loopity loop
       for (var __i in __data) {
+
         var __li = $('<li/>').text(__data[__i]);
         __ul.append(__li);
+
       }
         
       $(__container).append(__ul);
@@ -42,7 +46,9 @@ var typeahead = function(__params) {
     
     // html has been provided
     else if (typeof __data === "string") {
+
       $(__container).html(__data);
+
     }
 
     // make the suggestions in the right place
@@ -63,18 +69,26 @@ var typeahead = function(__params) {
   }
 
   var _addEventBodyClick = function(__evt) {
+
     // make a click event on the body
     if (__evt.sourceElement === __el){
+
       return;
+
     }
     else {
+
       $(__container).remove();
+
     }
+
   }
   
   var _addEventClick = function() {
+
     // make a click event on the callback handle
     if (typeof __params.click !== "undefined") {
+
       $(__container).find(__params.click.handle).on('click', function() {
         
         // clear the container
@@ -83,19 +97,30 @@ var typeahead = function(__params) {
         __params.click.method.call(this, this);
       
       });
+
     }
+
   }
   
   var _addEventHover = function() {
+
     // make a click event on the callback handle
     if (typeof __params.hover !== "undefined") {
+
       $(__container).find(__params.hover.handle).on('mouseenter', function() {
+
         __params.hover.over.call(this, this);
+
       });
+
       $(__container).find(__params.hover.handle).on('mouseleave', function() {
+
         __params.hover.out.call(this, this);
+
       });
+
     }
+
   }
   
 }

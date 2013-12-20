@@ -1,5 +1,12 @@
 [
   {
+    "title": "Do a bing search",
+    "method": "GET",
+    "endpoint": "/ajax/bing-search",
+    "module": "bing_search_display.js",
+    "callback": "displayBingSearch"
+  },
+  {
     "title": "Performs a bing search for a string",
     "method": "GET",
     "endpoint": "/api/bing/search",
