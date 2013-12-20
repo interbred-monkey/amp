@@ -1,0 +1,9 @@
+[
+  {
+    "title": "Get a list of files",
+    "method": "GET",
+    "endpoint": "/ajax/file-browser",
+    "module": "file_system_display.js",
+    "callback": "displayFileList"
+  }
+]

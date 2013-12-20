@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Gets similar artist information from last.fm",
+    "method": "GET",
+    "endpoint": "/ajax/similar-artists",
+    "module": "music_manager_display.js",
+    "callback": "displaySimilarArtistInfo"
+  },
+  {
+    "title": "Gets artist information from last.fm",
+    "method": "GET",
+    "endpoint": "/ajax/artist-info",
+    "module": "music_manager_display.js",
+    "callback": "displayArtistInfo"
+  },
+  {
+    "title": "Get the songs from the music library",
+    "method": "GET",
+    "endpoint": "/ajax/music-browser",
+    "module": "music_manager_display.js",
+    "callback": "displayMusicBrowser"
+  },
+  {
+    "title": "Start a re-index",
+    "method": "POST",
+    "endpoint": "/ajax/reindex-music",
+    "module": "music_manager.js",
+    "callback": "reindex"
+  }
+]
