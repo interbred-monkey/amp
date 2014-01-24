@@ -1,0 +1,8 @@
+{
+	"debug": false,
+	"require_socket_io": true,
+  "api_keys": {
+    "lastfm": "API Key HERE",
+    "bing": "API Key HERE"
+  }
+}
