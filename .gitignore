@@ -1,5 +1,6 @@
 .DS_Store
 node_modules/
+core/config/__config.json
 core/public/images/backgrounds/main/
 core/public/media/music/
 core/public/media/images/
