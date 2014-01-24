@@ -15,11 +15,11 @@ var fs = require('fs');
 var _ = require('underscore');
 
 // include config etc
-var config = require('./media_manager/config/__config.json');
-var http_request = require('./media_manager/request.js');
+var config = require('./core/config/__config.json');
+var http_request = require('./core/request.js');
 
 // before we do anything render the ascii
-console.log(fs.readFileSync('./media_manager/includes/startup_art.txt', {encoding: "UTF-8"}));
+console.log(fs.readFileSync('./core/includes/startup_art.txt', {encoding: "UTF-8"}));
 
 // setup the things to get the query string and form elements
 server.use(express.urlencoded());
@@ -35,7 +35,7 @@ var seven_days = 60 * 60 * 24 * 7;
 var public_folders = ["stylesheets", "javascript", "bootstrap", { name: "images", options: { maxAge: seven_days} }, "fonts", "media"];
 
 // base directory
-var base_dir = __dirname+'/media_manager';
+var base_dir = __dirname+'/core';
 
 // set static content
 for (var pf in public_folders) {

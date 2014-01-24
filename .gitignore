@@ -1,8 +1,8 @@
 .DS_Store
 node_modules/
-media_manager/public/images/backgrounds/main/
-media_manager/public/media/music/
-media_manager/public/media/images/
-media_manager/public/media/video/
-media_manager/media_library/
-media_manager/error_logs/
+core/public/images/backgrounds/main/
+core/public/media/music/
+core/public/media/images/
+core/public/media/video/
+core/media_library/
+core/error_logs/

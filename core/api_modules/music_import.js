@@ -28,6 +28,12 @@ var errors = [];
 // keep a log of all the tags
 var tag_buffer = [];
 
+// what is in the artist artwork folder?
+var artist_artwork = [];
+
+// what is in the album artwork folder?
+var album_artwork = [];
+
 var importFiles = function(file_list, callback) {
 
   // do we need to import all files?
@@ -43,7 +49,7 @@ var importFiles = function(file_list, callback) {
 
     }
 
-    callback(true, "Import started");
+    return callback(true, "Import started");
 
   }
 
@@ -158,7 +164,7 @@ var q = async.queue(function(file_info, callback) {
       // change the actual path for a relative path
       tags.path = file_info.path;
 
-      return cb(tags);
+      return cb(null, tags);
 
     });
 
@@ -167,32 +173,49 @@ var q = async.queue(function(file_info, callback) {
   // check for artist artwork
   functions.push(function(tag_data, cb) {
 
-    // see if we have some id3 tags
-    fs.exists(__dirname+'/../public/images/artwork/artists/'+tag_data.artist.toLowerCase()+'.jpg', function(exists) {
+    // if we dont have a copy of the images dir then load one in
+    if (artist_artwork.length === 0) {
 
-      if (exists === true) {
+      artist_artwork = fs.readdirSync(__dirname+'/../public/images/artwork/artists');
 
-        tag_data.artist_artwork = '/images/artwork/artists/'+tag_data.artist.toLowerCase()+'.jpg';
+    }
+
+    // is there a copy of this artists image?
+    for (var art in artist_artwork) {
+
+      if (artist_artwork[art].match(tag_data.artist.toLowerCase().replace(/\s/g, '_'), 'g')) {
+
+        tag_data.artist_artwork = '/images/artwork/artists/'+artist_artwork[art];
 
       }
-      
-    });
+
+    }
+
+    return cb(null, tag_data);
 
   });
 
   // check for album artwork
   functions.push(function(tag_data, cb) {
 
-    // see if we have some id3 tags
-    fs.exists(__dirname+'/../public/images/artwork/albums/'+tag_data.album.toLowerCase()+'.jpg', function(exists) {
+    if (album_artwork.length === 0) {
 
-      if (exists === true) {
+      album_artwork = fs.readdirSync(__dirname+'/../public/images/artwork/albums');
 
-        tag_data.album_artwork = '/images/artwork/albums/'+tag_data.album.toLowerCase()+'.jpg';
+    }
+
+    // is there a copy of this artists image?
+    for (var aa in album_artwork) {
+
+      if (album_artwork[aa].match(tag_data.album.toLowerCase().replace(/\s/g, '_'), 'g')) {
+
+        tag_data.album_artwork = '/images/artwork/albums/'+album_artwork[aa];
 
       }
-      
-    });
+
+    }
+
+    return cb(null, tag_data);
 
   });
 
@@ -200,8 +223,9 @@ var q = async.queue(function(file_info, callback) {
 
     // add it to the list of tags
     tag_buffer.push(data);
+    callback();
 
-  })
+  });
   
 
 }, 10);
@@ -224,6 +248,9 @@ q.drain = function(err, data) {
         logs.log_errors(errors, 'music');
 
       }
+
+      // clear out the buffer
+      tag_buffer.length = 0;
 
       console.log('Import Successful');
 
