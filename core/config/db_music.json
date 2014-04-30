@@ -1,0 +1,52 @@
+{
+  "documents": [
+    {
+      "_id": "_design/matching",
+      "language": "javascript",
+      "views": {
+        "groupAlbums": {
+          "map": "function(doc) { emit([doc.album, (doc.album_artwork?doc.album_artwork:null)], 1); }",
+          "reduce": "function(keys, values, rereduce) { return sum(values); }"
+        },
+        "groupGenres": {
+          "map": "function(doc) { emit([doc.genre, (doc.artist_artwork?doc.artist_artwork:null)], 1); }",
+          "reduce": "function(keys, values, rereduce) { return sum(values); }"
+        },
+        "groupArtists": {
+          "map": "function(doc) { emit([doc.artist, (doc.artist_artwork?doc.artist_artwork:null)], 1); }",
+          "reduce": "function(keys, values, rereduce) { return sum(values); }"
+        },
+        "groupSongs": {
+          "map": "function(doc) { emit([doc.album, doc.artist, (doc.track_number?doc.track_number:null), doc.title], 1); }",
+          "reduce": "function(keys, values, rereduce) { return sum(values); }"
+        },
+        "groupArtistByAlbum": {
+          "map": "function(doc) { emit([doc.artist, doc.album, (doc.album_artwork?doc.album_artwork:null)], 1); }",
+          "reduce": "function(keys, values, rereduce) { return sum(values); }"
+        },
+        "groupSongsByArtist": {
+          "map": "function(doc) { emit([doc.artist, doc.title, (doc.album_artwork?doc.album_artwork:null)], 1); }",
+          "reduce": "function(keys, values, rereduce) { return sum(values); }"
+        },
+        "groupSongsByAlbum": {
+          "map": "function(doc) { emit([doc.album, (doc.track_number?doc.track_number:null), doc.title, (doc.album_artwork?doc.album_artwork:null)], 1); }",
+          "reduce": "function(keys, values, rereduce) { return sum(values); }"
+        },
+        "groupSongsByGenre": {
+          "map": "function(doc) { emit([doc.genre, doc.title, (doc.album_artwork?doc.album_artwork:null)], 1); }",
+          "reduce": "function(keys, values, rereduce) { return sum(values); }"
+        }
+      }
+    },
+    {
+      "_id": "_design/search",
+      "language": "javascript",
+      "indexes": {
+        "music": {
+          "analyzer": "standard",
+          "index": "function(doc){\n index(\"artist\", doc.artist, {\"store\": \"yes\"});\n index(\"album\", doc.album, {\"store\": \"yes\"});\n index(\"title\", doc.title, {\"store\": \"yes\"});\n}"
+        }
+      }
+    }
+  ]
+}

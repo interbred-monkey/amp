@@ -1,0 +1,58 @@
+div(id="artist_song_view")
+
+  nav_link = 'music/songs/'+set;
+
+  div(class="col-md-12 mt20")
+    div(class="col-md-5")
+      h2(class="birth spaced-text" sub-title='' nav-item='#{nav_link}') Songs
+  
+  div(songs-list)
+
+    div(class='col-md-12 pt10 pb10 pl0 pr0 no-overflow')
+      div(class='col-md-1 nlm')
+        div(class='col-md-6 ellipsis')
+          span 
+          strong #
+        div(class='col-md-6')
+          span
+      div(class='col-md-3 ellipsis')
+        span 
+          strong Title
+      div(class='col-md-1 ellipsis')
+        span 
+          strong Time
+      div(class='col-md-3 ellipsis')
+        span 
+          strong Artist
+      div(class='col-md-3 ellipsis')
+        span 
+          strong Album
+
+    for d, i in data
+
+      if typeof d.album_artwork === "undefined" || d.album_artwork === null
+        image = '/images/record-full-blue.png';
+        image_class = ' dark-back';
+
+      else
+        image = d.album_artwork;
+        image_class = '';
+
+      div(class='col-md-12 nopad no-overflow', song-row='')
+        div(class='col-md-1 nlm')
+          div(class='col-md-6 ellipsis')
+            span #{i + 1}
+          div(class='col-md-6')
+            img(src='#{image}', title='#{d.title}', class='#{image_class}')
+        div(class='col-md-3 ellipsis')
+          span #{d.title}
+        div(class='col-md-1 ellipsis')
+          span #{d.display_time ? d.display_time : ''}
+        div(class='col-md-3 ellipsis')
+          span #{d.artist}
+        div(class='col-md-3 ellipsis')
+          span #{d.album}
+
+  if more_docs === true
+    div(class='col-md-12 mt20 no-overflow')
+      span(nav-item='#{nav-link}') ...load more

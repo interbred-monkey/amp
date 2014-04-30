@@ -1,0 +1,23 @@
+div(id="group_view")
+
+  div(class="col-md-12 dark-back nopad")
+    div(class="col-md-5")
+      h1(class="birth spaced-text ml30" sub-title) #{data.group}
+    div(class="col-md-5 pull-right image-cover", music-image-cover)
+  
+  for d, i in data.group_items
+
+    if d.key[1] === null
+      image = '/images/record-full-blue.png';
+
+    else
+      image = d.key[1];
+
+    nav_item = d.key[0].replace(/\s/g, '-');
+
+    div(class='group-block music-group-block col-md-2 nopad no-overflow', nav-item='music/#{data.group}/#{nav_item}')
+      div(class='col-md-12 dark-back text-middle')
+        div.image-container
+          img(src='#{image}', title='#{d.key[0]}')
+      div(class='col-md-12 darker-back pad10 text-middle ellipsis')
+        span #{d.key[0]}

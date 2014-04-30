@@ -1,7 +1,7 @@
 div.col-md-12
   ul(class='nav nav-pills mb20')
 
-    if req.path == "/browser"
+    if req.path == "/" || req.path == "/browser"
       li(class='active', menu-item='#browser')
         a(href='#browser/web-search') Browser
     else
@@ -10,10 +10,10 @@ div.col-md-12
 
     if req.path == "/music"
       li(class='active', menu-item='#music')
-        a(href='#music') Music
+        a(href='#music/artists') Music
     else
       li(menu-item='#music')
-        a(href='#music') Music
+        a(href='#music/artists') Music
 
     if req.path == "/movies"
       li(class='active', menu-item='#movies')

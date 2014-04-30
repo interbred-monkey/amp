@@ -10,11 +10,23 @@ var id3_reader = require('id3_reader');
 // include the file system library
 var fs = require('fs');
 
-// inlcude the file system library
+// include the moment library
+var moment = require('moment');
+
+// inlcude our file system library
 var file_system = require(__dirname+'/file_system.js');
 
-// inlcude the file system library
-var logs = require(__dirname+'/logs.js');
+// inlcude our lastfm library
+var lastfm = require(__dirname+'/lastfm.js');
+
+// inlcude the logs library
+var logs = require(__dirname+'/includes/logs.js');
+
+// inlcude the cloudant library
+var cloudant = require(__dirname+'/includes/cloudant.js');
+
+// inlcude the lastfm library
+var lastfm = require(__dirname+'/lastfm.js');
 
 // define where the music is
 var music_folder = "/media/music";
@@ -28,11 +40,11 @@ var errors = [];
 // keep a log of all the tags
 var tag_buffer = [];
 
-// what is in the artist artwork folder?
-var artist_artwork = [];
+// how many tags to keep before writing them to the db
+var buffer_size = 100;
 
-// what is in the album artwork folder?
-var album_artwork = [];
+// are we importing all files and need to replicate the db?
+var full_import = false;
 
 var importFiles = function(file_list, callback) {
 
@@ -40,52 +52,119 @@ var importFiles = function(file_list, callback) {
   if (_.isFunction(file_list) === true) {
 
     callback = file_list;
+    full_import = true;
 
-    var folder_list = file_system.getFileList(__dirname+music_folder);
+  }
 
-    for (var fl in folder_list) {
+  var actions = [];
 
-      q.push(folder_list[fl]);
+  // find out if the import is already running
+  actions.push(function(cb) {
 
+    var params = {
+      db: "music_copy"
     }
 
-    return callback(true, "Import started");
+    cloudant.getdb(params, function(success, msg, data) {
+
+      if (success === true || q.length > 0) {
+
+        return cb("Import already running");
+
+      }
+
+      return cb(null);
+
+    })
+
+  })
+
+  // do a full import
+  if (full_import === true) {
+
+    actions.push(function(cb) {
+
+      // firstly as this is a big import then we should make a fresh db to import into
+      cloudant.createdb({db: 'music_copy'}, function(success, msg, data) {
+
+        if (!success) {
+
+          return cb('Unable to create import db');
+
+        }
+
+        var folder_list = file_system.getFileList(__dirname+music_folder);
+
+        for (var fl in folder_list) {
+
+          q.push(folder_list[fl]);
+
+        }
+
+        // add in the view docs
+        addViewDocs();
+
+        return cb(null, "Import started");
+
+      })
+
+    })
 
   }
 
   // we have been given some files to import -- ignore for now because I have not done this part
   else {
 
-    if (_.isString(file_list) === true) {
+    actions.push(function(cb) {
 
-      file_list = [file_list];
+      if (_.isString(file_list) === true) {
 
-    }
-
-    else if (_.isArray(file_list) === false) {
-
-      return callback(false, "No file supplied");
-
-    }
-
-    for (var fl in file_list) {
-
-      // add the file details to the queue
-      var fd = getFileDetails(file_list[fl]);
-
-      if (fd === false) {
-
-        continue;
+        file_list = [file_list];
 
       }
 
-      q.push(fd);
+      else if (_.isArray(file_list) === false) {
+
+        return cb("No file supplied");
+
+      }
+
+      for (var fl in file_list) {
+
+        // add the file details to the queue
+        var fd = getFileDetails(file_list[fl]);
+
+        if (fd === false) {
+
+          continue;
+
+        }
+
+        q.push(fd);
+
+      }
+
+      return cb(null, "Import started");
+
+    })
+
+  }
+
+  async.series(actions, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      return callback(false, err);
 
     }
 
-    return callback(true, "Import started");
+    else {
 
-  }
+      return callback(true, data)
+
+    }
+
+  })
 
 }
 
@@ -148,7 +227,7 @@ var q = async.queue(function(file_info, callback) {
     // see if we have some id3 tags
     id3_reader.read(__dirname+file_info.path, function(success, msg, data) {
 
-      // no id3 tags, see if we can get some information from the 
+      // no id3 tags, see if we can get some information from the filename
       if (success === false || data.tags.title === "unknown") {
 
         var tags = makeTagsFromFileName(data.tags, file_info.filename);
@@ -159,6 +238,12 @@ var q = async.queue(function(file_info, callback) {
 
         var tags = data.tags;
 
+        if (!_.isUndefined(tags['length'])) {
+
+          tags.display_time = formatDisplayTime(tags['length']);
+
+        }
+
       }
 
       // change the actual path for a relative path
@@ -168,95 +253,373 @@ var q = async.queue(function(file_info, callback) {
 
     });
 
-  });
+  })
 
   // check for artist artwork
   functions.push(function(tag_data, cb) {
 
-    // if we dont have a copy of the images dir then load one in
-    if (artist_artwork.length === 0) {
+    // is this an unknown artist? We dont wanna look up that
+    if (tag_data.artist === "unknown") {
 
-      artist_artwork = fs.readdirSync(__dirname+'/../public/images/artwork/artists');
+      return cb(null, tag_data);
 
     }
 
-    // is there a copy of this artists image?
-    for (var art in artist_artwork) {
+    var params = {
+      artist: tag_data.artist
+    }
 
-      if (artist_artwork[art].match(tag_data.artist.toLowerCase().replace(/\s/g, '_'), 'g')) {
+    lastfm.getArtistInfo(params, function(success, msg, data) {
 
-        tag_data.artist_artwork = '/images/artwork/artists/'+artist_artwork[art];
+      if (success === false) {
+
+        return cb(null, tag_data);
 
       }
 
-    }
+      // is this the correct name for the artist?
+      if (tag_data.artist !== data.name) {
 
-    return cb(null, tag_data);
+        tag_data.artist = data.name;
 
-  });
+      }
+
+      // have we got an image?
+      if (!_.isUndefined(data.image)) {
+
+        tag_data.artist_artwork = data.image[data.image.length - 1].text;
+
+      }
+      
+
+      return cb(null, tag_data);
+
+    })
+
+  })
 
   // check for album artwork
   functions.push(function(tag_data, cb) {
 
-    if (album_artwork.length === 0) {
+    // is this an unknown artist? We dont wanna look up that
+    if (tag_data.artist === "unknown" || tag_data.album === "unknown") {
 
-      album_artwork = fs.readdirSync(__dirname+'/../public/images/artwork/albums');
+      return cb(null, tag_data);
 
     }
 
-    // is there a copy of this artists image?
-    for (var aa in album_artwork) {
+    var params = {
+      artist: tag_data.artist,
+      album: tag_data.album
+    }
 
-      if (album_artwork[aa].match(tag_data.album.toLowerCase().replace(/\s/g, '_'), 'g')) {
+    lastfm.getAlbumInfo(params, function(success, msg, data) {
 
-        tag_data.album_artwork = '/images/artwork/albums/'+album_artwork[aa];
+      if (success === false) {
+
+        return cb(null, tag_data);
 
       }
 
+      // is this the correct name for the artist?
+      if (tag_data.album !== data.name) {
+
+        tag_data.album = data.name;
+
+      }
+
+      // have we got an image?
+      if (!_.isUndefined(data.image)) {
+
+        tag_data.album_artwork = data.image[data.image.length - 1].text;
+
+      }
+      
+
+      return cb(null, tag_data);
+
+    })
+
+  })
+
+  // check track info
+  functions.push(function(tag_data, cb) {
+
+    // we dont have a tag so we cant really make this functional
+    if (tag_data.artist === "unknown") {
+
+      return cb(null, tag_data);
+
     }
 
-    return cb(null, tag_data);
+    var params = {
+      artist: tag_data.artist,
+      track: tag_data.title
+    }
 
-  });
+    lastfm.getSongInfo(params, function(success, msg, data) {
+
+      if (success === false) {
+
+        return cb(null, tag_data);
+
+      }
+
+      // do we have a duration?
+      if (!_.isUndefined(data.duration)) {
+
+        tag_data.length = data.duration;
+        tag_data.display_time = formatDisplayTime(data.duration);
+
+      }
+
+      // do we have a track number?
+      if (!_.isUndefined(data.album) && _.isUndefined(tag_data.track_number)) {
+
+        tag_data.track_number = data.album.attr.position;
+
+      }
+
+      // do we have any album artwork?
+      if (!_.isUndefined(data.album) && _.isUndefined(tag_data.album_artwork) && !_.isUndefined(data.album.image)) {
+
+        tag_data.album_artwork = data.album.image[data.album.image.length - 1].text;
+
+      }
+
+      // do we have some suggestions we could add?
+      tag_data.suggestions = {};
+
+      // suggest a artist name?
+      if (!_.isUndefined(data.artist) && data.artist.name.toLowerCase() !== tag_data.artist.toLowerCase()) {
+
+        tag_data.suggestions.artist = data.artist.name;
+
+      }
+
+      // suggest a track name?
+      if (data.name.toLowerCase() !== tag_data.title.toLowerCase()) {
+
+        tag_data.suggestions.title = data.name;
+
+      }
+
+      // suggest album info?
+      if (!_.isUndefined(data.album)) {
+
+        if (data.album.title.toLowerCase() !== tag_data.album.toLowerCase()) {
+
+          tag_data.suggestions.album = data.album.title;
+
+        }
+
+      }
+
+      return cb(null, tag_data);
+
+    })
+
+  })
 
   async.waterfall(functions, function(err, data) {
 
     // add it to the list of tags
     tag_buffer.push(data);
-    callback();
+
+    // write the tags...?
+    if (tag_buffer.length >= buffer_size) {
+
+      processBuffer();
+
+    }
+
+    setTimeout(function() {
+
+      callback();
+
+    }, 400)
 
   });
   
 
-}, 10);
+}, 5);
  
 q.drain = function(err, data) {
 
-  // write the errors to a file maybe
-  fs.writeFile(__dirname+'/media_library/music.json', JSON.stringify(tag_buffer, undefined, 2), function(err) {
+  if (err) {
 
-    if (!_.isNull(err)) {
+    // add the errors to the log
+    //logs.log_errors(err, "music");
 
-      console.log('Error: '+err);
+    console.log('Import failed, check logs for errors');
+    console.log(err);
+    return;
+
+  }
+
+  processBuffer(true);
+
+}
+
+// write the tags to the db
+var processBuffer = function(finished) {
+
+  if (tag_buffer.length > 0) {
+
+    var docsToSend = JSON.parse(JSON.stringify(tag_buffer));
+    tag_buffer = [];
+
+    var params = {
+      db: "music_copy",
+      docs: docsToSend
+    }
+
+    cloudant.addBulk(params, function(success, msg, data) {
+
+      if (success === false) {
+
+        tag_buffer = tag_buffer.concat(docsToSend);
+        return;
+
+      }
+
+      else if (full_import === true && finished === true) {
+
+        var actions = [];
+
+        // remove the current music db
+        actions.push(function(cb) {
+
+          var params = {
+            db: 'music'
+          }
+
+          cloudant.destroydb(params, function(success, msg, data) {
+
+            if (success === false) {
+
+              return cb(msg);
+
+            }
+
+            return cb(null);
+
+          })
+
+        })
+
+        // replicate the _music db to music
+        actions.push(function(cb) {
+
+          var params = {
+            from: 'music_copy',
+            to: 'music',
+            create_target: true
+          }
+
+          cloudant.replicatedb(params, function(success, msg, data) {
+
+            if (success === false) {
+
+              return cb(msg)
+
+            }
+
+            return cb(null);
+
+          })
+
+        })
+
+        // delete the _music db
+        actions.push(function(cb) {
+
+          var params = {
+            db: 'music_copy'
+          }
+
+          cloudant.destroydb(params, function(success, msg, data) {
+
+            if (success === false) {
+
+              return cb(msg)
+
+            }
+
+            return cb(null);
+
+          })
+
+        })
+
+        async.series(actions, function(err) {
+
+          if (!_.isNull(err)) {
+
+            console.log("Unable to import music");
+            console.log("Error changing music DB");
+            console.log(err);
+            return;
+
+          }
+
+          console.log("Import successful");
+
+        })
+
+      }
+
+      else if (finished === true) {
+
+        console.log("Import successful");
+
+      }
+      
+    })
+
+  }
+
+}
+
+// add in the view docs for the new db
+var addViewDocs = function() {
+
+  var params = {
+    db: 'music_copy',
+    docs: require('./config/db_music.json').documents
+  }
+
+  cloudant.addBulk(params, function(success, msg, data) {
+
+    if (success === false) {
+
+      console.log("Unable to add view documents to db "+database, data);
+      return;
 
     }
 
     else {
 
-      if (errors.length) {
-
-        logs.log_errors(errors, 'music');
-
-      }
-
-      // clear out the buffer
-      tag_buffer.length = 0;
-
-      console.log('Import Successful');
+      console.log("Added view docs");
+      return;
 
     }
 
-  });
+  })
+
+}
+
+var formatDisplayTime = function(ts) {
+
+  var display_time = moment(parseInt(ts)).format('HH:mm:ss');
+
+  if (display_time.substr(0, 2) === "00") {
+
+    display_time = display_time.substr(3);
+
+  }
+
+  return display_time;
 
 }
 

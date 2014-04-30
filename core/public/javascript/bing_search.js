@@ -32,22 +32,27 @@ var doWebSearch = function(el) {
       }
 
       window.location.hash = "browser/web-results/?q="+encodeURIComponent(str);
+      $('#web_search_container').addClass('hidden');
+      $('#web_results_container').removeClass('hidden');
+
+      new scrollInSetup('#fixed_search_bar');
       
     }
+
   });
 
 }
 
-var navigationSearch = function(qs) {
+var navigationSearch = function(params) {
 
-  if (typeof qs !== "object") {
+  if (typeof params.qs !== "object") {
 
     $('#web_results').html("<p>No Results</p>");
     return false;
     
   }
 
-  $('[web-search-input]').val(qs.q);
+  $('[web-search-input]').val(params.qs.q);
   doWebSearch();
 
 }

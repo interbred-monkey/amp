@@ -1,10 +1,10 @@
 each d in data
   div(class='row')
-    div.col-md-12
-      h4
-        a(href=d.Url, class='link') #{d.Title}
-      p=d.Description
-      p
+    div(class='col-md-12 web-result nopad dark-back')
+      div(class='col-md-12')
+        h4
+          a(href=d.Url, class='link') #{d.Title}
+        p=d.Description
         a(href=d.Url, class='link') #{d.DisplayUrl}
       
       

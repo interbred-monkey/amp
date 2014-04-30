@@ -15,15 +15,17 @@ div(id="music-browser" class="col-md-12")
           div(class="col-md-12")
             ul(class="nav nav-pills nav-stacked plain-list")
               li(class="active")
-                a(href="javascript:void") Songs
+                a(href="javascript:void(0)", nav-item="music/artists") Artists
               li(class="")
-                a(href="javascript:void") Artists
+                a(href="javascript:void(0)", nav-item="music/albums") Albums
               li(class="")
-                a(href="javascript:void") Albums
+                a(href="javascript:void(0)", nav-item="music/genres") Genres
+              li(class="")
+                a(href="javascript:void(0)", nav-item="music/songs") Songs
               li(class="hidden")
-                a(href="javascript:void") Queue
+                a(href="javascript:void(0)", nav-item="music/queue") Queue
               li(class="")
-                a(href="javascript:void") Playlists
+                a(href="javascript:void(0)", nav-item="music/playlists") Playlists
 
       div.col-md-10.nopad
-        div(class='col-md-12', main, box, music-browser)
+        div(class='col-md-12 contained pt0 pl0 pr0', main, box, music-browser)

@@ -1,0 +1,68 @@
+div(id="song_view")
+
+  if typeof data[0].album_artwork !== "undefined"
+    image = data[0].album_artwork;
+
+  else
+    image = '/images/record-full-blue.png';
+
+  if typeof set !== "undefined"
+    title = set.replace(/-/g, ' ');
+
+  else
+    title = "Songs";
+
+  div(class="col-md-12 dark-back nopad mb20")
+    div(class="col-md-5")
+      h1(class="birth spaced-text ml30" sub-title) #{title}
+    div(class="col-md-5 pull-right image-cover", music-image-cover="")
+
+  div(songs-list)
+
+    div(class='col-md-12 pt10 pb10 pl0 pr0 no-overflow')
+      div(class='col-md-1 nlm')
+        div(class='col-md-6 ellipsis')
+          span 
+            strong #
+        div(class='col-md-6')
+          span
+      div(class='col-md-3 ellipsis')
+        span 
+          strong Title
+      div(class='col-md-1 ellipsis')
+        span 
+          strong Time
+      div(class='col-md-3 ellipsis')
+        span 
+          strong Artist
+      div(class='col-md-3 ellipsis')
+        span 
+          strong Album
+
+    for d, i in data
+
+      if typeof d.album_artwork === "undefined" || d.album_artwork === null
+        image = '/images/record-full-blue.png';
+        image_class = ' dark-back';
+
+      else
+        image = d.album_artwork;
+        image_class = '';
+
+      div(class='col-md-12 nopad no-overflow', song-row='', path='')
+        div(class='col-md-1 nlm')
+          div(class='col-md-6 ellipsis')
+            span #{i + 1}
+          div(class='col-md-6')
+            img(src='#{image}', title='#{d.title}', class='#{image_class}')
+        div(class='col-md-3 ellipsis')
+          span #{d.title}
+        div(class='col-md-1 ellipsis')
+          span #{d.display_time ? d.display_time : ''}
+        div(class='col-md-3 ellipsis')
+          span #{d.artist}
+        div(class='col-md-3 ellipsis')
+          span #{d.album}
+
+  script.
+    renderMusicCoverImage('#{image}');

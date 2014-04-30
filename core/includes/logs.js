@@ -15,6 +15,7 @@ var log_errors = function(errors, type) {
         fs.writeFile(__dirname+'/../error_logs/'+type+'_import_errors.json', JSON.stringify(errors, undefined, 2), function() {
 
           console.log('errors wrote to '+type+'_import_errors.json');
+          return;
 
         });
 
@@ -27,6 +28,7 @@ var log_errors = function(errors, type) {
       fs.writeFile(__dirname+'/../error_logs/'+type+'_import_errors.json', JSON.stringify(errors, undefined, 2), function() {
 
         console.log('errors wrote to '+type+'_import_errors.json');
+        return;
 
       });
 

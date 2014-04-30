@@ -1,0 +1,19 @@
+div(id="artist_view")
+
+  if typeof data[0].album_artwork !== "undefined"
+    image = data[0].album_artwork;
+
+  else
+    image = '/images/record-full-blue.png';
+
+  div(class="col-md-12 dark-back nopad")
+    div(class="col-md-5")
+      h1(class="birth spaced-text ml30" sub-title) #{data[0].artist}
+    div(class="col-md-5 pull-right image-cover", music-image-cover="")
+
+  div(class="col-md-12", artist-album-group="")
+  div(class="col-md-12", artist-songs-group="")
+  script.
+    renderMusicCoverImage('#{image}');
+    renderArtistSubGroup('artist-album', '#{data[0].artist}');
+    renderArtistSubGroup('artist-songs', '#{data[0].artist}');

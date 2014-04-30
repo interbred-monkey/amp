@@ -118,9 +118,12 @@ var delegateAPI = function(req_path, req_method, req_vars, callback) {
       continue;
 
     }
+
+    // match teh endpoint
+    var endpoint_match = req_path.match(new RegExp(controller_config[cc].endpoint));
     
     // does it match the config?
-    if (controller_config[cc].endpoint.toLowerCase() === req_path.toLowerCase() && controller_config[cc].method.toLowerCase() === req_method.toLowerCase()) {
+    if (!_.isNull(endpoint_match) && controller_config[cc].method.toLowerCase() === req_method.toLowerCase()) {
       
       found_endpoint = true;
 
@@ -140,6 +143,13 @@ var delegateAPI = function(req_path, req_method, req_vars, callback) {
         (config.debug)?console.log("Debug - Module callback "+controller_config[cc].callback+" not found"):"";
         return callback(false, "Not found");
       
+      }
+
+      // if we have a endpoint param then add that to the request vars
+      if (endpoint_match.length > 1) {
+
+        req_vars.endpoint = endpoint_match.slice(1);
+
       }
       
       // run the function

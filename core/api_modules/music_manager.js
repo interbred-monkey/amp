@@ -6,99 +6,109 @@ var fs = require('fs');
 // include the underscore library
 var _ = require('underscore');
 
+// include the cloudant library
+var cloudant = require('./includes/cloudant.js');
+
 // include the music_import library
 var music_import = require('./music_import.js');
 
-// a handy store to keep all the music grouped
-var music_groups = null;
+var getSongList = function(callback) {
 
-var getSongList = function() {
-
-  if (!fs.existsSync(__dirname+'/media_library/music.json')) {
-
-    return false;
-
+  var params = {
+    db: "music",
+    design_name: "matching",
+    view_name: "groupSongs",
+    opts: {
+      reduce: false,
+      include_docs: true,
+      limit: 200
+    }
   }
 
-  // load in the music library
-  var library = require('./media_library/music.json');
+  cloudant.view(params, function(success, msg, data) {
 
-  return library;
+    // cant get any data
+    if (success === false) {
+
+      return callback(false, msg);
+
+    }
+
+    // no errors
+    return callback(success, msg, data);
+
+  })
 
 }
 
-var groupMusic = function() {
+var getMusicGroup = function(view, opts, callback) {
 
-  // already been populated
-  if (!_.isNull(music_groups)) {
+  if (_.isFunction(opts)) {
 
-    return music_groups;
+    callback = opts;
+    opts = {
+      reduce: true,
+      group_level: 2
+    }
 
   }
 
-  // create the structure
-  music_groups = {
-    artists_grouped: {},
-    albums_grouped: {},
-    genres_grouped: {},
-    artists: {},
-    albums: {},
-    genres: []
+  var params = {
+    db: "music",
+    design_name: "matching",
+    view_name: view,
+    opts: opts
   }
 
-  // load in the song list
-  var library = getSongList();
+  cloudant.view(params, function(success, msg, data) {
 
-  // error somewhere
-  if (library === false) {
+     // cant get any data
+    if (success === false) {
 
-    return false;
-
-  }
-
-  for (var l in library) {
-
-    if (_.isUndefined(music_groups.artists[library[l].artist])) {
-
-      music_groups.artists_grouped[library[l].artist] = [];
+      return callback(false, msg);
 
     }
 
-    if (_.isUndefined(music_groups.albums[library[l].album])) {
+    if (!_.isUndefined(data.rows)) {
 
-      music_groups.albums_grouped[library[l].album] = [];
-
-    }
-
-    if (_.isUndefined(music_groups.genres[library[l].genre])) {
-
-      music_groups.genres_grouped[library[l].genre] = [];
+      data = data.rows;
 
     }
 
-    music_groups.artists_grouped[library[l].artist].push(library[l]);
-    music_groups.albums_grouped[library[l].album].push(library[l]);
-    music_groups.genres_grouped[library[l].genre].push(library[l]);
+    return callback(success, msg, data);
 
-    if (_.isUndefined(music_groups.artists[library[l].artist])) {
+  })
 
-      music_groups.artists[library[l].artist] = {};
-      music_groups.artists[library[l].artist].artwork = (!_.isUndefined(library[l].artist_artwork)?library[l].artist_artwork:"/images/record.png");
+}
+
+var reduceGenres = function(d) {
+
+  var rd = [];
+  var k2r = [];
+
+  for (var k in d) {
+
+    if (rd.indexOf(d[k].key[0]) === -1) {
+
+      rd.push(d[k].key[0]);
 
     }
 
-    if (_.isUndefined(music_groups.artists[library[l].artist])) {
+    else {
 
-      music_groups.albums[library[l].album] = {};
-      music_groups.albums[library[l].artist].artwork = (!_.isUndefined(library[l].album_artwork)?library[l].album_artwork:"/images/record.png");
+      k2r.push(k);
 
     }
-
-    music_groups.genres.push(library[l].genre);
 
   }
 
-  return music_groups;
+  for (var r in k2r) {
+
+    d.splice(k2r[r]);
+
+  }
+
+  return d;
 
 }
 
@@ -113,7 +123,8 @@ var reindex = function(params, callback) {
 }
 
 module.exports = {
-  groupMusic: groupMusic,
+  getMusicGroup: getMusicGroup,
   getSongList: getSongList,
+  reduceGenres: reduceGenres,
   reindex: reindex
 }

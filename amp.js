@@ -8,6 +8,9 @@ var server = express();
 var http = require('http');
 var http_server = http.createServer(server);
 
+// get the statup params
+var argv = require('optimist').argv;
+
 //include the file system library
 var fs = require('fs');
 
@@ -17,6 +20,9 @@ var _ = require('underscore');
 // include config etc
 var config = require('./core/config/__config.json');
 var http_request = require('./core/request.js');
+
+// include our setup
+var setup = require('./core/setup.js');
 
 // before we do anything render the ascii
 console.log(fs.readFileSync('./core/includes/startup_art.txt', {encoding: "UTF-8"}));
@@ -111,7 +117,7 @@ var ignorePath = function(path) {
   
 }
 
-/*    End Server Functions */
+/*    End Server Functions    */
 
 /*    Socket IO functions   */
 
@@ -152,3 +158,9 @@ if (io) {
 }
 
 /*    End Socket IO functions   */
+
+/*    Do the setup    */
+
+setup.start();
+
+/*    End setup    */

@@ -14,11 +14,25 @@
     "callback": "displayArtistInfo"
   },
   {
-    "title": "Get the songs from the music library",
+    "title": "Get a music group from the library",
     "method": "GET",
-    "endpoint": "/ajax/music-browser",
+    "endpoint": "/ajax/music-([A-Za-z0-9-_]+)-list",
     "module": "music_manager_display.js",
-    "callback": "displayMusicBrowser"
+    "callback": "displayGroupedList"
+  },
+  {
+    "title": "Get the songs from a group in the music library",
+    "method": "GET",
+    "endpoint": "/ajax/music-subset",
+    "module": "music_manager_display.js",
+    "callback": "displayGroupSubset"
+  },
+  {
+    "title": "Get all the songs in the music library",
+    "method": "GET",
+    "endpoint": "/ajax/music-all",
+    "module": "music_manager_display.js",
+    "callback": "displaySongs"
   },
   {
     "title": "Start a re-index",
