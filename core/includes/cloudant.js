@@ -20,7 +20,7 @@ var getdb = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
@@ -35,11 +35,11 @@ var getdb = function(params, callback) {
 
     if (err) {
 
-      return callback(false, "Unable to fetch db information", err);
+      return callback("Unable to fetch db information", err);
 
     }
 
-    return callback(true, "DB info returned", doc);
+    return callback(null, doc);
 
   })
 
@@ -50,7 +50,7 @@ var createdb = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
@@ -59,20 +59,20 @@ var createdb = function(params, callback) {
     if (config.debug) {
 
       console.log("Create DB: "+params.db);
-      //console.log(err, doc);
+      console.log(err, doc);
 
     }
 
     if (err) {
 
-      return callback(false, "Unable to create db", err);
+      return callback("Unable to create db", err);
 
     }
 
     // add a reference to the db
     dbs[params.db] = nano.db.use(params.db);
 
-    return callback(true, "DB created", doc);
+    return callback(null, doc);
 
   })
 
@@ -92,11 +92,11 @@ var listdbs = function(callback) {
 
     if (err) {
 
-      return callback(false, "Unable to find any dbs");
+      return callback("Unable to find any dbs");
 
     }
 
-    return callback(true, "dbs returned", doc);
+    return callback(null, doc);
 
   })
 
@@ -107,7 +107,7 @@ var destroydb = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
@@ -122,14 +122,14 @@ var destroydb = function(params, callback) {
 
     if (err) {
 
-      return callback(false, "Unable to find db", err);
+      return callback("Unable to find db", err);
 
     }
 
     // remove the reference to the db
     delete(dbs[params.db]);
 
-    return callback(true, "db removed");
+    return callback(null);
 
   })
 
@@ -140,13 +140,13 @@ var replicatedb = function(params, callback) {
 
   if (_.isUndefined(params.from) || !_.isString(params.from)) {
 
-    return callback(false, "from db not valid");
+    return callback("from db not valid");
 
   }
 
   if (_.isUndefined(params.to) || !_.isString(params.to)) {
 
-    return callback(false, "to db not valid");
+    return callback("to db not valid");
 
   }
 
@@ -162,14 +162,14 @@ var replicatedb = function(params, callback) {
 
     if (err) {
 
-      return callback(false, "Unable to replicate db", err);
+      return callback("Unable to replicate db", err);
 
     }
 
     // add a reference to the DB
     dbs[params.to] = nano.db.use(params.to);
 
-    return callback(true, "db replicated");
+    return callback(null);
 
   })
 
@@ -180,13 +180,13 @@ var get = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
   if (_.isUndefined(params.id) || !_.isString(params.id)) {
 
-    return callback(false, "doc to pull not valid");
+    return callback("doc to pull not valid");
 
   }
 
@@ -201,11 +201,11 @@ var get = function(params, callback) {
 
     if (err) {
 
-      return callback(false, "Unable to find doc");
+      return callback("Unable to find doc");
 
     }
 
-    return callback(true, "Doc returned", doc);
+    return callback(null, doc);
 
   })
 
@@ -216,13 +216,13 @@ var head = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
   if (_.isUndefined(params.id) || !_.isString(params.id)) {
 
-    return callback(false, "doc to pull not valid");
+    return callback("doc to pull not valid");
 
   }
 
@@ -237,11 +237,11 @@ var head = function(params, callback) {
 
     if (err) {
 
-      return callback(false, "Unable to find doc");
+      return callback("Unable to find doc");
 
     }
 
-    return callback(true, "Doc returned", doc);
+    return callback(null, doc);
 
   })
 
@@ -252,7 +252,7 @@ var list = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
@@ -267,7 +267,7 @@ var list = function(params, callback) {
 
     if (err || docs.rows.length === 0) {
 
-      return callback(false, "Unable to find docs");
+      return callback("Unable to find docs");
 
     }
 
@@ -284,7 +284,7 @@ var list = function(params, callback) {
 
     }
 
-    return callback(true, "Docs returned", (!_.isEmpty(return_docs)?return_docs:docs));
+    return callback(null, (!_.isEmpty(return_docs)?return_docs:docs));
 
   })
 
@@ -295,13 +295,13 @@ var add = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
   if (_.isUndefined(params.doc) || !_.isObject(params.doc)) {
 
-    return callback(false, "doc to insert not valid");
+    return callback("doc to insert not valid");
 
   }
 
@@ -316,11 +316,11 @@ var add = function(params, callback) {
 
     if (err) {
 
-      return callback(false, "Unable to add doc");
+      return callback("Unable to add doc");
 
     }
 
-    return callback(true, "Doc added", doc);
+    return callback(null, doc);
 
   })
 
@@ -331,19 +331,19 @@ var destroy = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
   if (_.isUndefined(params.rev) || !_.isString(params.rev)) {
 
-    return callback(false, "rev not valid");
+    return callback("rev not valid");
 
   }
 
   if (_.isUndefined(params.id) || !_.isObject(params.id)) {
 
-    return callback(false, "doc to delete not valid");
+    return callback("doc to delete not valid");
 
   }
 
@@ -358,11 +358,11 @@ var destroy = function(params, callback) {
 
     if (err) {
 
-      return callback(false, "Unable to delete doc");
+      return callback("Unable to delete doc");
 
     }
 
-    return callback(true, "Doc deleted", doc);
+    return callback(null, doc);
 
   })
 
@@ -373,13 +373,13 @@ var getBulk = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
   if (_.isUndefined(params.keys) || !_.isArray(params.keys)) {
 
-    return callback(false, "docs to pull is not valid");
+    return callback("docs to pull is not valid");
 
   }
 
@@ -394,7 +394,7 @@ var getBulk = function(params, callback) {
 
     if (err || docs.rows.length === 0) {
 
-      return callback(false, "Unable to find docs");
+      return callback("Unable to find docs");
 
     }
 
@@ -411,7 +411,7 @@ var getBulk = function(params, callback) {
 
     }
 
-    return callback(true, "Docs returned", (!_.isEmpty(return_docs)?return_docs:docs));
+    return callback(null, (!_.isEmpty(return_docs)?return_docs:docs));
 
   })
 
@@ -422,13 +422,13 @@ var addBulk = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
   if (_.isUndefined(params.docs) || !_.isArray(params.docs)) {
 
-    return callback(false, "docs to add is not valid");
+    return callback("docs to add is not valid");
 
   }
 
@@ -443,11 +443,11 @@ var addBulk = function(params, callback) {
 
     if (err) {
 
-      return callback(false, "Unable to add docs");
+      return callback("Unable to add docs");
 
     }
 
-    return callback(true, "Docs added", docs);
+    return callback(null, docs);
 
   })
 
@@ -458,19 +458,19 @@ var view = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
   if (_.isUndefined(params.design_name) || !_.isString(params.design_name)) {
 
-    return callback(false, "design doc name is not valid");
+    return callback("design doc name is not valid");
 
   }
 
   if (_.isUndefined(params.view_name) || !_.isString(params.view_name)) {
 
-    return callback(false, "view name is not valid");
+    return callback("view name is not valid");
 
   }
 
@@ -485,7 +485,7 @@ var view = function(params, callback) {
 
     if (err || docs.rows.length === 0) {
 
-      return callback(false, "Unable to find docs");
+      return callback("Unable to find docs");
 
     }
 
@@ -502,7 +502,7 @@ var view = function(params, callback) {
 
     }
 
-    return callback(true, "Docs returned", (!_.isEmpty(return_docs)?return_docs:docs));
+    return callback(null, (!_.isEmpty(return_docs)?return_docs:docs));
 
   })
 
@@ -513,19 +513,19 @@ var search = function(params, callback) {
 
   if (_.isUndefined(params.db) || !_.isString(params.db)) {
 
-    return callback(false, "db not valid");
+    return callback("db not valid");
 
   }
 
   if (_.isUndefined(params.design_name) || !_.isString(params.design_name)) {
 
-    return callback(false, "design doc name is not valid");
+    return callback("design doc name is not valid");
 
   }
 
   if (_.isUndefined(params.search_name) || !_.isString(params.search_name)) {
 
-    return callback(false, "search name is not valid");
+    return callback("search name is not valid");
 
   }
 
@@ -540,24 +540,22 @@ var search = function(params, callback) {
 
     if (err || docs.rows.length === 0) {
 
-      return callback(false, "Unable to find docs");
+      return callback("Unable to find docs");
 
     }
-
-    var return_docs = [];
 
     // if they want the docs then just give them back the docs
     if (!_.isUndefined(params.opts) && params.opts.include_docs === true) {
 
       for (var dr in docs.rows) {
 
-        return_docs.push(docs.rows[dr].doc);
+        docs.rows[dr] = docs.rows[dr].doc;
 
       }
 
     }
 
-    return callback(true, "Docs returned", (!_.isEmpty(return_docs)?return_docs:docs));
+    return callback(null, docs);
 
   })
 

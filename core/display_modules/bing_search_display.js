@@ -14,12 +14,12 @@ var bing_search = require('../api_modules/bing_search.js');
 
 var displayBingSearch = function(params, callback) {
 
-  bing_search.doBingSearch(params, function(success, msg, data) {
+  bing_search.doBingSearch(params, function(err, data) {
 
     // did we error
-    if (success === false) {
+    if (!_.isNull(err)) {
 
-      return callback(success, msg, data);
+      return callback(err);
 
     }
 
@@ -27,7 +27,7 @@ var displayBingSearch = function(params, callback) {
 
     if (!fs.existsSync(jade_path)) {
 
-      return callback(false, "An error occured reading file");
+      return callback("An error occured reading file");
 
     }
     
@@ -36,7 +36,7 @@ var displayBingSearch = function(params, callback) {
       var fn = jade.compile(_jade);
       var html = fn({data: data});
       
-      return callback(success, msg, html);
+      return callback(null, html);
 
     });
 

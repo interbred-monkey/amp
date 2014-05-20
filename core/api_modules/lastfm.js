@@ -16,7 +16,7 @@ var config = require('./config/__config.json');
 var getSimilarArtists = function(params, callback){
   
   if (_.isUndefined(params.artist)) {
-    return callback(false, "artist is a required parameter");
+    return callback("artist is a required parameter");
   }
 
   var url = "http://ws.audioscrobbler.com/2.0/?method=artist.getsimilar&api_key="+config.api_keys.lastfm+"&format=json&limit=5&autocorrect=1&artist="+encodeURI(params.artist);
@@ -25,13 +25,13 @@ var getSimilarArtists = function(params, callback){
 
     if (!_.isNull(err)) {
 
-      return callback(false, err);
+      return callback(err);
 
     }
 
     if (_.isUndefined(data.artist) || !_.isObject(data.artist)){
 
-      return callback(false, "No results");
+      return callback("No results");
 
     }
 
@@ -40,7 +40,7 @@ var getSimilarArtists = function(params, callback){
 
     data = formatResponse(data);
 
-    return callback(true, "Artist info returned", data);
+    return callback(null, data);
   
   })
   
@@ -50,7 +50,7 @@ var getSimilarArtists = function(params, callback){
 var getArtistInfo = function(params, callback){
   
   if (_.isUndefined(params.artist)) {
-    return callback(false, "artist is a required parameter");
+    return callback("artist is a required parameter");
   }
 
   var url = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key="+config.api_keys.lastfm+"&format=json&limit=5&autocorrect=1&artist="+encodeURI(params.artist);
@@ -59,13 +59,13 @@ var getArtistInfo = function(params, callback){
 
     if (!_.isNull(err)) {
 
-      return callback(false, err);
+      return callback(err);
 
     }
 
     if (_.isUndefined(data.artist) || !_.isObject(data.artist)){
 
-      return callback(false, "No results");
+      return callback("No results");
 
     }
 
@@ -74,7 +74,7 @@ var getArtistInfo = function(params, callback){
 
     data = formatResponse(data);
 
-    return callback(true, "Artist info returned", data);
+    return callback(null, data);
   
   })
   
@@ -85,13 +85,13 @@ var getAlbumInfo = function(params, callback){
   
   if (_.isUndefined(params.artist)) {
 
-    return callback(false, "artist is a required parameter");
+    return callback("artist is a required parameter");
 
   }
 
   if (_.isUndefined(params.album)) {
 
-    return callback(false, "album is a required parameter");
+    return callback("album is a required parameter");
 
   }
 
@@ -100,7 +100,7 @@ var getAlbumInfo = function(params, callback){
   doAPICall(url, function(err, data) {
 
     if (_.isUndefined(data.album) || !_.isObject(data.album)){
-      return callback(false, "No results");
+      return callback("No results");
     }
 
     // return just the artist matches
@@ -108,7 +108,7 @@ var getAlbumInfo = function(params, callback){
 
     data = formatResponse(data);
 
-    return callback(true, "Album info returned", data);
+    return callback(null, data);
   
   });
   
@@ -119,13 +119,13 @@ var getSongInfo = function(params, callback){
   
   if (_.isUndefined(params.artist)) {
 
-    return callback(false, "artist is a required parameter");
+    return callback("artist is a required parameter");
 
   }
 
   if (_.isUndefined(params.track)) {
 
-    return callback(false, "track is a required parameter");
+    return callback("track is a required parameter");
 
   }
 
@@ -134,7 +134,7 @@ var getSongInfo = function(params, callback){
   doAPICall(url, function(err, data) {
 
     if (_.isUndefined(data.track) || !_.isObject(data.track)){
-      return callback(false, "No results");
+      return callback("No results");
     }
 
     // return just the artist matches
@@ -142,7 +142,7 @@ var getSongInfo = function(params, callback){
 
     data = formatResponse(data);
 
-    return callback(true, "Track info returned", data);
+    return callback(null, data);
   
   });
   

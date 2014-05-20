@@ -1,32 +1,9 @@
 @import (reference) "general.less";
-@import (reference) "media.less";
 
 /* -------------------- Text ----------------------*/
 
   h1,h2,h3,h4,p,a,label,div {
     color: @white;
-  }
-
-  h1[title] {
-    line-height: 150px;
-    font-weight: normal;
-    font-size: 100px;
-  }
-
-  h1[sub-title] {
-    line-height: 70px;
-    font-weight: normal;
-    font-size: 50px;
-  }
-
-  h1[sub-title]:first-letter {
-    text-transform: uppercase;
-  }
-
-  .standard {
-    line-height: 40px;
-    font-weight: normal;
-    font-size: 20px;
   }
   
   .birth {
@@ -35,7 +12,7 @@
 
   .black-text h1, .black-text h2, .black-text h3, .black-text h4, 
   .black-text p, .black-text a, .black-text label, .black-text div {
-    color: #000;
+    color: @black;
   }
 
   a.link {
@@ -68,8 +45,12 @@
     position: relative;
   }
 
+  .inline-block {
+    display: inline-block;
+  }
+
   .hidden {
-    display: none !important;
+    display: none @important;
   }
 
   .invisible {
@@ -94,21 +75,21 @@
 
   .pull-middle {
     display: block;
-    float: none !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    float: none @important;
+    margin-left: auto @important;
+    margin-right: auto @important;
   }
 
   .fixed-top {
     position: fixed;
-    top: 0px;
-    left: 0px;
+    top: @0;
+    left: @0;
   }
 
   .fixed-bottom {
     position: fixed;
-    bottom: 0px;
-    left: 0px;
+    bottom: @0;
+    left: @0;
   }
 
   .inline {
@@ -122,59 +103,76 @@
   .no-overflow {
     overflow: hidden;
   }
+
+  .flip {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
+    -k-transform: rotateY(180deg);
+    -o-transform: rotateY(180deg);
+    -ms-transform: rotateY(180deg);
+  }
+
+  .valign-super {
+    vertical-align: super;
+  }
   
   /* Padding */
   .nopad {
-    padding: 0px !important;
+    padding: @0 @important;
   }
 
   .pad10 {
-    padding: 10px;
+    padding: @10;
   }
 
   .pad20 {
-    padding: 20px;
+    padding: @20;
   }
 
   /* Padding Top */
   .pt0 {
-    padding-top: 0px !important;
+    padding-top: @0 @important;
   }
 
   .pt15 {
-    padding-top: 15px;
+    padding-top: @15;
   }
 
   /* Padding Bottom */
   .pb10 {
-    padding-bottom: 10px;
+    padding-bottom: @10;
   }
 
   .pb15 {
-    padding-bottom: 15px;
+    padding-bottom: @15;
   }
 
   /* Padding Left */
   .pl0 {
-    padding-left: 0px !important;
+    padding-left: @0 @important;
   }
 
   .pl30 {
-    padding-left: 30px;
+    padding-left: @30;
   }
 
   /* Padding Right */
   .pr0 {
-    padding-right: 0px !important;
+    padding-right: @0 @important;
   }
 
   .pr30 {
-    padding-right: 30px;
+    padding-right: @30;
   }
 
   /* Margin Top */
   .ntm {
-    margin-top: 0px;
+    margin-top: @0;
+  }
+
+  .mt5 {
+    margin-top: @5;
   }
 
   .mt7 {
@@ -182,70 +180,86 @@
   }
 
   .mt10 {
-    margin-top: 10px;
+    margin-top: @10;
   }
 
   .mt20 {
-    margin-top: 20px;
+    margin-top: @20;
   }
 
   .mt30 {
-    margin-top: 30px;
+    margin-top: @30;
   }
   
   .mt40 {
-    margin-top: 40px;
+    margin-top: @40;
   }
   
   .mt100 {
-    margin-top: 100px;
+    margin-top: @100;
   }
 
   /* Margin Bottom */
   .nbm {
-    margin-bottom: 0px;
+    margin-bottom: @0;
   }
 
   .mb20 {
-    margin-bottom: 20px;
+    margin-bottom: @20;
   }
   
   /* Margin Left */
+  .ml-2 {
+    margin-left: -2px;
+  }
+
+  .ml-5 {
+    margin-left: -@5;
+  }
+
   .nlm {
-    margin-left: 0px !important;
+    margin-left: @0 @important;
   }
 
   .ml5 {
-    margin-left: 5px;
+    margin-left: @5;
   }
 
   .ml10 {
-    margin-left: 10px;
+    margin-left: @10;
   }
 
   .ml15 {
-    margin-left: 15px !important;
+    margin-left: @15 @important;
   }
 
   .ml25 {
-    margin-left: 25px !important;
+    margin-left: 2@5 @important;
   }
 
   .ml30 {
-    margin-left: 30px !important;
+    margin-left: @30 @important;
   }
 
   .ml40 {
-    margin-left: 40px !important;
+    margin-left: @40 @important;
   }
   
   /* Margin Right */
   .mr5 {
-    margin-right: 5px;
+    margin-right: @5;
+  }
+
+  .mr10 {
+    margin-right: @10;
+  }
+
+  .mr15 {
+    margin-right: @15;
   }
 
   .mr20 {
-    margin-right: 20px;
+    margin-right: @20;
   }
   
 /* -------------------- End General Layout ----------------------*/
@@ -254,36 +268,36 @@
 
   [box] {
     background-color: rgba(119,119,119, 0.6);
-    box-shadow: 1px 1px 20px 10px @box-shadow;
-    -webkit-box-shadow: 1px 1px 20px 10px #222;
-    -moz-box-shadow: 1px 1px 20px 10px @box-shadow;
-    -o-box-shadow: 1px 1px 20px 10px @box-shadow;
-    -k-box-shadow: 1px 1px 20px 10px @box-shadow;
-    border-radius: 30px;
-    -webkit-border-radius: 30px;
-    -moz-border-radius: 30px;
-    -o-border-radius: 30px;
-    -k-border-radius: 30px;
+    box-shadow: @1 @1 @20 @10 @very-dark-grey;
+    -webkit-box-shadow: @1 @1 @20 @10 @very-dark-grey;
+    -moz-box-shadow: @1 @1 @20 @10 @very-dark-grey;
+    -o-box-shadow: @1 @1 @20 @10 @very-dark-grey;
+    -k-box-shadow: @1 @1 @20 @10 @very-dark-grey;
+    border-radius: @30;
+    -webkit-border-radius: @30;
+    -moz-border-radius: @30;
+    -o-border-radius: @30;
+    -k-border-radius: @30;
   }
 
   [white-box] {
     background-color: @white;
     border: 2px solid @dark-grey;
-    box-shadow: 1px 1px 20px 10px @box-shadow;
-    -webkit-box-shadow: 1px 1px 20px 10px #222;
-    -moz-box-shadow: 1px 1px 20px 10px @box-shadow;
-    -o-box-shadow: 1px 1px 20px 10px @box-shadow;
-    -k-box-shadow: 1px 1px 20px 10px @box-shadow;
-    border-radius: 30px;
-    -webkit-border-radius: 30px;
-    -moz-border-radius: 30px;
-    -o-border-radius: 30px;
-    -k-border-radius: 30px;
+    box-shadow: @1 @1 @20 @10 @box-shadow;
+    -webkit-box-shadow: @1 @1 @20 @10 @box-shadow;
+    -moz-box-shadow: @1 @1 @20 @10 @box-shadow;
+    -o-box-shadow: @1 @1 @20 @10 @box-shadow;
+    -k-box-shadow: @1 @1 @20 @10 @box-shadow;
+    border-radius: @30;
+    -webkit-border-radius: @30;
+    -moz-border-radius: @30;
+    -o-border-radius: @30;
+    -k-border-radius: @30;
   }
 
   [main] {
-    min-height: 800px !important;
-    padding: 20px 20px 40px;
+    min-height: 800px @important;
+    padding: @20 @20 @40;
   }
 
   [nav-item] {
@@ -295,14 +309,14 @@
   }
 
   ul.plain-list li {
-    margin: 2px 0px;
+    margin: 2px @0;
     list-style-type: none;
   }
 
   .system-message {
     position: fixed;
-    bottom: 0px;
-    right: 10px;
+    bottom: @0;
+    right: @10;
     transition: all 0.5s ease-in-out;
     -webkit-transition: all 0.5s ease-in-out;
     -moz-transition: all 0.5s ease-in-out;
@@ -312,19 +326,19 @@
   }
 
   .group-block {
-    margin: 10px;
-    border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -o-border-radius: 5px;
-    -k-border-radius: 5px;
+    margin: @10;
+    border-radius: @5;
+    -webkit-border-radius: @5;
+    -moz-border-radius: @5;
+    -o-border-radius: @5;
+    -k-border-radius: @5;
     overflow: hidden;
   }
 
   .scroll-in-hidden, .scroll-in-hidden * {
-    height: 0px;
+    height: @0;
     overflow: hidden;
-    padding: 0px;
+    padding: @0;
   }
 
 /* -------------------- End General Display ----------------------*/
@@ -340,12 +354,12 @@
   }
 
   .background-cover {
-    background-size: cover !important;
+    background-size: cover @important;
   }
 
   [background] {
     position: fixed;
-    top: 0px;
+    top: @0;
     height: 100%;
     width: 100%;
     z-index: -1;
@@ -386,21 +400,21 @@
 /* -------------------- Accordion ----------------------*/
 
   [accordion] h3:first-child {
-    margin-top: 0px;
+    margin-top: @0;
   }
 
   [accordion] h3 {
     padding: 8px;
     margin-top: 2px;
     margin-bottom: 2px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -k-border-radius: 5px;
-    -o-border-radius: 5px;
-    -ms-border-radius: 5px;
-    border-radius: 5px;
+    -webkit-border-radius: @5;
+    -moz-border-radius: @5;
+    -k-border-radius: @5;
+    -o-border-radius: @5;
+    -ms-border-radius: @5;
+    border-radius: @5;
     cursor: pointer;
-    border: 1px solid @almost-white;
+    border: @1 solid @almost-white;
     border-bottom-color: transparent;
     color: @white;
     background-color: @blue;
@@ -413,7 +427,7 @@
   }
 
   [accordion] div.content {
-    padding: 10px;
+    padding: @10;
   }
 
 /* -------------------- End Accordion ----------------------*/
@@ -421,7 +435,7 @@
 /* -------------------- Specific Layout ----------------------*/
 
   #preview_search_video {
-    margin: 15px 0px 0px 15px;
+    margin: @15 @0 @0 @15;
   }
 
   [search-preview] {
@@ -431,60 +445,47 @@
     height: 300px;
     background-color: @white;
     border: 3px solid @box-shadow;
-    box-shadow: 1px 1px 20px 10px @box-shadow;
-    -webkit-box-shadow: 1px 1px 20px 10px #222;
-    -moz-box-shadow: 1px 1px 20px 10px @box-shadow;
-    -o-box-shadow: 1px 1px 20px 10px @box-shadow;
-    -k-box-shadow: 1px 1px 20px 10px @box-shadow;
-    border-radius: 30px;
-    -webkit-border-radius: 30px;
-    -moz-border-radius: 30px;
-    -o-border-radius: 30px;
-    -k-border-radius: 30px;
+    box-shadow: @1 @1 @20 @10 @box-shadow;
+    -webkit-box-shadow: @1 @1 @20 @10 @box-shadow;
+    -moz-box-shadow: @1 @1 @20 @10 @box-shadow;
+    -o-box-shadow: @1 @1 @20 @10 @box-shadow;
+    -k-box-shadow: @1 @1 @20 @10 @box-shadow;
+    border-radius: @30;
+    -webkit-border-radius: @30;
+    -moz-border-radius: @30;
+    -o-border-radius: @30;
+    -k-border-radius: @30;
     z-index: 1000000;
   }
 
   #web_results_container {
-    padding: 10px;
+    padding: @10;
   }
 
   #web_results .web-result:first-child {
-    border-top: 1px solid @light-grey;
+    border-top: @1 solid @light-grey;
   }
 
   #web_results .web-result {
-    border-left: 1px solid @light-grey;
-    border-right: 1px solid @light-grey;
-    border-bottom: 1px solid @light-grey;
+    border-left: @1 solid @light-grey;
+    border-right: @1 solid @light-grey;
+    border-bottom: @1 solid @light-grey;
   }
 
   #web_results .web-result .col-md-12 {
-    padding: 15px 20px 15px 20px;
-  }
-
-  [file-browser] {
-    min-height: 760px !important;
+    padding: @15 @20 @15 @20;
   }
 
   [song-row] {
-    border-top: 1px solid @light-grey;
+    border-top: @1 solid @light-grey;
   }
 
   [songs-list] [song-row]:last-child {
-    border-bottom: 1px solid @light-grey;
+    border-bottom: @1 solid @light-grey;
   }
 
   [song-row]:hover {
     background-color: @darker-blue;
-  }
-
-  [song-row] img {
-    height: 40px;
-    vertical-align: top;
-  }
-
-  [song-row] span {
-    line-height: 40px;
   }
 
   .music-group-block {
@@ -492,14 +493,14 @@
   }
 
   .music-group-block img {
-    margin: 10px 0px;
+    margin: @10 @0;
     height: 180px;
   }
 
   .music-group-block .image-container:after {
     position: absolute;
-    top: 0px;
-    left: 0px;
+    top: @0;
+    left: @0;
     content: "";
     height: 100%;
     width: 100%;
@@ -517,16 +518,16 @@
   }
 
   .image-cover {
-    height: 100px;
+    height: @100;
     background-size: cover;
-    background-position: 0px -80px;
+    background-position: @0 -@80;
     background-repeat: no-repeat;
   }
 
   .image-cover:after {
     position: absolute;
-    left: 0px;
-    height: 100px;
+    left: @0;
+    height: @100;
     width: 100%;
     content: "";
     background: -moz-linear-gradient(left, rgba(51,51,51,1) 0%, rgba(51,51,51,1) 15%, rgba(255,255,255,0) 100%); /* FF3.6+ */
@@ -535,16 +536,16 @@
     background: -o-linear-gradient(left, rgba(51,51,51,1) 0%,rgba(51,51,51,1) 15%,rgba(255,255,255,0) 100%); /* Opera 11.10+ */
   }
 
-  .player-icon {
-    height: 45px;
-  }
-
-  #now_playing img {
-    height: 50px;
-    vertical-align: top;
-  }
-
 /* -------------------- End Specific Layout ----------------------*/
+
+/* -------------------- Media Queries ----------------------*/
+
+  @import url('./tv.less') screen and (min-width: 2560px);
+  @import url('./desktop.less') screen and (min-width: 992px) and (max-width: 2560px);
+  @import url('./tablet.less') screen and (min-width: 768px) and (max-width: 992px);
+  @import url('./mobile.less') screen and (max-width: 768px);
+
+/* -------------------- End Media Queries ----------------------*/
 
 /* -------------------- Fonts ----------------------*/
 

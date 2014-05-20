@@ -24,6 +24,10 @@
           "map": "function(doc) { emit([doc.artist, doc.album, (doc.album_artwork?doc.album_artwork:null)], 1); }",
           "reduce": "function(keys, values, rereduce) { return sum(values); }"
         },
+        "groupSongsByAlbumAndArtist": {
+          "map": "function(doc) { emit([doc.album, doc.artist, (doc.album_artwork?doc.album_artwork:null)], 1); }",
+          "reduce": "function(keys, values, rereduce) { return sum(values); }"
+        },
         "groupSongsByArtist": {
           "map": "function(doc) { emit([doc.artist, doc.title, (doc.album_artwork?doc.album_artwork:null)], 1); }",
           "reduce": "function(keys, values, rereduce) { return sum(values); }"
@@ -44,7 +48,7 @@
       "indexes": {
         "music": {
           "analyzer": "standard",
-          "index": "function(doc){\n index(\"artist\", doc.artist, {\"store\": \"yes\"});\n index(\"album\", doc.album, {\"store\": \"yes\"});\n index(\"title\", doc.title, {\"store\": \"yes\"});\n}"
+          "index": "function(doc){\n index(\"artist\", doc.artist, {\"store\": \"yes\"});\n index(\"album\", doc.album, {\"store\": \"yes\"});\n index(\"title\", doc.title, {\"store\": \"yes\"});\n index(\"genre\", doc.genre, {\"store\": \"yes\"});\n }"
         }
       }
     }

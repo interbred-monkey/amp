@@ -1,0 +1,79 @@
+[
+  {
+    "title": "Gets similar artist information from last.fm",
+    "method": "GET",
+    "endpoint": "/ajax/similar-artists",
+    "module": "music_manager_display.js",
+    "callback": "displaySimilarArtistInfo"
+  },
+  {
+    "title": "Gets artist information from last.fm",
+    "method": "GET",
+    "endpoint": "/ajax/artist-info",
+    "module": "music_manager_display.js",
+    "callback": "displayArtistInfo"
+  },
+  {
+    "title": "Get a music group from the library",
+    "method": "GET",
+    "endpoint": "/ajax/music-([A-Za-z0-9-_]+)-list",
+    "module": "music_manager_display.js",
+    "callback": "displayGroupedList"
+  },
+  {
+    "title": "Get the list of artists in the music library",
+    "method": "GET",
+    "endpoint": "/ajax/music-artists",
+    "module": "music_manager_display.js",
+    "callback": "displayMusicArtists"
+  },
+  {
+    "title": "Get the songs by artist and album in the music library",
+    "method": "GET",
+    "endpoint": "/ajax/music-artist-album",
+    "module": "music_manager_display.js",
+    "callback": "displayMusicByArtistAlbum"
+  },
+  {
+    "title": "Get the songs by artist in the music library",
+    "method": "GET",
+    "endpoint": "/ajax/music-artist-songs",
+    "module": "music_manager_display.js",
+    "callback": "displayMusicByArtistSongs"
+  },
+  {
+    "title": "Get the songs by album in the music library",
+    "method": "GET",
+    "endpoint": "/ajax/music-albums",
+    "module": "music_manager_display.js",
+    "callback": "displayAlbumMusic"
+  },
+  {
+    "title": "Get the songs in the music library",
+    "method": "GET",
+    "endpoint": "/ajax/music-songs",
+    "module": "music_manager_display.js",
+    "callback": "displayMusicBySong"
+  },
+  {
+    "title": "Get the songs by genre in the music library",
+    "method": "GET",
+    "endpoint": "/ajax/music-genre",
+    "module": "music_manager_display.js",
+    "callback": "displayMusicByGenre"
+  },
+  {
+    "title": "Get all the songs in the music library",
+    "method": "GET",
+    "endpoint": "/ajax/music-all",
+    "module": "music_manager_display.js",
+    "callback": "displaySongs"
+  },
+  {
+    "title": "Start a re-index",
+    "method": "POST",
+    "endpoint": "/ajax/reindex-music",
+    "module": "music_manager.js",
+    "callback": "reindex"
+  }
+]

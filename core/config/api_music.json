@@ -1,0 +1,9 @@
+[
+  {
+    "title": "Search the music for the given fields",
+    "method": "GET",
+    "endpoint": "/music/search",
+    "module": "music_manager.js",
+    "callback": "musicSearch"
+  }
+]

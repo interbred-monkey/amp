@@ -21,12 +21,12 @@ var music_manager = require('../api_modules/music_manager.js');
 var displayArtistInfo = function(params, callback) {
 
   // get the info from last.fm
-  lastfm.getArtistInfo(params, function(success, msg, data) {
+  lastfm.getArtistInfo(params, function(err, data) {
 
     // did we error
-    if (success === false) {
+    if (!_.isNull(err)) {
 
-      return callback(success, msg, data);
+      return callback(err);
 
     }
 
@@ -37,7 +37,7 @@ var displayArtistInfo = function(params, callback) {
 
       if (!fs.existsSync(jade_path)) {
 
-        return callback(false, "An error occured reading file");
+        return callback("An error occured reading file");
 
       }
       
@@ -46,13 +46,13 @@ var displayArtistInfo = function(params, callback) {
         var fn = jade.compile(_jade);
         var html = fn({data: data});
         
-        return callback(success, msg, html);
+        return callback(null, html);
 
       });
 
     }
     
-    return callback(success, msg, html);
+    return callback(null, html);
     
   });
 
@@ -61,12 +61,12 @@ var displayArtistInfo = function(params, callback) {
 var displaySimilarArtistInfo = function(params, callback) {
 
   // get the info from last.fm
-  lastfm.getSimilarArtists(params, function(success, msg, data) {
+  lastfm.getSimilarArtists(params, function(err, data) {
 
     // did we error
-    if (success === false) {
+    if (!_.isNull(err)) {
 
-      return callback(success, msg, data);
+      return callback(err);
 
     }
 
@@ -74,7 +74,7 @@ var displaySimilarArtistInfo = function(params, callback) {
 
     if (!fs.existsSync(jade_path)) {
 
-      return callback(false, "An error occured reading file");
+      return callback("An error occured reading file");
 
     }
     
@@ -83,11 +83,328 @@ var displaySimilarArtistInfo = function(params, callback) {
       var fn = jade.compile(_jade);
       var html = fn({data: data});
       
-      return callback(success, msg, html);
+      return callback(null, html);
 
     });
     
   });
+
+}
+
+var displayMusicArtists = function(params, callback) {
+
+  var opts = {
+    reduce: false,
+    startkey: [params.set.replace(/-/g, ' ')],
+    limit: 2,
+    include_docs: true
+  }
+
+  music_manager.getMusicByArtist(opts, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      return callback("Unable to get music from "+params.group+" "+params.set);
+
+    }
+
+    var jade_file = 'music_artists_template.jade';
+      
+    var jade_params = {
+      set: params.set,
+      more_docs: (!_.isUndefined(opts.limit) && data.length >= opts.limit?true:false),
+      data: (!_.isUndefined(opts.limit) && data.length >= opts.limit?data.slice(0, opts.limit - 1):data)
+    }
+
+    createHTML(jade_file, jade_params, function(err, html) {
+
+      var return_params = {
+        html: html, 
+        background_image: (!_.isUndefined(data[0].album_artwork)?data[0].album_artwork:"/images/record-full-blue.png")
+      }
+      
+      return callback(null, return_params);
+
+    })
+
+  })
+
+}
+
+var displayMusicByArtistAlbum = function(params, callback) {
+
+  var opts = {
+    reduce: true,
+    startkey: [params.set.replace(/-/g, ' ')],
+    endkey: [params.set.replace(/-/g, ' ')+"𧻓"],
+    limit: 6,
+    group_level: 3
+  }
+
+  if (!_.isUndefined(params.subset)) {
+
+    opts.startkey = [params.set.replace(/-/g, ' '), params.subset.replace(/-/g, ' ')];
+    opts.endkey = [params.set.replace(/-/g, ' '), params.subset.replace(/-/g, ' ')+"𧻓"];
+
+  }
+
+  music_manager.getMusicByArtistAlbum(opts, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      return callback("Unable to get music from "+params.group+" "+params.set);
+
+    }
+
+    var jade_file = 'music_artist_album_template.jade';
+      
+    var jade_params = {
+      set: params.set,
+      more_docs: (!_.isUndefined(opts.limit) && data.length >= opts.limit?true:false),
+      data: (!_.isUndefined(opts.limit) && data.length >= opts.limit?data.slice(0, opts.limit - 1):data)
+    }
+
+    createHTML(jade_file, jade_params, function(err, html) {
+
+      var return_params = {
+        html: html, 
+        background_image: (!_.isUndefined(data[0].album_artwork)?data[0].album_artwork:"/images/record-full-blue.png")
+      }
+      
+      return callback(null, return_params);
+
+    })
+
+  })
+
+}
+
+var displayMusicByAlbumAndArtist = function(params, callback) {
+
+  var opts = {
+    reduce: false,
+    include_docs: true,
+    startkey: [params.set.replace(/-/g, ' '), params.subset.replace(/-/g, ' ')],
+    endkey: [params.set.replace(/-/g, ' '), params.subset.replace(/-/g, ' ')+"𧻓"]
+  }
+
+  music_manager.getMusicByAlbumAndArtist(opts, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      return callback("Unable to get music from "+params.group+" "+params.set);
+
+    }
+
+    var jade_file = 'music_songs_template.jade';
+      
+    var jade_params = {
+      set: params.set,
+      more_docs: (!_.isUndefined(opts.limit) && data.length >= opts.limit?true:false),
+      data: (!_.isUndefined(opts.limit) && data.length >= opts.limit?data.slice(0, opts.limit - 1):data)
+    }
+
+    createHTML(jade_file, jade_params, function(err, html) {
+
+      var return_params = {
+        html: html, 
+        background_image: (!_.isUndefined(data[0].album_artwork)?data[0].album_artwork:"/images/record-full-blue.png")
+      }
+      
+      return callback(null, return_params);
+
+    })
+
+  })
+
+}
+
+var displayMusicByArtistSongs = function(params, callback) {
+
+  var opts = {
+    reduce: false,
+    include_docs: true,
+    startkey: [params.set.replace(/-/g, ' ')],
+    endkey: [params.set.replace(/-/g, ' ')+"𧻓"],
+    limit: 11
+  }
+
+  music_manager.getMusicByArtistSongs(opts, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      return callback("Unable to get music from "+params.group+" "+params.set);
+
+    }
+
+    var jade_file = 'music_artist_songs_template.jade';
+      
+    var jade_params = {
+      set: params.set,
+      more_docs: (!_.isUndefined(opts.limit) && data.length >= opts.limit?true:false),
+      data: (!_.isUndefined(opts.limit) && data.length >= opts.limit?data.slice(0, opts.limit - 1):data)
+    }
+
+    createHTML(jade_file, jade_params, function(err, html) {
+
+      var return_params = {
+        html: html, 
+        background_image: (!_.isUndefined(data[0].album_artwork)?data[0].album_artwork:"/images/record-full-blue.png")
+      }
+      
+      return callback(null, return_params);
+
+    })
+
+  })
+
+}
+
+var displayAlbumMusic = function(params, callback) {
+
+  if (!_.isUndefined(params.subset)) {
+
+    displayMusicByAlbumAndArtist(params, function(err, data) {
+
+      return callback(err, data);
+
+    })
+
+  }
+
+  else {
+
+    displayMusicByAlbum(params, function(err, data) {
+
+      return callback(err, data);
+
+    })
+
+  }
+
+}
+
+var displayMusicByAlbum = function(params, callback) {
+
+  var opts = {
+    reduce: false,
+    include_docs: true,
+    startkey: [params.set.replace(/-/g, ' ')],
+    endkey: [params.set.replace(/-/g, ' ')+"𧻓"]
+  }
+
+  // do we have an artist name to 
+  if (!_.isUndefined(params.subset)) {
+
+
+
+  }
+
+  music_manager.getMusicByAlbum(opts, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      return callback("Unable to get music from "+params.group+" "+params.set);
+
+    }
+
+    var jade_file = 'music_songs_template.jade';
+    var jade_params = {
+      set: params.set,
+      more_docs: (!_.isUndefined(opts.limit) && data.length >= opts.limit?true:false),
+      data: (!_.isUndefined(opts.limit) && data.length >= opts.limit?data.slice(0, opts.limit - 1):data)
+    }
+
+    createHTML(jade_file, jade_params, function(err, html) {
+
+      var return_params = {
+        html: html, 
+        background_image: (!_.isUndefined(data[0].album_artwork)?data[0].album_artwork:"/images/record-full-blue.png")
+      }
+      
+      return callback(null, return_params);
+
+    })
+
+  })
+
+}
+
+var displayMusicBySong = function(params, callback) {
+
+  var opts = {
+    reduce: false,
+    include_docs: true,
+    startkey: [params.set.replace(/-/g, ' ')],
+    endkey: [params.set.replace(/-/g, ' ')+"𧻓"]
+  }
+
+  music_manager.getMusicBySong(opts, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      return callback("Unable to get music from "+params.group+" "+params.set);
+
+    }
+
+    var jade_file = 'music_songs_template.jade';
+    var jade_params = {
+      set: params.set,
+      more_docs: (!_.isUndefined(opts.limit) && data.length >= opts.limit?true:false),
+      data: (!_.isUndefined(opts.limit) && data.length >= opts.limit?data.slice(0, opts.limit - 1):data)
+    }
+
+    createHTML(jade_file, jade_params, function(err, html) {
+
+      var return_params = {
+        html: html, 
+        background_image: (!_.isUndefined(data[0].album_artwork)?data[0].album_artwork:"/images/record-full-blue.png")
+      }
+      
+      return callback(null, return_params);
+
+    })
+
+  })
+
+}
+
+var displayMusicByGenre = function(params, callback) {
+
+  var opts = {
+    reduce: false,
+    include_docs: true,
+    startkey: [params.set.replace(/-/g, ' ')],
+    endkey: [params.set.replace(/-/g, ' ')+"𧻓"]
+  }
+
+  music_manager.getMusicByGenre(opts, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      return callback("Unable to get music from "+params.group+" "+params.set);
+
+    }
+
+    var jade_file = 'music_songs_template.jade';
+    var jade_params = {
+      set: params.set,
+      more_docs: (!_.isUndefined(opts.limit) && data.length >= opts.limit?true:false),
+      data: (!_.isUndefined(opts.limit) && data.length >= opts.limit?data.slice(0, opts.limit - 1):data)
+    }
+
+    createHTML(jade_file, jade_params, function(err, html) {
+
+      var return_params = {
+        html: html, 
+        background_image: (!_.isUndefined(data[0].album_artwork)?data[0].album_artwork:"/images/record-full-blue.png")
+      }
+      
+      return callback(null, return_params);
+
+    })
+
+  })
 
 }
 
@@ -97,11 +414,11 @@ var displayGroupedList = function(params, callback) {
   var regex = new RegExp("("+group[0]+")");
   var view_name = "group"+group.replace(regex, group[0].toUpperCase());
 
-  music_manager.getMusicGroup(view_name, function(success, msg, data) {
+  music_manager.getMusicGroup(view_name, function(err, data) {
 
-    if (success === false) {
+    if (!_.isNull(err)) {
 
-      return callback(false, "Unable to get "+params.endpoint[0]+" music");
+      return callback("Unable to get "+params.endpoint[0]+" music");
 
     }
 
@@ -120,7 +437,7 @@ var displayGroupedList = function(params, callback) {
 
     if (!fs.existsSync(jade_path)) {
 
-      return callback(false, "An error occured reading file");
+      return callback("An error occured reading file");
 
     }
     
@@ -134,57 +451,7 @@ var displayGroupedList = function(params, callback) {
         background_image: "/images/record-full-blue.png"
       }
       
-      return callback(true, "html returned", return_params);
-
-    });
-
-  })
-
-}
-
-var displayGroupSubset = function(params, callback) {
-
-  var opts = getSubGroupViewOpts(params);
-
-  music_manager.getMusicGroup(opts.view, opts, function(success, msg, data) {
-
-    if (success === false) {
-
-      return callback(false, "Unable to get music from "+params.group+" "+params.set);
-
-    }
-
-    var jade_path = __dirname+'/views/music_'+opts.file.replace(/-/g, '_')+'_template.jade';
-
-    if (!fs.existsSync(jade_path)) {
-
-      return callback(false, "An error occured reading file");
-
-    }
-    
-    fs.readFile(jade_path, {encoding: "utf8"}, function(err, _jade) {
-
-      var jade_params = {
-        set: params.set,
-        more_docs: (!_.isUndefined(opts.limit) && data.length >= opts.limit?true:false),
-        data: (!_.isUndefined(opts.limit) && data.length >= opts.limit?data.slice(0, opts.limit - 1):data)
-      }
-
-      if (!_.isUndefined(opts.group_title)) {
-
-        jade_params.group_title = opts.group_title;
-
-      }
-
-      var fn = jade.compile(_jade);
-      var html = fn(jade_params);
-
-      var return_params = {
-        html: html, 
-        background_image: (!_.isUndefined(data[0].album_artwork)?data[0].album_artwork:"/images/record-full-blue.png")
-      }
-      
-      return callback(true, "html returned", return_params);
+      return callback(null, return_params);
 
     });
 
@@ -194,11 +461,11 @@ var displayGroupSubset = function(params, callback) {
 
 var displaySongs = function(params, callback) {
 
-  music_manager.getSongList(function(success, msg, data) {
+  music_manager.getSongList(function(err, data) {
 
-    if (success === false) {
+    if (!_.isNull(err)) {
 
-      return callback(false, "Unable to get music list");
+      return callback("Unable to get music list");
 
     }
 
@@ -206,7 +473,7 @@ var displaySongs = function(params, callback) {
 
     if (!fs.existsSync(jade_path)) {
 
-      return callback(false, "An error occured reading file");
+      return callback("An error occured reading file");
 
     }
     
@@ -220,7 +487,7 @@ var displaySongs = function(params, callback) {
         background_image: ("/images/record-full-blue.png")
       }
       
-      return callback(true, "html returned", return_params);
+      return callback(null, return_params);
 
     });
 
@@ -228,89 +495,45 @@ var displaySongs = function(params, callback) {
 
 }
 
-var getSubGroupViewOpts = function(params, opts) {
+var createHTML = function(filename, data, callback) {
 
-  switch (params.group) {
+  if (_.isFunction(data)) {
 
-    case "artists":
-      var view_opts = {
-        reduce: false,
-        include_docs: true,
-        startkey: [params.set.replace(/-/g, ' ')],
-        limit: 2,
-        view: "groupArtists",
-        file: params.group
-      }
-      break;
-
-    case "artist-album":
-      var view_opts = {
-        reduce: true,
-        startkey: [params.set.replace(/-/g, ' ')],
-        endkey: [params.set.replace(/-/g, ' ')+"𧻓"],
-        limit: 6,
-        group_level: 3,
-        view: "groupArtistByAlbum",
-        file: params.group
-      }
-      break;
-    
-    case "artist-songs":
-      var view_opts = {
-        reduce: false,
-        include_docs: true,
-        startkey: [params.set.replace(/-/g, ' ')],
-        endkey: [params.set.replace(/-/g, ' ')+"𧻓"],
-        limit: 11,
-        view: "groupSongsByArtist",
-        file: params.group
-      }
-      break;
-
-    case "albums":
-      var view_opts = {
-        reduce: false,
-        include_docs: true,
-        startkey: [params.set.replace(/-/g, ' ')],
-        endkey: [params.set.replace(/-/g, ' ')+"𧻓"],
-        view: "groupSongs",
-        file: "songs",
-        group_title: "album"
-      }
-      break;
-
-    case "songs": 
-      var view_opts = {
-        reduce: false,
-        include_docs: true,
-        startkey: [params.set.replace(/-/g, ' ')],
-        endkey: [params.set.replace(/-/g, ' ')+"𧻓"],
-        view: "groupSongs",
-        file: params.group
-      }
-      break;
-
-    case "genres": 
-      var view_opts = {
-        reduce: false,
-        include_docs: true,
-        startkey: [params.set.replace(/-/g, ' ')],
-        endkey: [params.set.replace(/-/g, ' ')+"𧻓"],
-        view: "groupSongsByGenre",
-        file: "songs"
-      }
-      break;
+    callback = data;
+    data = {};
 
   }
 
-  return view_opts;
+  var jade_path = __dirname+'/views/'+filename;
+
+  if (!fs.existsSync(jade_path)) {
+
+    return callback("An error occured reading file");
+
+  }
+  
+  fs.readFile(jade_path, {encoding: "utf8"}, function(err, _jade) {
+
+    var fn = jade.compile(_jade);
+    var html = fn(data);
+    
+    return callback(null, html);
+
+  })
 
 }
 
 module.exports = {
+  displaySongs: displaySongs,
   displayArtistInfo: displayArtistInfo,
   displaySimilarArtistInfo: displaySimilarArtistInfo,
   displayGroupedList: displayGroupedList,
-  displayGroupSubset: displayGroupSubset,
-  displaySongs: displaySongs
+  displayMusicArtists: displayMusicArtists,
+  displayMusicByArtistAlbum: displayMusicByArtistAlbum,
+  displayMusicByAlbumAndArtist: displayMusicByAlbumAndArtist,
+  displayMusicByArtistSongs: displayMusicByArtistSongs,
+  displayMusicByAlbum: displayMusicByAlbum,
+  displayMusicBySong: displayMusicBySong,
+  displayMusicByGenre: displayMusicByGenre,
+  displayAlbumMusic: displayAlbumMusic
 }

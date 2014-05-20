@@ -69,7 +69,7 @@ server.all('*', function(req,res) {
 	rp.params = req.body;
 	
 	// handle the request
-	http_request.processRequest(rp, function(success, msg, data) {
+	http_request.processRequest(rp, function(success, data) {
 	
 	  // do we have some html to put out?
 	  if(!_.isUndefined(data) && data.file){
@@ -78,7 +78,7 @@ server.all('*', function(req,res) {
 	
 	  // must be an api call
 	  else {
-      var ret = {"success":success, "msg": msg};
+      var ret = {"success":success};
         
       if (!_.isUndefined(data)) {
         ret.data = data;

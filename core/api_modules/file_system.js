@@ -22,10 +22,10 @@ var findFiles = function(params, callback) {
   fs.readdir(__dirname+"/media/"+params.path, function(err, dir) {
 
     if (err || (_.isArray(dir) === false && _.isObject === false)) {
-      return callback(false, []);
+      return callback(null, []);
     }
 
-    return callback(true, dir);
+    return callback(null, dir);
 
   });
   
@@ -36,14 +36,14 @@ var listFiles = function(params, callback) {
 
   if (_.isUndefined(file_structure[params.type]) === false) {
 
-    return callback(true, params.type+" returned", file_structure[params.type]);
+    return callback(null, file_structure[params.type]);
 
   }
 
   // load the files
   file_structure[params.type] = getFolderFiles(__dirname+"/media/"+params.type);
 
-  return callback(true, params.type+" returned", file_structure[params.type]);
+  return callback(null, file_structure[params.type]);
   
 }
 

@@ -15,9 +15,9 @@ var file_system = require('../api_modules/file_system.js');
 // perform a file system search
 var displayFileSearch = function(params, callback) {
   
-  file_system.findFiles(params, function(success, msg, data) {
+  file_system.findFiles(params, function(err, data) {
 
-    callback(success, msg, data);
+    callback(err, data);
 
   });
   
@@ -26,19 +26,19 @@ var displayFileSearch = function(params, callback) {
 // get a directory list
 var displayFileList = function(params, callback) {
   
-  file_system.listFiles(params, function(success, msg, data) {
+  file_system.listFiles(params, function(err, data) {
     
     // did we error
-    if (success === false) {
+    if (!_.isNull(err)) {
 
-      return callback(success, msg, data);
+      return callback(err);
 
     }
 
     // we have no files
     if (data.length === 0) {
 
-      return callback(success, msg);
+      return callback(null, data);
 
     }
 
@@ -46,7 +46,7 @@ var displayFileList = function(params, callback) {
 
     if (!fs.existsSync(jade_path)) {
 
-      return callback(false, "An error occured reading file");
+      return callback("An error occured reading file");
 
     }
     
@@ -55,7 +55,7 @@ var displayFileList = function(params, callback) {
       var fn = jade.compile(_jade);
       var html = fn({data: data});
       
-      return callback(success, msg, html);
+      return callback(null, html);
 
     });
 

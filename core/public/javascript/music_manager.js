@@ -12,16 +12,15 @@ var processMusicNav = function(params) {
     case 1:
       loadMusicGroup(params.path[0], function(data) {
 
-        renderMusicSection(data);
+        return renderMusicSection(data);
 
       })
       break;
 
-    case 2:
-    case 3:
+    default:
       loadMusicGroupSubset(params.path, function(data) {
 
-        renderMusicSection(data);
+        return renderMusicSection(data);
 
       })
       break;
@@ -146,9 +145,15 @@ var loadMusicGroupSubset = function(params, callback) {
     set: params[1]
   }
 
+  if (typeof params[2] !== "undefined") {
+
+    data.subset = params[2];
+
+  }
+
   $.ajax({
     type: "GET",
-    url: "/ajax/music-subset",
+    url: "/ajax/music-"+params[0],
     data: data,
     dataType: "json",
     success: function(res){

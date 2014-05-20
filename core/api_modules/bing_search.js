@@ -22,14 +22,14 @@ var doBingSearch = function(params, callback) {
     function(err,response,body){
   
     if (err) {
-      return callback(false, "Encountered an error - "+err);
+      return callback("Encountered an error - "+err);
     }
     else if (response.statusCode !== 200) {
-      return callback(false, "Received header - "+response.statusCode);
+      return callback("Received header - "+response.statusCode);
     }
     
     if(body === ""){
-      return callback(false, "No data recieved");
+      return callback("No data recieved");
     }
 
     // parse the json
@@ -38,14 +38,14 @@ var doBingSearch = function(params, callback) {
     }
     
     catch (e) {
-      return callback(false, "Unable to decode body");
+      return callback("Unable to decode body");
     }
 
     if (_.isUndefined(bing_res.d) || _.isUndefined(bing_res.d.results) || bing_res.d.results.length === 0) {
-      return callback(true, "No results", []);
+      return callback(null, ["No results"]);
     }
 
-    return callback(true, "Search results", bing_res.d.results);
+    return callback(null, bing_res.d.results);
 
   });
 

@@ -269,9 +269,9 @@ var q = async.queue(function(file_info, callback) {
       artist: tag_data.artist
     }
 
-    lastfm.getArtistInfo(params, function(success, msg, data) {
+    lastfm.getArtistInfo(params, function(err, data) {
 
-      if (success === false) {
+      if (!_.isNull(err)) {
 
         return cb(null, tag_data);
 
@@ -313,9 +313,9 @@ var q = async.queue(function(file_info, callback) {
       album: tag_data.album
     }
 
-    lastfm.getAlbumInfo(params, function(success, msg, data) {
+    lastfm.getAlbumInfo(params, function(err, data) {
 
-      if (success === false) {
+      if (!_.isNull(err)) {
 
         return cb(null, tag_data);
 
@@ -357,9 +357,9 @@ var q = async.queue(function(file_info, callback) {
       track: tag_data.title
     }
 
-    lastfm.getSongInfo(params, function(success, msg, data) {
+    lastfm.getSongInfo(params, function(err, data) {
 
-      if (success === false) {
+      if (!_.isNull(err)) {
 
         return cb(null, tag_data);
 
@@ -474,9 +474,9 @@ var processBuffer = function(finished) {
       docs: docsToSend
     }
 
-    cloudant.addBulk(params, function(success, msg, data) {
+    cloudant.addBulk(params, function(err, data) {
 
-      if (success === false) {
+      if (!_.isNull(err)) {
 
         tag_buffer = tag_buffer.concat(docsToSend);
         return;
@@ -494,9 +494,9 @@ var processBuffer = function(finished) {
             db: 'music'
           }
 
-          cloudant.destroydb(params, function(success, msg, data) {
+          cloudant.destroydb(params, function(err, data) {
 
-            if (success === false) {
+            if (!_.isNull(err)) {
 
               return cb(msg);
 
@@ -517,9 +517,9 @@ var processBuffer = function(finished) {
             create_target: true
           }
 
-          cloudant.replicatedb(params, function(success, msg, data) {
+          cloudant.replicatedb(params, function(err, data) {
 
-            if (success === false) {
+            if (!_.isNull(err)) {
 
               return cb(msg)
 
@@ -538,9 +538,9 @@ var processBuffer = function(finished) {
             db: 'music_copy'
           }
 
-          cloudant.destroydb(params, function(success, msg, data) {
+          cloudant.destroydb(params, function(err, data) {
 
-            if (success === false) {
+            if (!_.isNull(err)) {
 
               return cb(msg)
 
@@ -589,9 +589,9 @@ var addViewDocs = function() {
     docs: require('./config/db_music.json').documents
   }
 
-  cloudant.addBulk(params, function(success, msg, data) {
+  cloudant.addBulk(params, function(err, data) {
 
-    if (success === false) {
+    if (!_.isNull(err)) {
 
       console.log("Unable to add view documents to db "+database, data);
       return;

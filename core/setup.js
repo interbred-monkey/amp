@@ -40,7 +40,15 @@ var start = function() {
 
     }
 
-    cloudant.listdbs(function(success, msg, data) {
+    cloudant.listdbs(function(err, data) {
+
+      if (!_.isNull(err)) {
+
+        console.log("********************** Startup Error: **********************");
+        console.log('Unable to connect to cloudant databases');
+        process.exit();
+
+      }
 
       for (var cf in config_files) {
 
@@ -98,9 +106,9 @@ var processConfig = function(config_file, database) {
 
   actions.add = function(cb) {
 
-    cloudant.createdb({db: database}, function(success, msg, data) {
+    cloudant.createdb({db: database}, function(err, data) {
       
-      if (success === false) {
+      if (!_.isNull(err)) {
 
         return cb("Unable to create db "+database, data);
 
@@ -123,9 +131,9 @@ var processConfig = function(config_file, database) {
       docs: require('./config/'+config_file).documents
     }
 
-    cloudant.addBulk(params, function(success, msg, data) {
+    cloudant.addBulk(params, function(err, data) {
 
-      if (success === false) {
+      if (!_.isNull(err)) {
 
         return cb("Unable to add documents to db "+database, data);
 
@@ -174,9 +182,9 @@ var checkViewExists = function(config_file, database) {
     keys: doc_ids
   }
 
-  cloudant.getBulk(params, function(success, msg, data) {
+  cloudant.getBulk(params, function(err, data) {
 
-    if (success === false) {
+    if (!_.isNull(err)) {
 
       console.log("********************** Startup Error: **********************");
       console.log('Unable to pull design documents for db: '+database+" check config to ensure DB access\n");
@@ -225,9 +233,9 @@ var addDocument = function(database, doc) {
     doc: doc
   }
 
-  cloudant.add(params, function(success, msg, data) {
+  cloudant.add(params, function(err, data) {
 
-    if (success === false) {
+    if (!_.isNull(err)) {
 
       console.log("********************** Startup Error: **********************");
       console.log("Unable to add design documents to db "+database+" check config to ensure DB access");
@@ -247,9 +255,9 @@ var removeDB = function(database) {
     db: database
   }
 
-  cloudant.destroydb(params, function(success, msg, data) {
+  cloudant.destroydb(params, function(err, data) {
 
-    if (success === false) {
+    if (!_.isNull(err)) {
 
       console.log("********************** Startup Error: **********************");
       console.log("Unable to remove db "+database+" check config to ensure DB access");

@@ -1,21 +1,19 @@
-@media screen and (min-width: 2560px) {
-  @import (once) "/stylesheets/tv.less";
+.media-selector() {
+  @media screen and (min-width: 2560px) {
+    @media-type: tv;
+  }
+
+  @media screen and (min-width: 992px) and (max-width: 2560px) {
+    @media-type: desktop;
+  }
+
+  @media screen and (min-width: 768px) and (max-width: 992px) {
+    @media-type: tablet;
+  }
+
+  @media screen and (max-width: 768px) {
+    @media-type: mobile;
+  }
 }
 
-@media screen and (min-width: 1200px) {
-  @import (once) "/stylesheets/large-desktop.less";
-}
-
-@media screen and (min-width: 992px) {
-  @import (once) "/stylesheets/desktop.less";
-}
-
-@media screen and (min-width: 768px) and (max-width: 992px) {
-  @import (once) "/stylesheets/tablet.less";
-}
-
-@media screen and (max-width: 768px) {
-  @import (once) "/stylesheets/mobile.less";
-}
-
- @import (once) "/stylesheets/mobile.less";
+@import (reference) "./@{media-type}.less";

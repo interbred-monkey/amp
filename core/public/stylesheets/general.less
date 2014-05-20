@@ -1,14 +1,74 @@
+  
+  @important: !important;
+
 /* -------------------- Colours ---------------------- */
 
-  /* @white: #FFFFFF; */
-  @almost-white: #DDDDDD;
-  @light-grey: #A5A3A9;
-  @dark-grey: #333333;
+  @black: #000000;
   @almost-black: #111111;
+  @very-dark-grey: #222222;
+  @dark-grey: #333333;
+  @light-grey: #A5A3A9;
   @box-shadow: #777777;
+  @white: #FFFFFF;
+  @almost-white: #DDDDDD;
   @light-blue: #00A5FB;
   @blue: #0088CC;
   @darker-blue: #3576BE;
   @yellow: #F8FF00;
 
-  /* -------------------- End Colours ---------------------- */
+/* -------------------- End Colours ---------------------- */
+
+/* -------------------- Sizes ---------------------- */
+
+  @0:   0px;
+  @1:   1px;
+  @5:   5px;
+  @10:  10px;
+  @15:  15px;
+  @20:  20px;
+  @25:  25px;
+  @30:  30px;
+  @35:  35px;
+  @40:  40px;
+  @45:  45px;
+  @50:  50px;
+  @55:  55px;
+  @60:  60px;
+  @65:  65px;
+  @70:  70px;
+  @75:  75px;
+  @80:  80px;
+  @85:  85px;
+  @90:  90px;
+  @95:  95px;
+  @100: 100px;
+  @150: 150px;
+
+
+
+/* -------------------- End Sizes ---------------------- */
+
+/* -------------------- Mixin ---------------------- */
+
+  .text-defaults(@lh, @fs) {
+    line-height: @lh;
+    font-weight: normal;
+    font-size: @fs;
+  }
+
+  .play-btn(@tbb, @lb) {
+    width: 0; 
+    height: 0; 
+    border-top: @tbb solid transparent;
+    border-bottom: @tbb solid transparent; 
+    border-left: @lb solid @blue; 
+  }
+
+  .pause-line(@height, @bw) {
+    display: inline-block;
+    height: @height;
+    width: 0px;
+    border-right: @bw solid @blue;
+  }
+
+/* -------------------- End Mixin ---------------------- */

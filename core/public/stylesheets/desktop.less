@@ -1,5 +1,65 @@
-/* -------------------- Text ----------------------*/
+  /* -------------------- Specific Text ----------------------*/
 
-  @white: #FFFFFF;
+    .h1-title() {
+      .text-defaults(@150, @100);
+    }
 
-/* -------------------- End Text ----------------------*/
+    h1[title] {
+      .text-defaults(@150, @100);
+    }
+
+    h1[sub-title] {
+      .text-defaults(@70, @50);
+    }
+
+    h1[sub-title]:first-letter {
+      text-transform: uppercase;
+    }
+
+    #now_playing span {
+      .text-defaults(@60, @20);
+    }
+
+  /* -------------------- End Specific Text ----------------------*/
+
+  /* -------------------- Specific Layout ----------------------*/
+
+    [file-browser] {
+      min-height: 760px !important;
+    }
+
+    [song-row] img {
+      height: @40;
+      vertical-align: top;
+    }
+
+    [song-row] span {
+      line-height: @40;
+    }
+
+    .player-icon {
+      height: @45;
+    }
+
+    #now_playing img {
+      height: @50;
+      vertical-align: top;
+    }
+
+    [play-btn] {
+      .play-btn(@20, @25)
+    }
+
+    [play-btn-sml] {
+      .play-btn(@15, @20)
+    }
+
+    [pause-line] {
+      .pause-line(@35, 7px)
+    }
+
+    [pause-line-sml] {
+      .pause-line(@30, @5)
+    }
+
+  /* -------------------- End Specific Layout ----------------------*/

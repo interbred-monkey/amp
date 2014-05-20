@@ -45,6 +45,12 @@ var doWebSearch = function(el) {
 
 var navigationSearch = function(params) {
 
+  if (typeof params.qs.q === "undefined") {
+
+    return false;
+
+  }
+
   if (typeof params.qs !== "object") {
 
     $('#web_results').html("<p>No Results</p>");
@@ -52,7 +58,7 @@ var navigationSearch = function(params) {
     
   }
 
-  $('[web-search-input]').val(params.qs.q);
+  $('[web-search-input]').val(decodeURIComponent(params.qs.q));
   doWebSearch();
 
 }

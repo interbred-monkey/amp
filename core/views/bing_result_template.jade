@@ -3,8 +3,8 @@ each d in data
     div(class='col-md-12 web-result nopad dark-back')
       div(class='col-md-12')
         h4
-          a(href=d.Url, class='link') #{d.Title}
+          a(href=d.Url, class='link', target='_blank') #{d.Title}
         p=d.Description
-        a(href=d.Url, class='link') #{d.DisplayUrl}
+        a(href=d.Url, class='link', target='_blank') #{d.DisplayUrl}
       
       
