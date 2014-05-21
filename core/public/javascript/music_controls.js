@@ -1,8 +1,19 @@
+var music_player;
+
 $(function() {
 
   music_player = new musicPlayer();
 
 })
+
+var playTrack = function() {
+
+  music_player.play();
+
+  $('[play-btn]').addClass('hidden');
+  $('[pause-btn]').removeClass('hidden');
+
+}
 
 var nextTrack = function() {
 
@@ -32,13 +43,13 @@ var toggleTrackState = function() {
 
   if (music_player.current_state === "playing") {
 
-    music_player.pause();
+    pauseTrack();
 
   }
 
   else {
 
-    music_player.play();
+    playTrack();
 
   }
 
@@ -46,12 +57,20 @@ var toggleTrackState = function() {
 
 var loadTrack = function(track_src) {
 
-  if (typeof track_src === "undefined") {
+  if (typeof track_src === "undefined" || typeof track_src === "object") {
 
-    track_src = $(this).attr('track_src');
+    track_src = $(this).attr('media');
 
   }
 
   music_player.changeSource(track_src);
+  playTrack();
+
+}
+
+var playingEnded = function() {
+
+  $('[play-btn]').removeClass('hidden');
+  $('[pause-btn]').addClass('hidden');
 
 }

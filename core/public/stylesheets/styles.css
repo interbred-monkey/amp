@@ -116,6 +116,10 @@
   .valign-super {
     vertical-align: super;
   }
+
+  .valign-tbottom {
+    vertical-align: text-bottom;
+  }
   
   /* Padding */
   .nopad {

@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-  
+  $(document).on('dblclick', '[song-row]', loadTrack);
 
 })
 
