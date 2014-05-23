@@ -410,6 +410,12 @@ var musicSearch = function(opts, callback) {
     }
   }
 
+  if (!_.isUndefined(opts.limit)) {
+
+    params.limit = opts.limit;
+
+  }
+
   var query_bits = [];
 
   if (!_.isUndefined(opts.artist)) {

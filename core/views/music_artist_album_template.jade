@@ -1,8 +1,6 @@
 div(id="artist_album_view")
 
-  nav_item_1 = data[0].key[1].replace(/\s/g, '-');
-  nav_item_2 = data[0].key[0].replace(/\s/g, '-');
-  nav_link = 'music/albums/'+nav_item_1+'/'+nav_item_2;
+  nav_link = 'music/albums//'+data[0].artist.replace(/\s/g, '-');
 
   div(class="col-md-12")
     div(class="col-md-5")
@@ -10,17 +8,15 @@ div(id="artist_album_view")
   
   for d, i in data
 
-    if d.key[2] === null
+    if typeof d.album_artwork === "undefined"
       image = '/images/record-full-blue.png';
 
     else
-      image = d.key[2];
-
-    
+      image = d.album_artwork;
 
     div(class='group-block music-group-block col-md-2 nopad no-overflow', nav-item='#{nav_link}')
       div(class='col-md-12 dark-back text-middle')
         div.image-container
-          img(src='#{image}', title='#{d.key[0]} - #{d.key[1]}')
+          img(src='#{image}', title='#{d.artist} - #{d.album}')
       div(class='col-md-12 darker-back pad10 text-middle ellipsis')
-        span #{d.key[1]}
+        span #{d.album}
