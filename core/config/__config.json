@@ -1,8 +1,13 @@
 {
-	"debug": false,
-	"require_socket_io": true,
+  "debug": true,
+  "require_socket_io": true,
+  "cloudant": {
+    "username": "USERNAME HERE",
+    "password": "PASSWORD HERE",
+    "port": 443
+  },
   "api_keys": {
-    "lastfm": "API Key HERE",
-    "bing": "API Key HERE"
+    "lastfm": "API KEY HERE",
+    "bing": "API KEY HERE"
   }
 }
