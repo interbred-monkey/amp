@@ -3,6 +3,7 @@ var music_player;
 $(function() {
 
   music_player = new musicPlayer();
+  setupButtons();
 
 })
 
@@ -55,16 +56,23 @@ var toggleTrackState = function() {
 
 }
 
-var loadTrack = function(track_src) {
+var loadTrack = function(track_data) {
 
-  if (typeof track_src === "undefined" || typeof track_src === "object") {
+  showPlayerBar();
 
-    track_src = $(this).attr('media');
+  if (typeof track_data === "undefined" || typeof track_data.src === "undefined") {
+
+    track_data = {};
+    track_data.src = $(this).attr('media');
+    track_data.img = $(this).find('div:eq(0) div:eq(1) img').attr('src');
+    track_data.title = $(this).children('div:eq(1)').children('span').text();
+    track_data.artist = $(this).children('div:eq(3)').children('span').text();
 
   }
 
-  music_player.changeSource(track_src);
+  music_player.changeSource(track_data.src);
   playTrack();
+  displayTrackData(track_data);
 
 }
 
@@ -72,5 +80,69 @@ var playingEnded = function() {
 
   $('[play-btn]').removeClass('hidden');
   $('[pause-btn]').addClass('hidden');
+
+}
+
+var displayTrackData = function(track_data) {
+  
+  var img_col = $('<div/>').addClass('col-md-1 nopad nlm nrm').append($('<img/>').attr('src', track_data.img));
+  var track_span = $('<span/>').addClass('birth spaced-text').html('Now Playing: '+track_data.artist+' - '+track_data.title).append($('<span/>').attr('music-duration', ''));
+  var track_col = $('<div/>').addClass('col-md-11 nlm').append(track_span);
+  
+  $('#now_playing').html(img_col).append(track_col);
+
+}
+
+var musicDurationUpdate = function(duration) {
+
+  $('[music-duration]').text(" ("+duration+")");
+
+}
+
+var showPlayerBar = function() {
+
+  if ($('#player_controls').hasClass('hidden')) {
+
+    $('#player_controls').removeClass('hidden');
+
+  }
+
+}
+
+var hidePlayerBar = function() {
+
+  if (!$('#player_controls').hasClass('hidden')) {
+
+    $('#player_controls').addClass('hidden');
+
+  }
+
+}
+
+var setupButtons = function() {
+
+  $('[play-btn]').click(function() {
+
+    playTrack();
+
+  })
+
+  $('[pause-btn]').click(function() {
+
+    pauseTrack();
+
+  })
+
+  $('[next-btn]').click(function() {
+
+    nextTrack();
+
+  })
+
+  $('[prev-btn]').click(function() {
+
+    previousTrack();
+
+  })
 
 }

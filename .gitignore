@@ -1,4 +1,5 @@
 .DS_Store
+.nodemonignore
 node_modules/
 core/public/images/backgrounds/main/
 core/public/media/music/

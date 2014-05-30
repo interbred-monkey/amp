@@ -14,7 +14,8 @@ musicPlayer.prototype = {
   _play_index: 0,
   _current_state: null,
   _src: "",
-  _repeat_all: false
+  _repeat_all: false,
+  _duration: ""
 }
 
 musicPlayer.prototype.setup = function() {
@@ -27,7 +28,8 @@ musicPlayer.prototype.setup = function() {
 
   })
 
-  $(_musicPlayer._mp).bind('ended', _musicPlayer.playerEnded)
+  $(_musicPlayer._mp).bind('loadedmetadata', _musicPlayer.playerDurationChange);
+  $(_musicPlayer._mp).bind('ended', _musicPlayer.playerEnded);
 
 }
 
@@ -144,5 +146,23 @@ musicPlayer.prototype.playerEnded = function() {
 
   // if we get here there is nothing else to play
   playingEnded();
+
+}
+
+musicPlayer.prototype.playerDurationChange = function() {
+
+  var _d = moment.unix(_musicPlayer._mp.duration);
+  
+  var _time_format = (_d.hours() > 0?"hh:mm:ss":"mm:ss");
+
+  _musicPlayer._duration = _d.format(_time_format);
+
+  if (typeof musicDurationUpdate === "function") {
+
+    return musicDurationUpdate(_musicPlayer._duration);
+
+  }
+
+  return;
 
 }
