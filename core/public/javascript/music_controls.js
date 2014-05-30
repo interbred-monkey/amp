@@ -3,7 +3,7 @@ var music_player;
 $(function() {
 
   music_player = new musicPlayer();
-  setupButtons();
+  setupMusicPlayerButtons();
 
 })
 
@@ -13,6 +13,15 @@ var playTrack = function() {
 
   $('[play-btn]').addClass('hidden');
   $('[pause-btn]').removeClass('hidden');
+
+}
+
+var pauseTrack = function() {
+
+  music_player.pause();
+
+  $('[play-btn]').removeClass('hidden');
+  $('[pause-btn]').addClass('hidden');
 
 }
 
@@ -119,29 +128,37 @@ var hidePlayerBar = function() {
 
 }
 
-var setupButtons = function() {
+var setupMusicPlayerButtons = function() {
 
-  $('[play-btn]').click(function() {
+  $('#player_controls').on('click', '[play-btn]', function() {
+
+    console.log('play');
 
     playTrack();
 
   })
 
-  $('[pause-btn]').click(function() {
+  $('#player_controls').on('click', '[pause-btn]', function() {
+
+    console.log('pause');
 
     pauseTrack();
 
   })
 
-  $('[next-btn]').click(function() {
+  $('#player_controls').on('click', '[next-btn]', function() {
+
+    console.log('next');
 
     nextTrack();
 
   })
 
-  $('[prev-btn]').click(function() {
+  $('#player_controls').on('click', '[prev-btn]', function() {
 
-    previousTrack();
+    console.log('prev');
+
+    prevTrack();
 
   })
 
