@@ -7,3 +7,4 @@ core/public/media/images/
 core/public/media/video/
 core/media_library/
 core/error_logs/
+core/config/__config.json
