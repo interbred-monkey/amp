@@ -293,6 +293,19 @@ var scrollInSetup = function(_el) {
 
 }
 
+var addFillerBar = function(height) {
+
+  var filler_bar = $('<div/>').addClass('filler_bar').height(height);
+  $(filler_bar).insertAfter('[main]');
+
+}
+
+var removeFillerBar = function(height) {
+
+  $('.filler_bar').remove();
+
+}
+
 var _contains = function(_o, _v) {
 
   if (typeof _o !== "object") {

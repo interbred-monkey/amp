@@ -27,13 +27,13 @@ var pauseTrack = function() {
 
 var nextTrack = function() {
 
-  music_player.next();
+  music_player.nextTrack();
 
 }
 
 var prevTrack = function() {
 
-  music_player.previous();
+  music_player.previousTrack();
 
 }
 
@@ -71,16 +71,18 @@ var loadTrack = function(track_data) {
 
   if (typeof track_data === "undefined" || typeof track_data.src === "undefined") {
 
-    track_data = {};
-    track_data.src = $(this).attr('media');
-    track_data.img = $(this).find('div:eq(0) div:eq(1) img').attr('src');
-    track_data.title = $(this).children('div:eq(1)').children('span').text();
-    track_data.artist = $(this).children('div:eq(3)').children('span').text();
+    track_data = htmlTrackData(this);
+    createVisibleTrackList(this);
 
   }
 
   music_player.changeSource(track_data.src);
   playTrack();
+
+}
+
+var updatedTrackData = function(track_data) {
+
   displayTrackData(track_data);
 
 }
@@ -113,6 +115,8 @@ var showPlayerBar = function() {
   if ($('#player_controls').hasClass('hidden')) {
 
     $('#player_controls').removeClass('hidden');
+    var bar_height = $('#player_controls').height() * 2;
+    addFillerBar(bar_height);
 
   }
 
@@ -123,6 +127,7 @@ var hidePlayerBar = function() {
   if (!$('#player_controls').hasClass('hidden')) {
 
     $('#player_controls').addClass('hidden');
+    removeFillerBar();
 
   }
 

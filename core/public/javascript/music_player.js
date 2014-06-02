@@ -15,6 +15,8 @@ musicPlayer.prototype = {
   _current_state: null,
   _src: "",
   _repeat_all: false,
+  _repeat_one: false,
+  _shuffle_tracks: false,
   _duration: ""
 }
 
@@ -55,6 +57,18 @@ musicPlayer.prototype.changeSource = function(_src) {
 
 }
 
+musicPlayer.prototype.updatePlayIndex = function(_index) {
+
+  if (isNaN(_index) || _musicPlayer._play_index === _index) {
+
+    return false;
+
+  }
+
+  _musicPlayer._play_index = _index;
+
+}
+
 musicPlayer.prototype.pause = function() {
 
   _musicPlayer._mp.pause();
@@ -66,6 +80,12 @@ musicPlayer.prototype.play = function() {
 
   _musicPlayer._mp.play();
   _musicPlayer._current_state = "playing";
+
+  if (typeof updatedTrackData === "function") {
+
+    updatedTrackData(_musicPlayer._play_list[_musicPlayer._play_index]);
+
+  }
 
 }
 
@@ -87,6 +107,12 @@ musicPlayer.prototype.addPlaylist = function(_play_list) {
 
 }
 
+musicPlayer.prototype.hasPlaylist = function() {
+
+  return (_musicPlayer._play_list.length === 0?false:true);
+
+}
+
 musicPlayer.prototype.repeat = function() {
 
   _musicPlayer._mp.loop = (this._mp.loop === true?false:true);
@@ -101,31 +127,35 @@ musicPlayer.prototype.repeatAll = function() {
 
 musicPlayer.prototype.nextTrack = function() {
 
-  _musicPlayer._play_index = this._play_index + 1;
+  _musicPlayer._play_index++;
 
-  if (this._play_index >= this._play_list.length) {
+  if (_musicPlayer._play_index >= _musicPlayer._play_list.length) {
 
-    this._play_index = 0;
+    _musicPlayer._play_index = 0;
 
   }
 
-  _musicPlayer.changeSource(this._play_list[this._play_index].filepath);
+  _musicPlayer.changeSource(_musicPlayer._play_list[_musicPlayer._play_index].src);
   _musicPlayer.play();
+
+  return _musicPlayer._play_list[_musicPlayer._play_index];
 
 }
 
 musicPlayer.prototype.previousTrack = function() {
 
-  _musicPlayer._play_index = _musicPlayer._play_index - 1;
+  _musicPlayer._play_index--;
 
-  if (this._play_index < 0) {
+  if (_musicPlayer._play_index === -1) {
 
-    this._play_index = _musicPlayer._play_list.length - 1;
+    _musicPlayer._play_index = (_musicPlayer._play_list.length - 1 > 0?_musicPlayer._play_list.length - 1:0);
 
   }
 
-  _musicPlayer.changeSource(_musicPlayer._play_list[_musicPlayer._play_index].filepath);
+  _musicPlayer.changeSource(_musicPlayer._play_list[_musicPlayer._play_index].src);
   _musicPlayer.play();
+
+  return this._play_list[_musicPlayer._play_index];
 
 }
 
@@ -133,14 +163,25 @@ musicPlayer.prototype.playerEnded = function() {
 
   if (_musicPlayer._repeat === true) {
 
+    _musicPlayer.play();
     return false;
 
   }
 
+  // start from the begining if we are at the end
   if (_musicPlayer._repeat_all === true && _musicPlayer._play_index === _musicPlayer._play_list.length - 1) {
 
     _musicPlayer._play_index = -1;
     _musicPlayer.nextTrack();
+    return;
+
+  }
+
+  // play the next track if there is one
+  else if (_musicPlayer._play_index < _musicPlayer._play_list.length -1) {
+
+    _musicPlayer.nextTrack();
+    return;
 
   }
 
