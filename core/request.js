@@ -27,14 +27,14 @@ var processRequest = function(req, callback) {
 	// is this a favicon request
 	if (req.path === '/favicon.ico') {
 
-	  return callback(false,"Favicon, dont load anything");
+	  return callback("Favicon, dont load anything");
     
 	}
 	
   // no path defined back out
   if (_.isUndefined(req.path)) {
 
-    return callback(false, "Not found");
+    return callback("Not found");
 
   }
 
@@ -49,9 +49,9 @@ var processRequest = function(req, callback) {
     var vars = buildVars(req.params, req.query);
     
     // call the respective function
-    delegateAPI(req.path, req.method, vars, function(success, msg, data) {
+    delegateAPI(req.path, req.method, vars, function(err, data) {
       
-      return callback(success, msg, data);
+      return callback(err, data);
       
     });
     
@@ -81,7 +81,7 @@ var processRequest = function(req, callback) {
         data.file = file;
         data.file_path = "/views/404.jade";
 
-        return callback(false, data);
+        return callback(data);
 
       }
   
@@ -92,7 +92,7 @@ var processRequest = function(req, callback) {
       data.file_path = '/views/'+file;
       data.path = url_bits;
       data.vars = buildVars(req.params, req.query);
-      callback(true, data);
+      callback(null, data);
   
     });
     
@@ -104,7 +104,7 @@ var delegateAPI = function(req_path, req_method, req_vars, callback) {
   
   // do we have some config?
   if (!_.isArray(controller_config) || controller_config.length === 0) {
-    return callback(false, {error: "Could not load config"});
+    return callback({error: "Could not load config"});
   }
   
   // loop the config to see what we should do with the request
@@ -133,7 +133,7 @@ var delegateAPI = function(req_path, req_method, req_vars, callback) {
       if (_.isUndefined(modules[module])) {
 
         (config.debug)?console.log("Debug - Module "+module+" not found"):"";
-        return callback(false, {error: "Not found"});
+        return callback({error: "Not found"});
 
       }
 
@@ -141,7 +141,7 @@ var delegateAPI = function(req_path, req_method, req_vars, callback) {
       if (_.isUndefined(modules[module]) || !_.isFunction(modules[module][controller_config[cc].callback])) {
 
         (config.debug)?console.log("Debug - Module callback "+controller_config[cc].callback+" not found"):"";
-        return callback(false, {error: "Not found"});
+        return callback({error: "Not found"});
       
       }
 
@@ -163,7 +163,7 @@ var delegateAPI = function(req_path, req_method, req_vars, callback) {
 
         }
 
-        return callback((!_.isNull(err)?false:true), data);
+        return callback(err, data);
         
       });
       
@@ -178,7 +178,7 @@ var delegateAPI = function(req_path, req_method, req_vars, callback) {
   if (found_endpoint === false) {
 
     (config.debug)?console.log("Debug - Endpoint "+req_path.toLowerCase()+" not found"):"";
-    return callback (false, {error: "Endpoint not found"});
+    return callback ({error: "Endpoint not found"});
   
   }
   

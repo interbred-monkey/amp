@@ -151,20 +151,41 @@ var displayMusicArtists = function(params, callback) {
 var displayMusicByArtistAlbum = function(params, callback) {
 
   var opts = {
-    artist: params.set.replace(/-/g, ' '),
-    limit: 6,
-    filename: 'music_artist_album_template.jade'
+    reduce: true,
+    include_docs: false,
+    group_level: 3,
+    startkey: [params.set.replace(/-/g, ' ')],
+    endkey: [params.set.replace(/-/g, ' ')+"𧻓"]
   }
 
-  if (!_.isUndefined(params.subset)) {
+  (_.isUndefined(params.no_limit)?opts.limit = 6:"");
 
-    opts.album = params.subset.replace(/-/g, ' ')
+  music_manager.getMusicByArtistAlbum(opts, function(err, data) {
 
-  }
+    if (!_.isNull(err)) {
 
-  searchToHTML(opts, function(err, data) {
+      return callback("Unable to get music from "+params.group+" "+params.set);
 
-    return callback(err, data);
+    }
+
+    var jade_file = 'music_artist_album_template.jade';
+      
+    var jade_params = {
+      set: params.set,
+      more_docs: (!_.isUndefined(opts.limit) && data.length >= opts.limit?true:false),
+      data: (!_.isUndefined(opts.limit) && data.length >= opts.limit?data.slice(0, opts.limit - 1):data)
+    }
+
+    createHTML(jade_file, jade_params, function(err, html) {
+
+      var return_params = {
+        html: html, 
+        background_image: (!_.isUndefined(data[0].album_artwork)?data[0].album_artwork:"/images/record-full-blue.png")
+      }
+      
+      return callback(null, return_params);
+
+    })
 
   })
 
@@ -253,7 +274,20 @@ var displayMusicByArtistSongs = function(params, callback) {
 
 var displayAlbumMusic = function(params, callback) {
 
-  if (!_.isUndefined(params.subset)) {
+  if (params.set === "" && !_.isUndefined(params.subset)) {
+
+    params.set = params.subset;
+    delete params.subset;
+
+    displayMusicByArtistAlbum(params, function(err, data) {
+
+      return callback(err, data);
+
+    })
+
+  }
+
+  else if (!_.isUndefined(params.set) && !_.isUndefined(params.subset)) {
 
     displayMusicByAlbumAndArtist(params, function(err, data) {
 
