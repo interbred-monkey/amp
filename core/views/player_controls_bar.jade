@@ -13,5 +13,17 @@ div(id='player_controls', class='col-md-12 pad10 dark-back fixed-bottom hidden')
       div(play-btn-sml, class='inline-block ml-5')
       div(pause-line-sml, class='ml-2')
 
-  div.col-md-8
+  div.col-md-6
     div(id='now_playing')
+
+  div.col-md-2
+    div(mp-volume-slider='', class="col-md-9")
+      input(volume-slider='', type='range', min='0', max='1', step='0.1', value='1', class='pull-right')
+
+    div.col-md-3
+      div(mp-btn, volume-btn, class='inline-block mt5')
+        div(speaker-back, class='inline-block')
+        div(speaker-cone, class='inline-block')
+        div(speaker-lines, class='inline-block')
+          div
+            div

@@ -359,6 +359,10 @@
     cursor: pointer;
   }
 
+  div[mp-volume-slider] {
+    padding-top: 23px;
+  }
+
 /* -------------------- End General Display ----------------------*/
 
 /* -------------------- Backgrounds ----------------------*/

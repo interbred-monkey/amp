@@ -24,13 +24,7 @@ musicPlayer.prototype.setup = function() {
 
   _musicPlayer.generatePlayer();
 
-  $(_musicPlayer._mp).bind('volumechange', function() {
-
-    console.log(_musicPlayer._mp.volume);
-
-  })
-
-  $(_musicPlayer._mp).bind('loadedmetadata', _musicPlayer.playerDurationChange);
+  $(_musicPlayer._mp).bind('loadedmetadata', _musicPlayer.playerChangedTrack);
   $(_musicPlayer._mp).bind('ended', _musicPlayer.playerEnded);
 
 }
@@ -80,12 +74,6 @@ musicPlayer.prototype.play = function() {
 
   _musicPlayer._mp.play();
   _musicPlayer._current_state = "playing";
-
-  if (typeof updatedTrackData === "function") {
-
-    updatedTrackData(_musicPlayer._play_list[_musicPlayer._play_index]);
-
-  }
 
 }
 
@@ -190,7 +178,7 @@ musicPlayer.prototype.playerEnded = function() {
 
 }
 
-musicPlayer.prototype.playerDurationChange = function() {
+musicPlayer.prototype.playerChangedTrack = function() {
 
   var _d = moment.unix(_musicPlayer._mp.duration);
   
@@ -198,12 +186,68 @@ musicPlayer.prototype.playerDurationChange = function() {
 
   _musicPlayer._duration = _d.format(_time_format);
 
-  if (typeof musicDurationUpdate === "function") {
+  _musicPlayer._play_list[_musicPlayer._play_index].duration = _d.format(_time_format);
 
-    return musicDurationUpdate(_musicPlayer._duration);
+  if (typeof updatedTrackData === "function") {
+
+    updatedTrackData(_musicPlayer._play_list[_musicPlayer._play_index]);
 
   }
 
   return;
+
+}
+
+musicPlayer.prototype.isPlaying = function() {
+
+  return (_musicPlayer._mp.paused === false?true:false);
+
+}
+
+musicPlayer.prototype.volumeUp = function() {
+
+  if(_musicPlayer._mp.volume < 1){
+
+    _musicPlayer._mp.volume += 0.1;
+
+  }
+
+  else{
+
+    _musicPlayer._mp.volume = 1;
+
+  }
+
+  return;
+
+}
+
+musicPlayer.prototype.volumeDown = function() {
+
+  if(_musicPlayer._mp.volume > 0.1){
+
+    _musicPlayer._mp.volume -= 0.1;
+
+  }
+
+  else{
+
+    _musicPlayer._mp.volume = 0;
+
+  }
+
+  return;
+
+}
+
+musicPlayer.prototype.setVolume = function(_num) {
+
+  if (isNaN(_num) || _num > 1 || _num < 0) {
+
+    return false;
+
+  }
+
+  _musicPlayer._mp.volume = _num;
 
 }

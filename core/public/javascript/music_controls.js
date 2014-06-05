@@ -4,6 +4,7 @@ $(function() {
 
   music_player = new musicPlayer();
   setupMusicPlayerButtons();
+  setupMusicPlayerKeypresses();
 
 })
 
@@ -49,19 +50,9 @@ var trackVolumeDown = function() {
 
 }
 
-var toggleTrackState = function() {
+var changeTrackVolume = function(level) {
 
-  if (music_player.current_state === "playing") {
-
-    pauseTrack();
-
-  }
-
-  else {
-
-    playTrack();
-
-  }
+  music_player.setVolume(level)
 
 }
 
@@ -97,16 +88,10 @@ var playingEnded = function() {
 var displayTrackData = function(track_data) {
   
   var img_col = $('<div/>').addClass('col-md-1 nopad nlm nrm').append($('<img/>').attr('src', track_data.img));
-  var track_span = $('<span/>').addClass('birth spaced-text').html('Now Playing: '+track_data.artist+' - '+track_data.title).append($('<span/>').attr('music-duration', ''));
+  var track_span = $('<span/>').addClass('birth spaced-text').html('Now Playing: '+track_data.artist+' - '+track_data.title).append($('<span/>').attr('music-duration', '').text(" ("+track_data.duration+")"));
   var track_col = $('<div/>').addClass('col-md-11 nlm').append(track_span);
   
   $('#now_playing').html(img_col).append(track_col);
-
-}
-
-var musicDurationUpdate = function(duration) {
-
-  $('[music-duration]').text(" ("+duration+")");
 
 }
 
@@ -137,15 +122,11 @@ var setupMusicPlayerButtons = function() {
 
   $('#player_controls').on('click', '[play-btn]', function() {
 
-    console.log('play');
-
     playTrack();
 
   })
 
   $('#player_controls').on('click', '[pause-btn]', function() {
-
-    console.log('pause');
 
     pauseTrack();
 
@@ -153,17 +134,88 @@ var setupMusicPlayerButtons = function() {
 
   $('#player_controls').on('click', '[next-btn]', function() {
 
-    console.log('next');
-
     nextTrack();
 
   })
 
   $('#player_controls').on('click', '[prev-btn]', function() {
 
-    console.log('prev');
-
     prevTrack();
+
+  })
+
+  $('[mp-volume-slider]').on('change', '[volume-slider]', function() {
+
+    changeTrackVolume($(this).val());
+
+  })
+
+}
+
+var setupMusicPlayerKeypresses = function() {
+
+  $(document).on('keydown',function(e){
+    
+    // if it's the search box then dont bother
+    if(e.target.nodeName === "INPUT"){
+
+      return false;
+
+    }
+
+    console.log(e.keyCode);
+    var matched_keycode = false;
+  
+    switch(e.keyCode){
+      
+      //Spacebar for pausing and playing
+      case 32:
+        (music_player.isPlaying() === true?pauseTrack():playTrack());
+        matched_keycode = true;
+      break;
+
+      //N or right arrow - next song
+      case 39:
+      case 110:
+        nextTrack();
+        matched_keycode = true;
+      break;
+
+      //B - Previous song
+      case 37:
+      case 98:
+        prevTrack();
+        matched_keycode = true;
+      break;
+
+      //+ - Volume up
+      case 38:
+      case 43:
+        trackVolumeUp();
+        matched_keycode = true;
+      break;
+
+      //- - Volume down
+      case 40:
+      case 45:
+        trackVolumeDown();
+        matched_keycode = true;
+      break;
+
+      //M - Mute
+      case 109:
+        muteVolume();
+        matched_keycode = true;
+      break;
+
+    }
+
+    if (matched_keycode === true) {
+
+      // prevent scrolling etc
+      e.preventDefault();
+
+    }
 
   })
 

@@ -71,4 +71,39 @@
     border-right: @bw solid @blue;
   }
 
+  .speaker-back(@width, @height, @br, @va) {
+    width: @width;
+    height: @height;
+    background-color: @blue;
+    border-top-left-radius: @br;
+    border-bottom-left-radius: @br;
+    vertical-align: @va;
+  }
+
+  .speaker-cone(@bs, @br, @ml) {
+    width: @0;
+    height: @0;
+    border-top: @bs solid transparent;
+    border-bottom: @bs solid transparent; 
+    border-right: @bs solid @blue; 
+    border-top-right-radius: @br;
+    border-bottom-right-radius: @br;
+    margin-left: -@ml;
+  }
+
+  .speaker-lines(@ml, @va) {
+    margin-left: -@ml;
+    vertical-align: @va;
+  }
+
+  .speaker-lines-div(@mh, @p, @b, @br) {
+    min-height: @mh;
+    padding: @p;
+    border: @b solid @blue;
+    border-left-color: transparent;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    border-radius: @br;
+  }
+
 /* -------------------- End Mixin ---------------------- */
