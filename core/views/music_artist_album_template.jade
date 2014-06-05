@@ -1,22 +1,24 @@
 div(id="artist_album_view")
 
-  nav_link = 'music/albums//'+data[0].artist.replace(/\s/g, '-');
+  albums_nav_link = 'music/albums//'+data[0].key[0].replace(/\s/g, '-');
 
   div(class="col-md-12")
     div(class="col-md-5")
-      h2(class="birth spaced-text" sub-title, nav-item='#{nav_link}') Albums
+      h2(class="birth spaced-text" sub-title, nav-item='#{albums_nav_link}') Albums
   
   for d, i in data
+  
+    album_nav_link = 'music/albums/'+d.key[1].replace(/\s/g, '-')+'/'+d.key[0].replace(/\s/g, '-');
 
-    if typeof d.album_artwork === "undefined"
+    if d.key[2] === null
       image = '/images/record-full-blue.png';
 
     else
-      image = d.album_artwork;
+      image = d.key[2];
 
-    div(class='group-block music-group-block col-md-2 nopad no-overflow', nav-item='#{nav_link}')
+    div(class='group-block music-group-block col-md-2 nopad no-overflow', nav-item='#{album_nav_link}')
       div(class='col-md-12 dark-back text-middle')
         div.image-container
-          img(src='#{image}', title='#{d.artist} - #{d.album}')
+          img(src='#{image}', title='#{d.key[0]} - #{d.key[1]}')
       div(class='col-md-12 darker-back pad10 text-middle ellipsis')
-        span #{d.album}
+        span #{d.key[1]}

@@ -10,6 +10,14 @@ var cloudant_url = "https://"+config.cloudant.username+":"+config.cloudant.passw
 // include the nano library
 var nano = require('nano')(cloudant_url);
 
+// test to make sure we have a connection to cloudant
+if (_.isUndefined(nano.db)) {
+
+  console.log('Unable to connect to cloudant, ensure the config is correct');
+  process.exit();
+
+}
+
 // central store for the db's
 var dbs = {
   music: nano.db.use('music')
