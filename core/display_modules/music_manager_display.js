@@ -155,10 +155,9 @@ var displayMusicByArtistAlbum = function(params, callback) {
     include_docs: false,
     group_level: 3,
     startkey: [params.set.replace(/-/g, ' ')],
-    endkey: [params.set.replace(/-/g, ' ')+"𧻓"]
+    endkey: [params.set.replace(/-/g, ' ')+"𧻓"],
+    limit: (_.isUndefined(params.no_limit)?6:200)
   }
-
-  (_.isUndefined(params.no_limit)?opts.limit = 6:"");
 
   music_manager.getMusicByArtistAlbum(opts, function(err, data) {
 
@@ -274,10 +273,11 @@ var displayMusicByArtistSongs = function(params, callback) {
 
 var displayAlbumMusic = function(params, callback) {
 
-  if (params.set === "" && !_.isUndefined(params.subset)) {
+  if (!_.isUndefined(params.set) && params.set === "" && !_.isUndefined(params.subset)) {
 
     params.set = params.subset;
     delete params.subset;
+    params.no_limit = true;
 
     displayMusicByArtistAlbum(params, function(err, data) {
 
