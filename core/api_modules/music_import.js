@@ -13,6 +13,9 @@ var fs = require('fs');
 // include the moment library
 var moment = require('moment');
 
+// include the config
+var config = require(__dirname+'/config/__config.json');
+
 // inlcude our file system library
 var file_system = require(__dirname+'/file_system.js');
 
@@ -29,7 +32,10 @@ var cloudant = require(__dirname+'/includes/cloudant.js');
 var lastfm = require(__dirname+'/lastfm.js');
 
 // define where the music is
-var music_folder = "/media/music";
+var music_folder = config.directories.music;
+
+// ignore files
+var ignore_files = [".DS_Store"];
 
 // common types of audio file supported by html5
 var allowed_types = ["mp3", "wav", "ogg"];
@@ -46,6 +52,9 @@ var buffer_size = 100;
 // are we importing all files and need to replicate the db?
 var full_import = false;
 
+// a file store
+var file_list = [];
+
 var importFiles = function(file_list, callback) {
 
   // do we need to import all files?
@@ -61,13 +70,21 @@ var importFiles = function(file_list, callback) {
   // find out if the import is already running
   actions.push(function(cb) {
 
+    // check to make sure the queue is empty first
+    if (q.length > 0) {
+
+      return cb("Import already running");
+
+    }
+
     var params = {
       db: "music_copy"
     }
 
-    cloudant.getdb(params, function(success, msg, data) {
+    // check we don't have a copy of the music collection
+    cloudant.getdb(params, function(err, data) {
 
-      if (success === true || q.length > 0) {
+      if (_.isNull(err) || q.length > 0) {
 
         return cb("Import already running");
 
@@ -85,26 +102,55 @@ var importFiles = function(file_list, callback) {
     actions.push(function(cb) {
 
       // firstly as this is a big import then we should make a fresh db to import into
-      cloudant.createdb({db: 'music_copy'}, function(success, msg, data) {
+      cloudant.createdb({db: 'music_copy'}, function(err, data) {
 
-        if (!success) {
+        if (!_.isNull(err)) {
 
           return cb('Unable to create import db');
 
         }
 
-        var folder_list = file_system.getFileList(__dirname+music_folder);
+        // put in the view documents
+        addViewDocs();
 
-        for (var fl in folder_list) {
+        return cb(null);
 
-          q.push(folder_list[fl]);
+      })
+
+    })
+
+    // make sure we have some files in the music dir and then make a list for import
+    actions.push(function(cb) {
+
+      fs.readdir(music_folder, function(err, folder_list) {
+
+        if (err) {
+
+          removeMusicCopy(function() {
+
+            return cb("Unable to read music directory");
+
+          })
 
         }
 
-        // add in the view docs
-        addViewDocs();
+        else if (folder_list.length > 0) {
 
-        return cb(null, "Import started");
+          extractFiles(music_folder);
+
+          return cb(null, "Import started");
+
+        }
+
+        else {
+
+          removeMusicCopy(function() {
+
+            return cb(null, "No Music to import");
+
+          })
+
+        }
 
       })
 
@@ -154,13 +200,15 @@ var importFiles = function(file_list, callback) {
 
     if (!_.isNull(err)) {
 
-      return callback(false, err);
+      return callback(err);
 
     }
 
     else {
 
-      return callback(true, data)
+      data = _.without(data, null);
+
+      return callback(null, data);
 
     }
 
@@ -221,14 +269,22 @@ var q = async.queue(function(file_info, callback) {
 
   var functions = [];
 
+  console.log(file_info);
+
+  if (!_.isObject(file_info)) {
+
+    return callback();
+
+  }
+
   // make id3 tags
   functions.push(function(cb) {
 
     // see if we have some id3 tags
-    id3_reader.read(__dirname+file_info.path, function(success, msg, data) {
+    id3_reader.read(file_info.path, function(success, msg, data) {
 
       // no id3 tags, see if we can get some information from the filename
-      if (success === false || data.tags.title === "unknown") {
+      if (success === false || _.isUndefined(data.tags) || data.tags.title === "unknown") {
 
         var tags = makeTagsFromFileName(data.tags, file_info.filename);
 
@@ -362,14 +418,6 @@ var q = async.queue(function(file_info, callback) {
       if (!_.isNull(err)) {
 
         return cb(null, tag_data);
-
-      }
-
-      // do we have a duration?
-      if (!_.isUndefined(data.duration)) {
-
-        tag_data.length = data.duration;
-        tag_data.display_time = formatDisplayTime(data.duration);
 
       }
 
@@ -534,19 +582,9 @@ var processBuffer = function(finished) {
         // delete the _music db
         actions.push(function(cb) {
 
-          var params = {
-            db: 'music_copy'
-          }
+          removeMusicCopy(function(err) {
 
-          cloudant.destroydb(params, function(err, data) {
-
-            if (!_.isNull(err)) {
-
-              return cb(msg)
-
-            }
-
-            return cb(null);
+            return cb(err);
 
           })
 
@@ -609,6 +647,27 @@ var addViewDocs = function() {
 
 }
 
+// remove the duplicate music database
+var removeMusicCopy = function(callback) {
+
+  var params = {
+    db: 'music_copy'
+  }
+
+  cloudant.destroydb(params, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      return callback(msg)
+
+    }
+
+    return callback(null);
+
+  })
+
+}
+
 var formatDisplayTime = function(ts) {
 
   var display_time = moment(parseInt(ts)).format('HH:mm:ss');
@@ -620,6 +679,63 @@ var formatDisplayTime = function(ts) {
   }
 
   return display_time;
+
+}
+
+var extractFiles = function(path) {
+
+  // make sure the path supplied exists
+  if (fs.statSync(path).isDirectory() === false) {
+    return;
+  }
+
+  // load the dir
+  var dir = fs.readdirSync(path);
+
+  // no files in the folder
+  if (_.isArray(dir) === false || dir.length === 0) {
+    return;
+  }
+
+  // loop through and make the file structure
+  for (var d in dir) {
+
+    // dont add the shit files no-one cares about
+    if (ignore_files.indexOf(dir[d]) !== -1) {
+
+      continue;
+
+    }
+
+    // it's a file add it to the lower level files
+    if (fs.statSync(path+"/"+dir[d]).isFile() === true) {
+
+      var extension = dir[d].split('.');
+      extension = extension[extension.length - 1];
+
+      if (allowed_types.indexOf(extension.toLowerCase()) === -1) {
+
+        continue;
+
+      }
+
+      var ob = {
+        filename: dir[d],
+        extension: extension,
+        path: path.replace(__dirname, "")+"/"+dir[d]
+      }
+
+      q.push(ob);
+
+    }
+
+    else if (fs.statSync(path).isDirectory() === true) {
+
+      extractFiles(path+"/"+dir[d]);
+
+    }
+
+  }
 
 }
 

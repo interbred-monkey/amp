@@ -25,23 +25,3 @@ var showFolderContent = function(el) {
   }
 
 }
-
-var reindex = function(type) {
-
-  $.ajax({
-    type: "POST",
-    url: "/ajax/reindex-"+type,
-    dataType: "json",
-    success: function(res){
-
-      showSystemMessage(res.success, res.msg);
-      
-    },
-    error: function() {
-
-      showSystemMessage(false, "Unable to import <strong>"+type.toUpperCase()+"</strong>, please try again");
-
-    }
-  });
-
-}

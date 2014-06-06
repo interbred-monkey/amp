@@ -10,4 +10,11 @@ div(id="settings-browser" class="col-md-12")
     div.col-md-10.nopad
       div(class="col-md-12", main, box)
         h3 Music
-        button(class="btn btn-default btn-info", onclick="reindex('music');") Rescan music library
+        div.col-md-12
+          form.form-horizontal
+            div.form-group
+              label(class='col-md-1 control-label', for='music_folder_select') Music Directory
+              div.col-md-6
+                input(music-path-select, class='form-control', type='text', value='#{config.directories.music}')
+              div.col-md-2
+                button(type='button', class="btn btn-default btn-info", onclick="reindex('music');") Rescan music library

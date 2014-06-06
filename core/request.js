@@ -92,6 +92,9 @@ var processRequest = function(req, callback) {
       data.file_path = '/views/'+file;
       data.path = url_bits;
       data.vars = buildVars(req.params, req.query);
+      data.config = {
+        directories: config.directories
+      }
       callback(null, data);
   
     });

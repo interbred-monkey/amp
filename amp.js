@@ -73,7 +73,7 @@ server.all('*', function(req,res) {
 	
 	  // do we have some html to put out?
 	  if(!_.isUndefined(data) && data.file){
-      res.render(base_dir+data.file_path, {params: data.vars, req: rp});
+      res.render(base_dir+data.file_path, {params: data.vars, config: data.config, req: rp});
     }
 	
 	  // must be an api call
