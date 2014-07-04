@@ -1,0 +1,14 @@
+{
+  "documents": [
+    {
+      "_id": "_design/matching",
+      "language": "javascript",
+      "views": {
+        "queueName": {
+          "map": "function(doc) { emit(doc.type.match(/([a-z0-9-_]+)[^_import]/gi)[0], 1); }",
+          "reduce": "function(keys, values, rereduce) { return sum(values); }"
+        }
+      }
+    }
+  ]
+}

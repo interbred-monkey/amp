@@ -20,6 +20,7 @@ var _ = require('underscore');
 // include config etc
 var config = require('./core/config/__config.json');
 var http_request = require('./core/request.js');
+var sockets = require('./core/sockets.js');
 
 // include our setup
 var setup = require('./core/setup.js');
@@ -133,25 +134,35 @@ if (io) {
 		socket.emit("identify",{});
 	
 		socket.on('identity',	function(data) { 
-		  lib.socketio.identity(data, lib, broadcast_data, send_data); 
+
+		  sockets.identity(data, lib, broadcast_data, send_data); 
+      
 		});
 		
 		socket.on('update',	function(data) {
-		  lib.socketio.update(data, lib, broadcast_data); 
+
+		  sockets.update(data, lib, broadcast_data); 
+
 		});
 		
 		socket.on('disconnect', function() { 
-		  lib.socketio.disconnect({"socketId": socket.id}, lib, broadcast_data);
+
+		  sockets.disconnect({"socketId": socket.id}, lib, broadcast_data);
+
 		});
 		
 		//Broadcast data
 		var broadcastData = function(d) {
+
 			socket.broadcast.emit(d.type,{"data": JSON.stringify(d.data)});
+
 		}
 		
 		//Send connected socket data
 		var sendData = function(d) {
+
 			socket.emit(d.type,{"data": JSON.stringify(d.data)});
+
 		}
 		
 	});

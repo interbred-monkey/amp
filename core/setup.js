@@ -13,90 +13,182 @@ var cloudant = require('./includes/cloudant.js');
 // include our config
 var config = require('./config/__config.json');
 
+// the list of config items to check
+var config_checklist = ["cloudant", "directories"];
+
 // checks to make sure all the databases are in place
 var start = function() {
   
-  if (_.isUndefined(config) || _.isUndefined(config.cloudant)) {
+  if (_.isUndefined(config)) {
 
     console.log("********************** Startup Error: **********************");
-    console.log('Unable to find config to check cloudant databases');
+    console.log('Config file is missing');
     process.exit();
 
   }
 
-  // load in the config files for the db's
-  fs.readdir(__dirname+'/config', function(err, files) {
+  for (var cc in config_checklist) {
 
-    var config_files = [];
+    if (_.isUndefined(config[config_checklist[cc]])) {
 
-    // filter out the right files
-    for (var f in files) {
-
-      if (files[f].match(/db_.*/)) {
-
-        config_files.push(files[f]);
-
-      }
+      console.log("********************** Startup Error: **********************");
+      console.log('The config for '+config_checklist[cc]+' is missing from the __config file');
+      console.log('Please make sure this config exists before starting');
+      process.exit();
 
     }
 
-    cloudant.listdbs(function(err, data) {
+  }
+
+  var actions = [];
+
+  // check for the cloudant stuff
+  actions.push(function(cb) {
+
+    // load in the config files for the db's
+    fs.readdir(__dirname+'/config', function(err, files) {
+
+      var config_files = [];
+
+      // filter out the right files
+      for (var f in files) {
+
+        if (files[f].match(/db_.*/)) {
+
+          config_files.push(files[f]);
+
+        }
+
+      }
+
+      cloudant.listdbs(function(err, data) {
+
+        if (!_.isNull(err)) {
+
+          console.log("********************** Startup Error: **********************");
+          console.log('Unable to connect to cloudant databases');
+          process.exit();
+
+        }
+
+        for (var cf in config_files) {
+
+          var db_name = config_files[cf].match(/db_([a-z0-9_-]+).json/i);
+
+          // missing db
+          if (data.indexOf(db_name[1]) === -1) {
+
+            (function(file_name, database) {
+
+              processConfig(file_name, database);
+
+            })(config_files[cf], db_name[1])
+
+          }
+
+          // check to make sure the views are there
+          else {
+
+            (function(file_name, database) {
+
+              checkViewExists(file_name, database);
+
+            })(config_files[cf], db_name[1])
+
+          }
+
+        }
+
+      })
+
+    })
+
+    cb(null);
+
+  })
+
+  // check the directories
+  actions.push(function(cb) {
+
+    for (var cd in config.directories) {
+
+      (function(local_dir, real_path) {
+
+        fs.readlink(__dirname+'/public/media/'+local_dir, function(err, linkstring) {
+
+          // file already exists
+          if (err && err.errno === 18 && config.debug === true) {
+
+            console.log("Error reading "+local_dir+" directory, file already exists");
+
+          }
+
+          else if (real_path !== linkstring) {
+
+            if (fs.existsSync(__dirname+'/public/media/'+local_dir)) {
+
+              fs.unlinkSync(__dirname+'/public/media/'+local_dir);
+
+            }
+
+            fs.symlink(real_path, __dirname+'/public/media/'+local_dir, 'dir', function(err) {})
+
+          }
+
+        })
+
+
+      })(cd, config.directories[cd])
+
+    }
+
+    cb(null);
+
+  })
+
+  // check to see if we need to start importing files
+  actions.push(function(cb) {
+
+    var params = {
+      db: "queues",
+      design_name: "matching",
+      view_name: "queueName",
+      opts: {
+        reduce: true,
+        group: true,
+        group_level: 1
+      }
+    }
+
+    cloudant.view(params, function(err, data) {
 
       if (!_.isNull(err)) {
 
-        console.log("********************** Startup Error: **********************");
-        console.log('Unable to connect to cloudant databases');
-        process.exit();
+        if (config.debug === true) {
+
+          console.log(err);
+
+        }        
 
       }
 
-      for (var cf in config_files) {
+      else if (data.rows.length > 0) {
 
-        var db_name = config_files[cf].match(/db_([a-z0-9_-]+).json/i);
+        for (var dr in data.rows) {
 
-        // missing db
-        if (data.indexOf(db_name[1]) === -1) {
-
-          (function(file_name, database) {
-
-            processConfig(file_name, database);
-
-          })(config_files[cf], db_name[1])
-
-        }
-
-        // check to make sure the views are there
-        else {
-
-          (function(file_name, database) {
-
-            checkViewExists(file_name, database);
-
-          })(config_files[cf], db_name[1])
+          require('./importers/'+data.rows[dr].key+'_import').startImport(function(err, data) {});
 
         }
 
       }
 
-      // do we have any stalled copy dbs?
-      for (var d in data) {
-
-        // is this a stalled copy db?
-        if (data[d].match(/^[a-z0-9_-]+_copy$/gi)) {
-
-          (function(db) {
-
-            removeDB(db);
-
-          })(data[d])
-
-        }
-
-      }
+      return cb(null);
 
     })
 
   })
+
+  async.parallel(actions, function(err, data) {});
 
 }
 
@@ -196,11 +288,14 @@ var checkViewExists = function(config_file, database) {
     // check the views we have to see if they are the same
     for (var dr in data.rows) {
 
+      // have we got an error or a document? either way find an id
+      var doc_id = (_.isUndefined(data.rows[dr].id)?data.rows[dr].key:data.rows[dr].id);
+
       // get the right doc from the docs
-      var config_doc = docs[doc_ids.indexOf(data.rows[dr].id)];
+      var config_doc = docs[doc_ids.indexOf(doc_id)];
 
       // document is missing
-      if (_.isNull(data.rows[dr].doc)) {
+      if (_.isUndefined(data.rows[dr].doc) || _.isNull(data.rows[dr].doc)) {
 
         return addDocument(database, config_doc);
 
@@ -221,6 +316,9 @@ var checkViewExists = function(config_file, database) {
       }
 
     }
+
+    // just return if there is nothing to do
+    return;
 
   })
 

@@ -4,6 +4,9 @@ var config = require('./config/__config.json');
 // include the underscore library
 var _ = require('underscore');
 
+// include the file system library
+var fs = require('fs');
+
 // calculate the api url
 var cloudant_url = "https://"+config.cloudant.username+":"+config.cloudant.password+"@"+config.cloudant.username+".cloudant.com:"+config.cloudant.port;
 
@@ -19,9 +22,25 @@ if (_.isUndefined(nano.db)) {
 }
 
 // central store for the db's
-var dbs = {
-  music: nano.db.use('music')
-}
+var dbs = {queues: nano.db.use('queues'), music_copy: nano.db.use('music_copy')}
+
+// load in the config files for the db's and use those
+fs.readdir(__dirname+'/config', function(err, files) {
+
+  // filter out the right files
+  for (var f in files) {
+
+    if (files[f].match(/db_.*/)) {
+
+      var db_name = files[f].match(/db_([a-zA-Z0-9-_]+)\.json/)[1];
+
+      dbs[db_name] = nano.db.use(db_name);
+
+    }
+
+  }
+
+})
 
 // get a db information
 var getdb = function(params, callback) {
@@ -71,7 +90,7 @@ var createdb = function(params, callback) {
 
     }
 
-    if (err) {
+    if (err && (_.isUndefined(params.ignore_err) || params.ignore_err === false)) {
 
       return callback("Unable to create db", err);
 
@@ -444,13 +463,13 @@ var addBulk = function(params, callback) {
 
     if (config.debug) {
 
-      console.log("Bulk Add: "+params.db);
+      console.log("Bulk Add: "+params.db+"\nNumDocs: "+params.docs.length);
       console.log(err, docs);
 
     }
 
     if (err) {
-
+      
       return callback("Unable to add docs");
 
     }

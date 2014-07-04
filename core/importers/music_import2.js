@@ -47,13 +47,21 @@ var errors = [];
 var tag_buffer = [];
 
 // how many tags to keep before writing them to the db
-var buffer_size = 100;
+var buffer_size = 500;
 
 // are we importing all files and need to replicate the db?
 var full_import = false;
 
 // a file store
 var file_list = [];
+
+// a count of the number of files to import
+var file_count = 0;
+
+// a count of the number of files processed
+var processed_count = 0;
+
+var obs = [];
 
 var importFiles = function(file_list, callback) {
 
@@ -109,9 +117,6 @@ var importFiles = function(file_list, callback) {
           return cb('Unable to create import db');
 
         }
-
-        // put in the view documents
-        addViewDocs();
 
         return cb(null);
 
@@ -269,8 +274,6 @@ var q = async.queue(function(file_info, callback) {
 
   var functions = [];
 
-  console.log(file_info);
-
   if (!_.isObject(file_info)) {
 
     return callback();
@@ -283,8 +286,22 @@ var q = async.queue(function(file_info, callback) {
     // see if we have some id3 tags
     id3_reader.read(file_info.path, function(success, msg, data) {
 
+      // failed to read the tags
+      if (success === false) {
+
+        data = {
+          tags: {
+            artist: "unknown",
+            title: "unknown",
+            album: "unknown",
+            genre: "unknown"
+          }
+        }
+
+      }
+
       // no id3 tags, see if we can get some information from the filename
-      if (success === false || _.isUndefined(data.tags) || data.tags.title === "unknown") {
+      if (_.isUndefined(data.tags) || data.tags.title === "unknown") {
 
         var tags = makeTagsFromFileName(data.tags, file_info.filename);
 
@@ -310,6 +327,8 @@ var q = async.queue(function(file_info, callback) {
     });
 
   })
+
+  /*
 
   // check for artist artwork
   functions.push(function(tag_data, cb) {
@@ -469,10 +488,16 @@ var q = async.queue(function(file_info, callback) {
 
   })
 
+  */
+
   async.waterfall(functions, function(err, data) {
+
+    // increment the number processed
+    processed_count++;
 
     // add it to the list of tags
     tag_buffer.push(data);
+    obs.push(data);
 
     // write the tags...?
     if (tag_buffer.length >= buffer_size) {
@@ -490,7 +515,7 @@ var q = async.queue(function(file_info, callback) {
   });
   
 
-}, 5);
+}, 10);
  
 q.drain = function(err, data) {
 
@@ -505,14 +530,26 @@ q.drain = function(err, data) {
 
   }
 
-  processBuffer(true);
+  if (processed_count >= file_count) {
+
+    return processBuffer(true);
+
+  }
 
 }
 
 // write the tags to the db
 var processBuffer = function(finished) {
 
-  if (tag_buffer.length > 0) {
+  if (tag_buffer.length === 0) {
+
+    return;
+
+  }
+
+  var actions = [];
+  
+  actions.push(function(cb) {
 
     var docsToSend = JSON.parse(JSON.stringify(tag_buffer));
     tag_buffer = [];
@@ -526,96 +563,112 @@ var processBuffer = function(finished) {
 
       if (!_.isNull(err)) {
 
-        tag_buffer = tag_buffer.concat(docsToSend);
-        return;
+        //tag_buffer = tag_buffer.concat(docsToSend);
+        return cb(null);
 
       }
 
-      else if (full_import === true && finished === true) {
+      return cb(null);
 
-        var actions = [];
+    })
 
-        // remove the current music db
-        actions.push(function(cb) {
+  })
+  
+  if (full_import === true && finished === true) {
 
-          var params = {
-            db: 'music'
-          }
+    // remove the current music db
+    actions.push(function(cb) {
 
-          cloudant.destroydb(params, function(err, data) {
+      console.log('Removing current music DB');
 
-            if (!_.isNull(err)) {
-
-              return cb(msg);
-
-            }
-
-            return cb(null);
-
-          })
-
-        })
-
-        // replicate the _music db to music
-        actions.push(function(cb) {
-
-          var params = {
-            from: 'music_copy',
-            to: 'music',
-            create_target: true
-          }
-
-          cloudant.replicatedb(params, function(err, data) {
-
-            if (!_.isNull(err)) {
-
-              return cb(msg)
-
-            }
-
-            return cb(null);
-
-          })
-
-        })
-
-        // delete the _music db
-        actions.push(function(cb) {
-
-          removeMusicCopy(function(err) {
-
-            return cb(err);
-
-          })
-
-        })
-
-        async.series(actions, function(err) {
-
-          if (!_.isNull(err)) {
-
-            console.log("Unable to import music");
-            console.log("Error changing music DB");
-            console.log(err);
-            return;
-
-          }
-
-          console.log("Import successful");
-
-        })
-
+      var params = {
+        db: 'music'
       }
 
-      else if (finished === true) {
+      cloudant.destroydb(params, function(err, data) {
 
-        console.log("Import successful");
+        if (!_.isNull(err)) {
 
+          return cb(msg);
+
+        }
+
+        return cb(null);
+
+      })
+
+    })
+
+    // replicate the _music db to music
+    actions.push(function(cb) {
+
+      console.log('Duplicating music_copy DB');
+
+      var params = {
+        from: 'music_copy',
+        to: 'music',
+        create_target: true
       }
-      
+
+      cloudant.replicatedb(params, function(err, data) {
+
+        if (!_.isNull(err)) {
+
+          return cb(msg)
+
+        }
+
+        return cb(null);
+
+      })
+
+    })
+
+    // delete the _music db
+    actions.push(function(cb) {
+
+      console.log('Removing music_copy DB');
+
+      removeMusicCopy(function(err) {
+
+        return cb(err);
+
+      })
+
+    })
+
+    // add in the view docs
+    actions.push(function() {
+
+      console.log('Adding in view docs');
+
+      // put in the view documents
+      addViewDocs();
+
+      return cb(null);
+
     })
 
   }
+
+  async.series(actions, function(err) {
+
+    if (!_.isNull(err)) {
+
+      console.log("Unable to import music");
+      console.log("Error changing music DB");
+      console.log(err);
+      return;
+
+    }
+
+    if (finished === true) {
+
+      console.log("Import successful");
+
+    }
+    
+  })
 
 }
 
@@ -725,6 +778,7 @@ var extractFiles = function(path) {
         path: path.replace(__dirname, "")+"/"+dir[d]
       }
 
+      file_count++;
       q.push(ob);
 
     }

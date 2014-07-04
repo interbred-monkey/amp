@@ -10,7 +10,7 @@ var _ = require('underscore');
 var cloudant = require('./includes/cloudant.js');
 
 // include the music_import library
-var music_import = require('./music_import.js');
+var music_import = require('./importers/music_import.js');
 
 var getSongList = function(callback) {
 

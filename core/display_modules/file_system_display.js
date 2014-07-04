@@ -10,7 +10,7 @@ var _ = require('underscore');
 var jade = require('jade');
 
 // include the file-system functions
-var file_system = require('../api_modules/file_system.js');
+var file_system = require('../includes/file_system.js');
 
 // perform a file system search
 var displayFileSearch = function(params, callback) {

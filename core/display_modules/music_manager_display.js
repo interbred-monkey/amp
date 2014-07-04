@@ -13,11 +13,9 @@ var jade = require('jade');
 var async = require('async');
 
 // include the lastfm functions
-var lastfm = require('../api_modules/lastfm.js');
-
-// include the lastfm functions
 var music_manager = require('../api_modules/music_manager.js');
 
+/*
 var displayArtistInfo = function(params, callback) {
 
   // get the info from last.fm
@@ -90,6 +88,8 @@ var displaySimilarArtistInfo = function(params, callback) {
   });
 
 }
+
+*/
 
 var searchToHTML = function(opts, callback) {
 
@@ -550,8 +550,8 @@ var createHTML = function(filename, data, callback) {
 
 module.exports = {
   displaySongs: displaySongs,
-  displayArtistInfo: displayArtistInfo,
-  displaySimilarArtistInfo: displaySimilarArtistInfo,
+  //displayArtistInfo: displayArtistInfo,
+  //displaySimilarArtistInfo: displaySimilarArtistInfo,
   displayGroupedList: displayGroupedList,
   displayMusicArtists: displayMusicArtists,
   displayMusicByArtistAlbum: displayMusicByArtistAlbum,

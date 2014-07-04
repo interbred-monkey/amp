@@ -5,5 +5,12 @@
     "endpoint": "/music/search",
     "module": "music_manager.js",
     "callback": "musicSearch"
+  },
+  {
+    "title": "Re-index the music",
+    "method": "GET",
+    "endpoint": "/music/re-index",
+    "module": "music_manager.js",
+    "callback": "reindex"
   }
 ]

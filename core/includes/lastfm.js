@@ -99,6 +99,12 @@ var getAlbumInfo = function(params, callback){
   
   doAPICall(url, function(err, data) {
 
+    if (!_.isNull(err)) {
+
+      return callback(err);
+
+    }
+
     if (_.isUndefined(data.album) || !_.isObject(data.album)){
       return callback("No results");
     }
@@ -132,6 +138,12 @@ var getSongInfo = function(params, callback){
   var url = "http://ws.audioscrobbler.com/2.0/?method=track.getinfo&api_key="+config.api_keys.lastfm+"&format=json&limit=5&autocorrect=1&artist="+encodeURI(params.artist)+"&track="+encodeURI(params.track);
   
   doAPICall(url, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      return callback(err);
+
+    }
 
     if (_.isUndefined(data.track) || !_.isObject(data.track)){
       return callback("No results");
