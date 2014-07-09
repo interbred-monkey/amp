@@ -26,10 +26,13 @@ var file_system = require('./includes/file_system.js');
 var lastfm = require('./includes/lastfm.js');
 
 // global params
-var emitter     = null,
-    doc_buffer  = [],
-    buffer_size = 500,
-    parallelism = 1;
+var emitter       = null,
+    doc_buffer    = [],
+    delete_buffer = [],
+    buffer_size   = 500,
+    parallelism   = 1,
+    docs_to_pull  = 50
+    pull_count    = 0;
 
 // define the allowed file types for import
 file_system.setAllowedTypes(['mp3', 'ogg', 'wav']);
@@ -126,7 +129,7 @@ var importFiles = function(callback) {
 
   })
 
-  actions.push(function() {
+  actions.push(function(cb) {
 
     startImport(function(err) {
 
@@ -425,90 +428,6 @@ var findTrackInfo = function(tag_data, callback) {
 
 }
 
-var import_q = async.queue(function(doc, callback) {
-
-  var actions = [];
-
-  if (!_.isObject(doc)) {
-
-    return callback();
-
-  }
-
-  // make id3 tags
-  actions.push(function(cb) {
-
-    generateTags(doc.data, function(err, tags) {
-
-      return cb(err, tags);
-
-    })
-
-  })
-
-  // check for artist artwork
-  actions.push(function(tag_data, cb) {
-
-    findArtistArtwork(tag_data, function(err, data) {
-
-      return cb(err, data);
-
-    })
-
-  })
-
-  // check for album artwork
-  actions.push(function(tag_data, cb) {
-
-    findAlbumArtwork(tag_data, function(err, data) {
-
-      return cb(err, data);
-
-    })
-
-  })
-
-  // check track info
-  actions.push(function(tag_data, cb) {
-
-    findTrackInfo(tag_data, function(err, data) {
-
-      return cb(err, data);
-
-    })
-
-  })
-
-  async.waterfall(actions, function(err, tag_data) {
-
-    tag_data._id = doc._id;
-    doc_buffer.push(tag_data);
-    return callback(err);
-
-  })
-
-}, parallelism)
-
-import_q.drain = function(err) {
-
-  if (!_.isNull(err)) {
-
-    if (config.debug === true) {
-
-      console.log(">>>>>>>>>>>>>>"+err);
-
-    }
-
-  }
-
-  writeDocs(function() {
-
-    return processImportQueue();
-
-  })
-  
-}
-
 var startImport = function(callback) {
 
   if (!_.isNull(emitter)) {
@@ -567,6 +486,22 @@ var processImportQueue = function() {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+/*                                                                          */
+/*                                                                          */
+/*  End data process section                                                */
+/*                                                                          */
+/*                                                                          */
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+/*                                                                          */
+/*                                                                          */
+/*  Database process section                                                */
+/*                                                                          */
+/*                                                                          */
+//////////////////////////////////////////////////////////////////////////////
+
 var fetchImportQueueItems = function(callback) {
 
   var params = {
@@ -574,10 +509,11 @@ var fetchImportQueueItems = function(callback) {
     design_name: "matching",
     view_name: "queueName",
     opts: {
-      limit: 10,
+      limit: docs_to_pull,
       skip: doc_buffer.length,
       reduce: false,
-      include_docs: true
+      include_docs: true,
+      key: "music"
     }
   }
 
@@ -588,9 +524,16 @@ var fetchImportQueueItems = function(callback) {
       if (config.debug === true) {
 
         console.log(err);
+        console.log("PULL COUNT ----- "+pull_count+" ------");
         return callback("Unable to get queue data");
 
       }
+
+    }
+
+    else {
+
+      pull_count++;
 
     }
 
@@ -600,12 +543,14 @@ var fetchImportQueueItems = function(callback) {
 
 }
 
-var deleteQueueItems = function(docs_to_remove, callback) {
+var deleteQueueItems = function(callback) {
+
+  var docs_clone = delete_buffer.splice(0, buffer_size);
 
   // write the docs
   var params = {
     db: "queues",
-    docs: docs_to_remove
+    docs: docs_clone
   }
 
   cloudant.addBulk(params, function(err, data) {
@@ -626,6 +571,36 @@ var deleteQueueItems = function(docs_to_remove, callback) {
 
 }
 
+var writeMusicItems = function(callback) {
+
+  var docs_clone = doc_buffer.splice(0, buffer_size);
+
+  // write the docs
+  var params = {
+    db: "music_copy",
+    docs: docs_clone
+  }
+
+  cloudant.addBulk(params, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      if (config.debug === true) {
+
+        console.log(err);
+
+      }
+
+      err = "Unable to write docs";
+
+    }
+
+    return callback(err, data);
+
+  })
+
+}
+
 var writeDocs = function(purge, callback) {
 
   if (_.isFunction(purge)) {
@@ -635,67 +610,59 @@ var writeDocs = function(purge, callback) {
 
   }
 
-  if (doc_buffer.length >= buffer_size || purge === true) {
+  if (doc_buffer.length < buffer_size && purge === false) {
 
-    // write the docs
-    var params = {
-      db: "music_copy",
-      docs: doc_buffer.splice(0, buffer_size)
-    }
+    return callback(null);
 
-    cloudant.addBulk(params, function(err, data) {
+  }
 
-      if (!_.isNull(err)) {
+  var actions = [];
 
-        if (config.debug === true) {
+  actions.push(function(cb) {
 
-          console.log(err);
+    writeMusicItems(function(err, data) {
 
-        }
-
-        return cb(null);
-
-      }
-
-      else {
-
-        for (d in data) {
-
-          data[d]._deleted = true;
-
-        }
-
-        deleteQueueItems(data, function() {
-
-          if (purge === true) {
-
-            moveImportedDocs(function(err) {
-
-              return callback(err)
-
-            })
-
-          }
-
-          else {
-
-            return callback(null)
-
-          }
-
-        })
-
-      }
+      return cb(null);
 
     })
-    
+
+  })
+
+  actions.push(function(cb) {
+
+    deleteQueueItems(function() {
+
+      return cb(null);
+
+    })
+
+  })
+
+  if (purge === true) {
+
+    actions.push(function(cb) {
+
+      moveImportedDocs(function(err) {
+
+        return cb(err)
+
+      })
+
+    })
+
   }
 
-  else {
+  async.series(actions, function(err, data) {
 
-    return callback();
+    if (err) {
 
-  }
+      return callback(err);
+
+    }
+
+    return callback(null);
+
+  })
   
 }
 
@@ -807,13 +774,161 @@ var moveImportedDocs = function(callback) {
 
 }
 
+var removeMusicCopy = function() {
+
+  var params = {
+    db: "music_copy"
+  }
+
+  cloudant.destroydb(params, function(err, data) {
+
+    return callback(err, data);
+
+  })
+
+}
+
+// add in the view docs for the new db
+var addViewDocs = function() {
+
+  var params = {
+    db: 'music',
+    docs: require('./config/db_music.json').documents
+  }
+
+  cloudant.addBulk(params, function(err, data) {
+
+    if (!_.isNull(err)) {
+
+      console.log("Unable to add view documents to db "+database, data);
+      return;
+
+    }
+
+    else {
+
+      console.log("Added view docs");
+      return;
+
+    }
+
+  })
+
+}
+
 //////////////////////////////////////////////////////////////////////////////
 /*                                                                          */
 /*                                                                          */
-/*  End data process section                                                */
+/*  End database process section                                            */
 /*                                                                          */
 /*                                                                          */
 //////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////
+//                                                 //
+//  Processing queue                               //
+//                                                 //
+/////////////////////////////////////////////////////
+
+var import_q = async.queue(function(doc, callback) {
+
+  var actions = [];
+
+  if (!_.isObject(doc) || _.isUndefined(doc._id)) {
+
+    return callback();
+
+  }
+
+  // make id3 tags
+  actions.push(function(cb) {
+
+    generateTags(doc.data, function(err, tags) {
+
+      return cb(err, tags);
+
+    })
+
+  })
+
+  // check for artist artwork
+  actions.push(function(tag_data, cb) {
+
+    findArtistArtwork(tag_data, function(err, data) {
+
+      return cb(err, data);
+
+    })
+
+  })
+
+  // check for album artwork
+  actions.push(function(tag_data, cb) {
+
+    findAlbumArtwork(tag_data, function(err, data) {
+
+      return cb(err, data);
+
+    })
+
+  })
+
+  // check track info
+  actions.push(function(tag_data, cb) {
+
+    findTrackInfo(tag_data, function(err, data) {
+
+      return cb(err, data);
+
+    })
+
+  })
+
+  async.waterfall(actions, function(err, tag_data) {
+
+    // add the new tags to the buffer
+    tag_data._id = doc._id;
+    doc_buffer.push(tag_data);
+
+    // create our queue doc to delete
+    doc = {
+      _id: doc._id,
+      _rev: doc._rev,
+      _deleted: true
+    }
+    delete_buffer.push(doc);
+
+    return callback(err);
+
+  })
+
+}, parallelism)
+
+import_q.drain = function(err) {
+
+  if (!_.isNull(err)) {
+
+    if (config.debug === true) {
+
+      console.log(">>>>>>>>>>>>>>"+err);
+
+    }
+
+  }
+
+  writeDocs(function() {
+
+    return processImportQueue();
+
+  })
+  
+}
+
+/////////////////////////////////////////////////////
+//                                                 //
+//  End processing queue                           //
+//                                                 //
+/////////////////////////////////////////////////////
 
 module.exports = {
   importFiles: importFiles,

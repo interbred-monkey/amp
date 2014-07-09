@@ -4,14 +4,20 @@ var config = require('./config/__config.json');
 // include the underscore library
 var _ = require('underscore');
 
+// include the moment library for debugging
+var moment = require('moment');
+
 // include the file system library
 var fs = require('fs');
 
 // calculate the api url
 var cloudant_url = "https://"+config.cloudant.username+":"+config.cloudant.password+"@"+config.cloudant.username+".cloudant.com:"+config.cloudant.port;
 
+// work out the request defaults
+var request_defaults = (config.cloudant.request_opts?config.cloudant.request_opts:{});
+
 // include the nano library
-var nano = require('nano')(cloudant_url);
+var nano = require('nano')({url: cloudant_url, request_defaults: request_defaults});
 
 // test to make sure we have a connection to cloudant
 if (_.isUndefined(nano.db)) {
@@ -22,7 +28,7 @@ if (_.isUndefined(nano.db)) {
 }
 
 // central store for the db's
-var dbs = {queues: nano.db.use('queues'), music_copy: nano.db.use('music_copy')}
+var dbs = {}
 
 // load in the config files for the db's and use those
 fs.readdir(__dirname+'/config', function(err, files) {
@@ -501,16 +507,26 @@ var view = function(params, callback) {
 
   }
 
+  var start_time = moment();
+
   dbs[params.db].view(params.design_name, params.view_name, params.opts, function(err, docs) {
+
+    var end_time = moment();
 
     if (config.debug) {
 
+      console.log("Connection details: "+JSON.stringify(dbs[params.db], null, 2))
+      console.log("Database: "+params.db);
       console.log("View: _design/"+params.design_name+"/_view/"+params.view_name);
+      console.log("Params: "+JSON.stringify(params.opts, null, 2));
       console.log(err, docs);
+      console.log("Start time: "+start_time.format('hh:mm:ss'));
+      console.log("End time: "+end_time.format('hh:mm:ss'));
+      console.log("Time taken: "+end_time.subtract(start_time).format('mm:ss'));
 
     }
 
-    if (err || docs.rows.length === 0) {
+    if (!_.isNull(err)) {
 
       return callback("Unable to find docs");
 
@@ -524,6 +540,12 @@ var view = function(params, callback) {
       for (var dr in docs.rows) {
 
         return_docs.push(docs.rows[dr].doc);
+
+      }
+
+      if (return_docs.length === 0) {
+
+        docs = return_docs;
 
       }
 
