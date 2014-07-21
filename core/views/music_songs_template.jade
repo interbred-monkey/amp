@@ -49,7 +49,13 @@ div(id="song_view")
         image = d.album_artwork;
         image_class = '';
 
-      div(class='col-md-12 nopad no-overflow', song-row='', media='#{d.path}')
+      if typeof add_anchor !== "undefined" && add_anchor === true && i === data.length - 1
+        scroll_anchor = " music-scroll-anchor";
+
+      else
+        scroll_anchor = "";
+
+      div(class='col-md-12 nopad no-overflow#{scroll_anchor}', song-row='', media='#{d.path}')
         div(class='col-md-1 nlm')
           div(class='col-md-6 ellipsis')
             span #{i + 1}
@@ -66,3 +72,4 @@ div(id="song_view")
 
   script.
     renderMusicCoverImage('#{image}');
+    loadScroll(true);

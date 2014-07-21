@@ -1,6 +1,6 @@
 div(id="artist_album_view")
 
-  albums_nav_link = 'music/albums//'+data[0].key[0].replace(/\s/g, '-');
+  albums_nav_link = 'music/albums//'+encodeURIComponent(data[0].key[0]);
 
   div(class="col-md-12")
     div(class="col-md-5")
@@ -8,7 +8,7 @@ div(id="artist_album_view")
   
   for d, i in data
   
-    album_nav_link = 'music/albums/'+d.key[1].replace(/\s/g, '-')+'/'+d.key[0].replace(/\s/g, '-');
+    album_nav_link = 'music/albums/'+encodeURIComponent(d.key[1])+'/'+encodeURIComponent(d.key[0]);
 
     if d.key[2] === null
       image = '/images/record-full-blue.png';

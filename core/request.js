@@ -239,14 +239,14 @@ var buildVars = function(body, qs) {
 	// add the body params
 	if (_.isObject(body)) {
     for (var b in body) {
-      ret[b] = body[b];
+      ret[b] = decodeURIComponent(body[b]);
     }
   }
 	
 	// add the qs params
 	if (_.isObject(qs)) {
     for (var q in qs) {
-      ret[q] = qs[q];
+      ret[q] = decodeURIComponent(qs[q]);
     }
   }
 	

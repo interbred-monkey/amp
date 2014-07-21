@@ -1,0 +1,30 @@
+for d, i in data
+
+  if typeof d.album_artwork === "undefined" || d.album_artwork === null
+    image = '/images/record-full-blue.png';
+    image_class = ' dark-back';
+
+  else
+    image = d.album_artwork;
+    image_class = '';
+
+  if typeof add_anchor !== "undefined" && add_anchor === true && i === data.length - 1
+    scroll_anchor = " music-scroll-anchor";
+
+  else
+    scroll_anchor = "";
+
+  div(class='col-md-12 nopad no-overflow#{scroll_anchor}', song-row='', media='#{d.path}')
+    div(class='col-md-1 nlm')
+      div(class='col-md-6 ellipsis')
+        span #{parseInt(offset) + i + 1}
+      div(class='col-md-6')
+        img(src='#{image}', title='#{d.title}', class='#{image_class}')
+    div(class='col-md-3 ellipsis')
+      span #{d.title}
+    div(class='col-md-1 ellipsis')
+      span #{d.display_time ? d.display_time : ''}
+    div(class='col-md-3 ellipsis')
+      span #{d.artist}
+    div(class='col-md-3 ellipsis')
+      span #{d.album}

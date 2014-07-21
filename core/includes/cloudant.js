@@ -31,22 +31,20 @@ if (_.isUndefined(nano.db)) {
 var dbs = {}
 
 // load in the config files for the db's and use those
-fs.readdir(__dirname+'/config', function(err, files) {
+var files = fs.readdirSync(__dirname+'/config');
 
-  // filter out the right files
-  for (var f in files) {
+// filter out the right files
+for (var f in files) {
 
-    if (files[f].match(/db_.*/)) {
+  if (files[f].match(/db_.*/)) {
 
-      var db_name = files[f].match(/db_([a-zA-Z0-9-_]+)\.json/)[1];
+    var db_name = files[f].match(/db_([a-zA-Z0-9-_]+)\.json/)[1];
 
-      dbs[db_name] = nano.db.use(db_name);
-
-    }
+    dbs[db_name] = nano.db.use(db_name);
 
   }
 
-})
+}
 
 // get a db information
 var getdb = function(params, callback) {
@@ -610,6 +608,17 @@ var search = function(params, callback) {
 
 }
 
+// replace some things for adequate searching
+var parseSearchString = function(str) {
+
+  str = str.replace(/\[/g, '\\[');
+  str = str.replace(/\]/g, '\\]');
+  str = str.replace(/\+/g, '\\+');
+
+  return str;
+
+}
+
 module.exports = {
   getdb: getdb,
   createdb: createdb,
@@ -624,5 +633,6 @@ module.exports = {
   getBulk: getBulk,
   addBulk: addBulk,
   view: view,
-  search: search
+  search: search,
+  parseSearchString: parseSearchString
 }

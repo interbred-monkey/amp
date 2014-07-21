@@ -486,7 +486,7 @@ var displayGroupedList = function(params, callback) {
 
 var displaySongs = function(params, callback) {
 
-  music_manager.getSongList(function(err, data) {
+  music_manager.getSongList(params, function(err, data) {
 
     if (!_.isNull(err)) {
 
@@ -494,7 +494,7 @@ var displaySongs = function(params, callback) {
 
     }
 
-    var jade_path = __dirname+'/views/music_songs_template.jade';
+    var jade_path = __dirname+'/views/music_songs'+(!_.isUndefined(params.skip)?'_list':'')+'_template.jade';
 
     if (!fs.existsSync(jade_path)) {
 
@@ -504,8 +504,14 @@ var displaySongs = function(params, callback) {
     
     fs.readFile(jade_path, {encoding: "utf8"}, function(err, _jade) {
 
+      var jade_params = {
+        add_anchor: true,
+        data: data,
+        offset: (!_.isUndefined(params.skip)?params.skip:0)
+      }
+
       var fn = jade.compile(_jade);
-      var html = fn({data: data});
+      var html = fn(jade_params);
 
       var return_params = {
         html: html, 

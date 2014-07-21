@@ -194,3 +194,66 @@ var renderMusicCoverImage = function(image_url) {
   $('[music-image-cover]').css('background-image', 'url('+image_url+')');
 
 }
+
+// load more results on scrolling
+var loadScroll = function() {
+
+  if (!$('.music-scroll-anchor').is(':visible')) {
+
+    return;
+
+  }
+
+  var monitor_scroll = true;
+
+  var params = {
+    handle: '.music-scroll-anchor',
+    offset: 700 + window.innerHeight
+  }
+
+  var si = new scrollSetup(params, function(load_more, position) {
+
+    if (load_more === true) {
+
+      si.pauseScroll();
+
+      var url = "/ajax/music-all";
+
+      $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        data: {
+          skip: $('[song-row]').length
+        },
+        success: function(res){
+
+          if (res.data.html) {
+
+            $('.music-scroll-anchor').removeClass('music-scroll-anchor');
+            $('[music-browser]').append(res.data.html);
+
+            setTimeout(function() {
+
+              si.resumeScroll();
+
+            }, 700)
+            
+
+          }
+          
+        },
+        error: function() {
+
+          si.resumeScroll();
+          return showSystemMessage(false, "Unable to load music library");
+
+        }
+
+      })
+
+    }
+
+  })
+
+}

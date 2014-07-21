@@ -12,7 +12,14 @@ var cloudant = require('./includes/cloudant.js');
 // include the music_import library
 var music_import = require('./importers/music_import.js');
 
-var getSongList = function(callback) {
+var getSongList = function(opts, callback) {
+
+  if (_.isUndefined(callback) && _.isFunction(opts)) {
+
+    callback = opts;
+    opts = null;
+
+  }
 
   var params = {
     db: "music",
@@ -23,6 +30,12 @@ var getSongList = function(callback) {
       include_docs: true,
       limit: 200
     }
+  }
+
+  if (!_.isNull(opts) && !_.isUndefined(opts.skip)) {
+
+    params.opts.skip = opts.skip;
+
   }
 
   cloudant.view(params, function(err, data) {
@@ -420,25 +433,25 @@ var musicSearch = function(opts, callback) {
 
   if (!_.isUndefined(opts.artist)) {
 
-    query_bits.push("(artist: "+opts.artist+(opts.fuzzy === true?"*":"")+")");
+    query_bits.push("(artist: "+cloudant.parseSearchString(opts.artist)+(opts.fuzzy === true?"*":"")+")");
 
   }
 
   if (!_.isUndefined(opts.album)) {
 
-    query_bits.push("(album: "+opts.album+(opts.fuzzy === true?"*":"")+")");
+    query_bits.push("(album: "+cloudant.parseSearchString(opts.album)+(opts.fuzzy === true?"*":"")+")");
 
   }
 
   if (!_.isUndefined(opts.title)) {
 
-    query_bits.push("(title: "+opts.title+(opts.fuzzy === true?"*":"")+")");
+    query_bits.push("(title: "+cloudant.parseSearchString(opts.title)+(opts.fuzzy === true?"*":"")+")");
 
   }
 
   if (!_.isUndefined(opts.genre)) {
 
-    query_bits.push("(genre: "+opts.genre+(opts.fuzzy === true?"*":"")+")");
+    query_bits.push("(genre: "+cloudant.parseSearchString(opts.genre)+(opts.fuzzy === true?"*":"")+")");
 
   }
 

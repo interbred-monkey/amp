@@ -47,7 +47,13 @@
       "language": "javascript",
       "indexes": {
         "music": {
-          "analyzer": "standard",
+          "analyzer": {
+            "name": "perfield",
+            "default": "standard",
+            "fields": {
+              "artist": "whitespace"
+            }
+          },
           "index": "function(doc){\n index(\"artist\", doc.artist, {\"store\": \"yes\"});\n index(\"album\", doc.album, {\"store\": \"yes\"});\n index(\"title\", doc.title, {\"store\": \"yes\"});\n index(\"genre\", doc.genre, {\"store\": \"yes\"});\n }"
         }
       }

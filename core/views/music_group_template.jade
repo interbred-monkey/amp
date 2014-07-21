@@ -13,9 +13,9 @@ div(id="group_view")
     else
       image = d.key[1];
 
-    nav_item = d.key[0].replace(/\s/g, '-');
+    nav_item = encodeURIComponent(d.key[0]);
 
-    div(class='group-block music-group-block col-md-2 nopad no-overflow', nav-item='music/#{data.group}/#{nav_item}')
+    div(class='group-block music-group-block col-md-2 nopad no-overflow', nav-item='music/#{encodeURIComponent(data.group)}/#{nav_item}')
       div(class='col-md-12 dark-back text-middle')
         div.image-container
           img(src='#{image}', title='#{d.key[0]}')

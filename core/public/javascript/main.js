@@ -232,16 +232,25 @@ var showSystemMessage = function(success, message) {
 
 }
 
-var scrollSetup = function(_h, _callback) {
+var scrollSetup = function(opts, _callback) {
 
-  var _instance_handle = _h;
-  var _instance_position = $(_h).offset();
+  var _instance = this;
+  _instance._monitor_scroll = true;
+  _instance._handle = opts.handle;
+  _instance._position = $(opts.handle).offset();
+  _instance._offset_distance = (typeof opts.offset !== "undefined"?opts.offset:null);
 
-  (function() {
+  _instance.setup = (function() {
 
     $(window).on('scroll', function(evt) {
 
-      return calculate();
+      if (_instance._monitor_scroll === false) {
+
+        return;
+
+      }
+
+      return (_instance._offset_distance === null?calculate():calculateOffset());
 
     })
 
@@ -251,9 +260,9 @@ var scrollSetup = function(_h, _callback) {
 
     var _scroll_top = $('body').scrollTop();
 
-    if (_scroll_top > _instance_position.top) {
+    if (_scroll_top > _instance._position.top) {
 
-      return _callback(true, _scroll_top - _instance_position.top);
+      return _callback(true, _scroll_top - _instance._position.top);
 
     }
 
@@ -262,6 +271,38 @@ var scrollSetup = function(_h, _callback) {
       return _callback(false, null);
 
     }
+
+  }
+
+  var calculateOffset = function() {
+
+    console.log($(_instance._handle).offset().top, _instance._offset_distance, $('body').scrollTop(), $('body').scrollTop() + _instance._offset_distance);
+
+    var _scroll_position = $('body').scrollTop() + _instance._offset_distance;
+
+    if (_scroll_position >= $(_instance._handle).offset().top) {
+
+      return _callback(true, _scroll_position - $(_instance._handle).offset());
+
+    }
+
+    else {
+
+      return _callback(false, null);
+
+    }
+
+  }
+
+  _instance.pauseScroll = function() {
+
+    _instance._monitor_scroll = false;
+
+  }
+
+  _instance.resumeScroll = function() {
+
+    _instance._monitor_scroll = true;
 
   }
 
@@ -289,7 +330,7 @@ var scrollInSetup = function(_el) {
 
   }
 
-  return _instance = new scrollSetup(_trigger, _result);
+  return _instance = new scrollSetup({handle: _trigger}, _result);
 
 }
 
